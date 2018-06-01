@@ -1099,7 +1099,6 @@ public:
         {"EOS",{"BWR","ECS","FE1","FE2","FE3","FE4","FEK","FEQ","FES"}},
         {"ETA",{"ECS","VS0","VS1","VS2","VS3","VS3","VS4","VS5","VS6","VS7","ECS","TRN"}},
         {"TCX",{"TK0","TC1","TC2","TC3","TC4","TC5","TC6","TC7","ECS","TRN"}},
-        {"MLT",{"ML1","ML2","MLH","MLP","MLW" }},
         {"SBL",{"SB1","SB2","SB3"}},
         {"DEC",{"DE2","DE3","DE4","DE5"}}
     };
@@ -1144,9 +1143,6 @@ public:
                     CAPTURE(r2.herr);
                     if (r2.ierr == 501) {
                         continue; // Fluid doesn't have a melting line model, so that's not actually an error in this case
-                    }
-                    if (r2.ierr == 504) {
-                        continue; // This model is not valid for this fluid, also not really an error
                     }
                     CHECK(r2.ierr < 100);
                 }

@@ -686,6 +686,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check very old fluid files with old transpo
     SETPATHdll(nopath, 255);
 
     auto files = get_files_in_folder(resources, ".FLD");
+    REQUIRE(!files.empty());
     for (auto &&file : files){
         int ierr; std::string herr;
         SETFLUIDS(file, ierr, herr);

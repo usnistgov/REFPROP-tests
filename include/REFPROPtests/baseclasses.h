@@ -25,8 +25,11 @@ class REFPROPDLLFixture
 private:
     std::unique_ptr<NativeSharedLibraryWrapper> RP;
 public:
-    REFPROPDLLFixture(){ reload(); }
-
+    REFPROPDLLFixture(){ 
+        reload(); 
+        DEFAULT = get_enum("DEFAULT");
+    }
+    int DEFAULT;
     void reload(){
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(RPPREFIX != nullptr);

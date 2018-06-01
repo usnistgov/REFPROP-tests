@@ -39,7 +39,7 @@ ENV RESOURCES /REFPROP-tests/resources
  
 # Run the exe, generating gcov output, running from the REFPROP-cmake build
 WORKDIR /REFPROP-cmake/build
-CMD (/REFPROP-tests/build/main ~[Torture] || echo "Tests done") && \
+CMD (/REFPROP-tests/build/main ~[Torture] 2>&1 | tee /output/log.txt || echo "Tests done") && \
     gcov CMakeFiles/refprop.dir/REFPROP/FORTRAN/*.gcno && \
     lcov --gcov-tool `which gcov` --capture --directory . --output-file coverage.info && \
     genhtml --output-directory html coverage.info && \

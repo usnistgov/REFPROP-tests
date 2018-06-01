@@ -1145,6 +1145,9 @@ public:
                     if (r2.ierr == 501) {
                         continue; // Fluid doesn't have a melting line model, so that's not actually an error in this case
                     }
+                    if (r2.ierr == 504) {
+                        continue; // This model is not valid for this fluid, also not really an error
+                    }
                     CHECK(r2.ierr < 100);
                 }
             }

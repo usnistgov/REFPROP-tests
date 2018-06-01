@@ -11,8 +11,8 @@ RUN apt-get -y -m update && apt-get install -y cmake python3-numpy g++ gfortran 
 ADD https://api.github.com/repos/usnistgov/REFPROP-cmake/git/refs/heads/master RPcmake-version.json
 RUN git clone --recursive https://github.com/usnistgov/REFPROP-cmake
 
-ADD https://api.github.com/repos/ianhbell/REFPROP-tests/git/refs/heads/master RPtests-version.json
-RUN git clone --recursive https://github.com/ianhbell/REFPROP-tests 
+ADD https://api.github.com/repos/usnistgov/REFPROP-tests/git/refs/heads/master RPtests-version.json
+RUN git clone --recursive https://github.com/usnistgov/REFPROP-tests 
 
 ADD REFPROP.zip . 
 

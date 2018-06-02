@@ -381,16 +381,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Flash roundtrips", "[flags],[roundtrips]") 
                     // Force a reset (TODO: remove this)
                     int kflag = 0;
                     FLAGS("RESET ALL",1,kflag);
+                    FLAGS("CACHE", 3, kflag);
                 
                     // Calculation at critical point
                     std::vector<double> zc(20,0);
                     auto r0c = REFPROP(fld,"","TC;DC",UNITS,iMass,satspln,0,0,zc);
                     double Tc = r0c.Output[0], Dc = r0c.Output[1];
-                    // Find a point above (single-phase); this is our baseline state point
-                    auto rc = REFPROP(fld, "TD&", keys, UNITS, iMass, satspln, Tc*1.3, Dc*1.5, r0c.z);
+                    // Find a point above the isopleth of the phase envelope(single-phase); this is our baseline state point
+                    auto rc = REFPROP(fld, "TD&", keys, UNITS, iMass, satspln, Tc, Dc*1.3, r0c.z);
                     auto props0 = get_props(rc);
-                    REQUIRE(props0["D"] == Approx(Dc*1.5));
-                    REQUIRE(props0["T"] == Approx(Tc*1.3));
+                    REQUIRE(props0["D"] == Approx(Dc*1.3));
+                    REQUIRE(props0["T"] == Approx(Tc));
 
                     // Run through all the flash calculations
                     // Check the round-trip to get back to the starting point again
@@ -408,6 +409,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Flash roundtrips", "[flags],[roundtrips]") 
                         CAPTURE(pair);
                         CAPTURE(r.herr);
                         CHECK(r.ierr < 100);
+                        CAPTURE(Tc);
+                        CAPTURE(Dc);
                         CHECK(T == Approx(T0).epsilon(1e-3));
                         CHECK(p == Approx(p0).epsilon(1e-3));
                         CHECK(d == Approx(d0).epsilon(1e-3));

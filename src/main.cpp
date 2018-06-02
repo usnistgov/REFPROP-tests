@@ -308,9 +308,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
         { 0.00090613,"PHIR33" },
         { -0.0013761,"PR" },
         { 0.11096,"GRUN" },
-        { 0.6595,"GRUN w/o CV0" },
         { 0.95443,"PIP" },
-        { 33.007,"W^2" },
         { 0.077751,"RIEM" },
         { 0.040316,"VE" },
         { 8.9995,"EE" },
@@ -321,7 +319,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
         { -0.11159,"(T-TC)/TC" },
         { 363.48,"TMF" },
         { 6.6416,"S*D" },
-        { -697.72,"A*D" },
         { 0.5,"XMOLE(1)" },
         { 0.5,"XMOLE(2)" }
     };

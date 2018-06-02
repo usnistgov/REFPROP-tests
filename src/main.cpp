@@ -19,19 +19,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "R + 0 = Total?", "[flash],[rplus0]") {
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP of water", "[nbp]"){
-    int ierr = 1, nc = 1;
-    char herr[255], hfld[255] = "WATER.FLD", hhmx[255] = "HMX.BNC", href[4] = "DEF";
-    SETUPdll(nc, hfld, hhmx, href, ierr, herr, 10000, 255, 3, 255);
-    CHECK(ierr == 0);
-
-    int kq = 1;
-    double z[] = { 1.0 }, x[] = { 1.0 }, y[] = { 1.0 }, T = 300, p = 101.325, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-    PQFLSHdll(p, q, z, kq, T, d, dl, dv, x, y, u, h, s, cp, cv, w, ierr, herr, 255);
-    CAPTURE(herr);
-    CHECK(ierr == 0);
-
-    CHECK(T == Approx(373.15).margin(0.1));
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP of water in SI unit systems", "[nbp]"){
+    double T_K = 373.1242958477, T_C = T_K - 273.15;
+    std::vector<double> z(20,0.0);
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("DEFAULT"), 0, 0, 101.325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MOLAR SI"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MASS SI"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("SI WITH C"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_C));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MOLAR BASE SI"), 0, 0, 101325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MASS BASE SI"), 0, 0, 101325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MKS"), 0, 0, 101.325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("CGS"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
+    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MEUNITS"), 0, 0, 1.01325, 0, z).Output[0] == Approx(T_C));
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[setup],[predef_mixes]") {

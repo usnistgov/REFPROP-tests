@@ -26,13 +26,13 @@ class REFPROPDLLFixture
 private:
     std::unique_ptr<NativeSharedLibraryWrapper> RP;
 public:
-    REFPROPDLLFixture(){ 
-        reload(); 
+    REFPROPDLLFixture() {
+        reload();
         DEFAULT = get_enum("DEFAULT");
         MOLAR_SI = get_enum("MOLAR SI");
     }
     int DEFAULT, MOLAR_SI;
-    void reload(){
+    void reload() {
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(RPPREFIX != nullptr);
         REQUIRE(strlen(RPPREFIX) != 0);
@@ -58,41 +58,41 @@ public:
 #else
         auto load_method = AbstractSharedLibraryWrapper::load_method::FROM_FILE;
 #endif
-        
+
 #else
         auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY;
 #endif
         RP.reset(new NativeSharedLibraryWrapper(shared_library_path, load_method));
-        
+
         // Check that the load was a success
         bool loaded_properly = std::get<0>(RP->is_locked());
         REQUIRE(loaded_properly);
-        
+
         // Set the path in REFPROP
         std::string path(RPPREFIX);
         char hpth[256] = "";
-        strcpy(hpth, (path + std::string(255-path.size(), ' ')).c_str());
+        strcpy(hpth, (path + std::string(255 - path.size(), ' ')).c_str());
         SETPATHdll(hpth, 255);
     }
-    virtual ~REFPROPDLLFixture(){
+    virtual ~REFPROPDLLFixture() {
         RP.reset(nullptr);
     }
     // And now, totally magical, the use of variadic function arguments in concert with type macros
     // Add many methods, each corresponding to a 1-to-1 wrapper of a function from the shared library
-    #define X(name) template<class ...Args> void name(Args&&... args){ return RP->getAddress<name ## _POINTER>(#name)(std::forward<Args>(args)...); };
-        LIST_OF_REFPROP_FUNCTION_NAMES
-    #undef X
-    
-    int get_enum(const std::string &key) {
-        char henum[256]="", herr[256]="";
+#define X(name) template<class ...Args> void name(Args&&... args){ return RP->getAddress<name ## _POINTER>(#name)(std::forward<Args>(args)...); };
+    LIST_OF_REFPROP_FUNCTION_NAMES
+#undef X
+
+        int get_enum(const std::string &key) {
+        char henum[256] = "", herr[256] = "";
         int ienum = 0, ierr = 0;
         REQUIRE(key.size() < 254);
-        strcpy(henum, (key + std::string(255-key.size(), ' ')).c_str());
+        strcpy(henum, (key + std::string(255 - key.size(), ' ')).c_str());
         int ii = 0;
         GETENUMdll(ii, henum, ienum, ierr, herr, 255, 255);
         CAPTURE(key);
         CAPTURE(herr);
-        REQUIRE(ierr==0);
+        REQUIRE(ierr == 0);
         return ienum;
     }
 

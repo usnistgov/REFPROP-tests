@@ -623,7 +623,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mysterious bug with molar mass", "[R1
 TEST_CASE_METHOD(REFPROPDLLFixture, "Molar mass of R134a", "[file_loading],[setup]") {
     std::vector<double> z = { 1.0 };
     int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
-    int MOLAR_SI = get_enum("MOLAR SI");
     REQUIRE(REFPROP("R134A", " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z).Output[0] == Approx(REFPROP("R134A", " ", "M", MOLAR_SI, 0, 0, 0, 0, z).Output[0] / 1000));
     REQUIRE(REFPROP("R134A", " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z).Output[0] == Approx(0.10203).epsilon(1e-3));
 };
@@ -904,9 +903,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check acentric factor for all pure fluids (
         double wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas, z[] = { 1.0 };
         int icomp = 1, kq = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
-
-        double p = 101.325, D, Dl, Dv, xliq[20], xvap[20], q = 0, u, h, s, cv, cp, w;
-        ierr = 0; char herr[255] = "";
 
         char htyp[4] = "EOS"; double Tmin, Tmax, Dmax, Pmax;
         LIMITSdll(htyp, z, Tmin, Tmax, Dmax, Pmax, 3);

@@ -333,8 +333,68 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Flash roundtrips", "[flags],[roundtrips]") {
+    std::string keys = "T;P;D;H;S;E";
+    std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
+    for (auto iMass : {0}){//,1}){
+        for (std::string fld: {"AMARILLO.MIX","XENON"}){
+            for (bool satspln: {true}){//, false}){
+                for (std::string & unit_string : unit_strings) {
+                    CAPTURE(iMass);
+                    CAPTURE(fld);
+                    CAPTURE(satspln);
+                    CAPTURE(unit_string);
+                    int UNITS = get_enum(unit_string);
 
+                    auto get_props = [keys](auto res) {
+                        auto i = 0;
+                        std::map<std::string, double> props;
+                        for (auto && k : str_split(keys, ";")) {
+                            props[k] = res.Output[i];
+                            i++;
+                        }
+                        return props;
+                    };
 
+                    // Force a reset (TODO: remove this)
+                    int kflag = 0;
+                    FLAGS("RESET ALL",1,kflag);
+                
+                    // Calculation at critical point
+                    std::vector<double> zc(20,0);
+                    auto r0c = REFPROP(fld,"","TC;DC",UNITS,iMass,satspln,0,0,zc);
+                    double Tc = r0c.Output[0], Dc = r0c.Output[1];
+                    // Find a point above (single-phase); this is our baseline state point
+                    auto rc = REFPROP(fld, "TD&", keys, UNITS, iMass, satspln, Tc*1.3, Dc*1.5, r0c.z);
+                    auto props0 = get_props(rc);
+                    REQUIRE(props0["D"] == Approx(Dc*1.5));
+                    REQUIRE(props0["T"] == Approx(Tc*1.3));
+
+                    // Run through all the flash calculations
+                    // Check the round-trip to get back to the starting point again
+                    for (std::string && pair : { "TP", "DT", "TD", "HP", "PH", "PS", "SP", "TS", "PE", // "ST",
+                                                 "EP", "PD", "DP", "DH", "HD", "DS","SD", "DE", "ED", "TS", "HS", "SH" }) {
+                        std::string k0 = std::string(1,pair[0]), k1 = std::string(1,pair[1]);
+                        double v1 = props0[k0], v2 = props0[k1];
+                        auto r = REFPROP(fld, pair, keys, UNITS, iMass, satspln, v1, v2, rc.z);
+                        auto props = get_props(r);
+                        double T = props["T"], T0 = props0["T"];
+                        double p = props["P"], p0 = props0["P"];
+                        double d = props["D"], d0 = props0["D"];
+                        CAPTURE(v1);
+                        CAPTURE(v2);
+                        CAPTURE(pair);
+                        CAPTURE(r.herr);
+                        CHECK(r.ierr < 100);
+                        CHECK(T == Approx(T0).epsilon(1e-3));
+                        CHECK(p == Approx(p0).epsilon(1e-3));
+                        CHECK(d == Approx(d0).epsilon(1e-3));
+                    }
+                }
+            }
+        }
+    }
+}
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {
     std::vector<double> z(20, 1.0); z[0] = 0.4; z[1] = 0.6;

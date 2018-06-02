@@ -33,6 +33,29 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP of water in SI unit systems", "[n
     CHECK(REFPROP("WATER", "PQ", "T", get_enum("MEUNITS"), 0, 0, 1.01325, 0, z).Output[0] == Approx(T_C));
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check spinodals", "[spinodal]") {
+    std::vector<double> z(20, 0.0); z[1] = 0;
+    double p = 101.325;
+    auto r = REFPROP("WATER", "PQ", "DLIQ;LIQSPNDL;VAPSPNDL;DVAP;T",DEFAULT, 0, 0, p, 0, z);
+    double dliq = r.Output[0], liqspndl = r.Output[1], vapspndl = r.Output[2], dvap = r.Output[3], T = r.Output[4]; 
+    double p_vapspndl = REFPROP("WATER", "TD&", "P", DEFAULT, 0, 0, T, vapspndl, z).Output[0];
+    double p_vapspndl2 = REFPROP("WATER", "DT&", "P", DEFAULT, 0, 0, vapspndl, T, z).Output[0];
+    double p_liqspndl = REFPROP("WATER", "TD&", "P", DEFAULT, 0, 0, T, liqspndl, z).Output[0];
+    REQUIRE(p_liqspndl < p);
+    REQUIRE(p_vapspndl > p);
+    //REQUIRE(p_vapspndl2 == Approx(p_vapspndl));
+    
+    auto T1 = REFPROP("WATER", "PD>", "T", DEFAULT, 0, 0, p_liqspndl, liqspndl, z).Output[0];
+    auto T2 = REFPROP("WATER", "PD<", "T", DEFAULT, 0, 0, p_vapspndl, vapspndl, z).Output[0];
+    auto T1b = REFPROP("WATER", "DP<", "T", DEFAULT, 0, 0, liqspndl, p_liqspndl, z).Output[0];
+    auto T2b = REFPROP("WATER", "DP>", "T", DEFAULT, 0, 0, vapspndl, p_vapspndl, z).Output[0];
+    REQUIRE(T1 == Approx(T));
+    REQUIRE(T2 == Approx(T));
+    REQUIRE(T1b == Approx(T));
+    REQUIRE(T2b == Approx(T));
+    
+};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[setup],[predef_mixes]") {
     for (auto &&mix : get_predefined_mixtures_list()) {
         // Load it

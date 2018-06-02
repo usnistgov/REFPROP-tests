@@ -28,8 +28,9 @@ public:
     REFPROPDLLFixture(){ 
         reload(); 
         DEFAULT = get_enum("DEFAULT");
+        MOLAR_SI = get_enum("MOLAR SI");
     }
-    int DEFAULT;
+    int DEFAULT, MOLAR_SI;
     void reload(){
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(RPPREFIX != nullptr);

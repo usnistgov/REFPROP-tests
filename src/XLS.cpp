@@ -74,20 +74,17 @@ public:
             std::tie(expected, in) = theinput;
             switch (in.Ninputs) {
                 case 2:
-                {
-                    char hFld[255]; strcpy(hFld, in.FluidName.c_str());
-                    char hIn[255] = ""; 
-                    char hOut[10000]; strcpy(hOut, in.OutputCode.c_str());
-                    
-                    int iUnit = 0, ierr = 0, iMass = 0, iFlag = 0;
-                    double a = 0, b = 0, q = -1; double z[20], Output[200], x[20], y[20], x3[20]; char hUnits[255], herr[255]; 
+                {   
+                    int iMass = 0, iFlag = 0;
                     int unit_system = get_enum("DEFAULT");
                     CAPTURE(in.FluidName);
                     CAPTURE(in.OutputCode);
-                    REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, z, Output, hUnits, iUnit, x, y, x3, q, ierr, herr, 10000, 255, 255, 255, 255);
-                    CAPTURE(herr);
-                    CHECK(ierr < 100);
-                    CHECK(Output[0] == Approx(expected).epsilon(1e-5));
+                    double a = in.Prop1, b = in.Prop2;
+                    std::vector<double> z(20,0.0);
+                    auto r = REFPROP(in.FluidName, "", in.OutputCode, unit_system, iMass, iFlag, a, b, z);
+                    CAPTURE(r.herr);
+                    CHECK(r.ierr < 100);
+                    CHECK(r.Output[0] == Approx(expected).epsilon(1e-5));
                     break;
                 }
                 case 3:

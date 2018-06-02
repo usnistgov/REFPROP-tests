@@ -114,8 +114,8 @@ public:
         strcpy(hIn, (_hIn + std::string(255-_hIn.size(), ' ')).c_str());
         strcpy(hOut, (_hOut + std::string(255-_hOut.size(), ' ')).c_str());
 
-        std::vector<double> Output(200), x(20), y(20), x3(20);
-        double q;
+        std::vector<double> Output(200, 0.0), x(20, 0.0), y(20, 0.0), x3(20, 0.0);
+        double q = 0;
         int iUnit = 0, ierr = 0;
         char herr[256] = "", hUnits[256] = "";
 

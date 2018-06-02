@@ -80,6 +80,23 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CRITP w/o splines for all predefined mixtur
     }
 };
 
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Sanity check phase equilibrium", "[flash],[fug]") {
+    std::vector<double>z(20,0); z[0] = 0.4, z[1] = 0.6;
+    // Flash call
+    auto r0 = REFPROP("Propane * R125","PQ","T;DLIQ;DVAP",DEFAULT, 0,0,101.325,0,z);
+    double T = r0.Output[0], dL = r0.Output[1], dV = r0.Output[2];
+    // Check fugacity, chem. pot., and fug. coeff match as they should
+    auto rL = REFPROP("", "TD&", "CPOT(1);CPOT(2);F(1);F(2);FC(1);FC(2)",DEFAULT,0,0,T,dL,r0.x);
+    auto rV = REFPROP("", "TD&", "CPOT(1);CPOT(2);F(1);F(2);FC(1);FC(2)",DEFAULT,0,0,T,dV,r0.y);
+    CHECK(rL.Output[0] == Approx(rV.Output[0]));
+    CHECK(rL.Output[1] == Approx(rV.Output[1])); 
+    CHECK(rL.Output[2] == Approx(rV.Output[2]));
+    CHECK(rL.Output[3] == Approx(rV.Output[3]));
+    CHECK(rL.Output[4]*r0.x[0] == Approx(rV.Output[4]*r0.y[0]));
+    CHECK(rL.Output[5]*r0.x[1] == Approx(rV.Output[5]*r0.y[1]));
+};
+
 struct PRTvalue{
     std::string name;
     double P, e, h, s, Cv, Cp, w, hjt;

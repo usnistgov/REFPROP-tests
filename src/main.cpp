@@ -355,7 +355,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Flash roundtrips", "[flags],[roundtrips]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[flags],[roundtrips]") {
     std::string keys = "T;P;D;H;S;E";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
     for (auto iMass : {0}){//,1}){

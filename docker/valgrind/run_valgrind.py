@@ -1,5 +1,6 @@
-import subprocess, os, sys, shutil, glob
+import subprocess, os, sys, shutil, glob, timeit
 
+tic = timeit.default_timer()
 output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
 
 for il, line in enumerate(output.split('\n')[1::]):
@@ -23,3 +24,6 @@ os.makedirs('errlog')
 for g in glob.glob('log_*.txt') + glob.glob('err_*.txt'):
     shutil.copy2(g,'errlog')
 shutil.make_archive('/output/output','zip','errlog')
+
+toc = timeit.default_timer()
+print('elapsed time [s]:', toc-tic)

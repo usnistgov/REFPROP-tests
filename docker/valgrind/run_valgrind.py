@@ -16,8 +16,9 @@ for il, line in enumerate(output.split('\n')[1::]):
     with open('log_'+root,'w') as fp_stderr:
         with open('err_'+root,'w') as fp_stdout:
             subprocess.run(cmd, shell = True, stdout = fp_stdout, stderr = fp_stderr)
+    print(open('log_'+root).readlines()[-1])
 
-subprocess.run('for f in log_*.txt; do echo $f && tail -n 1 $f; done', shell=True, stdout = sys.stdout, stderr = sys.stderr)
+# subprocess.run('for f in log_*.txt; do echo $f && tail -n 1 $f; done', shell=True, stdout = sys.stdout, stderr = sys.stderr)
 
 # Store all the outputs in zip archive
 os.makedirs('errlog')

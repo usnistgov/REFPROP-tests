@@ -11,6 +11,7 @@
 #include <cstring>
 
 struct REFPROPResult {
+    std::vector<double> z;
     std::vector<double> Output;
     std::string hUnits;
     int iUnit;
@@ -119,7 +120,7 @@ public:
         char herr[256] = "", hUnits[256] = "";
 
         REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, &(z[0]), &(Output[0]), hUnits, iUnit, &(x[0]), &(y[0]), &(x3[0]), q, ierr, herr, 10000, 255, 255, 255, 255);
-        REFPROPResult res  = {Output, std::string(hUnits), iUnit, x, y, x3, q, ierr, std::string(herr) };
+        REFPROPResult res  = {z, Output, std::string(hUnits), iUnit, x, y, x3, q, ierr, std::string(herr) };
         return res;
     }
     void FLAGS(const std::string &_hFlag, int jflag, int &kflag){

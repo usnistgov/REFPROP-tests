@@ -101,15 +101,15 @@ public:
         REQUIRE(_hFld.size() < 9999);
         REQUIRE(_hIn.size() < 254);
         REQUIRE(_hOut.size() < 254);
-        // Pad z with zeros
-        if (z.size() < 20){
-            auto old_size = z.size();
-            z.resize(20);
-            for (auto i = old_size; i < 20; ++i) {
-                z[i] = 0;
-            }
-        }
-        REQUIRE(z.size() >= 20);
+        //// Pad z with zeros
+        //if (z.size() < 20){
+        //    auto old_size = z.size();
+        //    z.resize(20);
+        //    for (auto i = old_size; i < 20; ++i) {
+        //        z[i] = 0;
+        //    }
+        //}
+        //REQUIRE(z.size() >= 20);
         strcpy(hFld, (_hFld + std::string(10000-_hFld.size(),' ')).c_str());
         strcpy(hIn, (_hIn + std::string(255-_hIn.size(), ' ')).c_str());
         strcpy(hOut, (_hOut + std::string(255-_hOut.size(), ' ')).c_str());

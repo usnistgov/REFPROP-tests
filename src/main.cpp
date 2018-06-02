@@ -346,7 +346,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Flash roundtrips", "[flags],[roundtrips]") 
                     CAPTURE(unit_string);
                     int UNITS = get_enum(unit_string);
 
-                    auto get_props = [keys](auto res) {
+                    auto get_props = [keys](const REFPROPResult &res) {
                         auto i = 0;
                         std::map<std::string, double> props;
                         for (auto && k : str_split(keys, ";")) {

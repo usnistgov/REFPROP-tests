@@ -10,7 +10,7 @@ for il, line in enumerate(output.split('\n')[1::]):
     if 'Torture' in tag: continue # Don't run the Torture test (very slow)
     root =  tag.replace('[', '').replace(']','') + '.txt'
     print(tag, ' --> ', root)
-    continue
+#    continue
 
     cmd = 'valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main ' + tag
     with open('log_'+root,'w') as fp_stderr:

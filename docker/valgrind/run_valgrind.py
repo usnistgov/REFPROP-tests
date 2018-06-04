@@ -1,23 +1,24 @@
 import subprocess, os, sys, shutil, glob, timeit
 
 tic = timeit.default_timer()
-output = subprocess.run('/REFPROP-tests/build/main --list-tests', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
+output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
 
-lines = output.split('\n')[1::]
+for il, line in enumerate(output.split('\n')[1::]):
 
-for il in range(0,len(lines),2):
-    line = lines[il]
-    tags = lines[il+1]
-    if ' test cases' in line: continue
-    if 'slow' in tags: continue # Don't run slow tests
-    root =  line.strip().lower().replace(' ','_') + '.txt'
+    if not line or '[' not in line: continue
+    tag = '[' + line.split('[')[1]
+    if 'Torture' in tag: continue # Don't run the Torture test (very slow)
+    root =  tag.replace('[', '').replace(']','') + '.txt'
     print(tag, ' --> ', root)
+#    continue
 
-    cmd = 'valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main "' + tag + '"'
+    cmd = 'valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main ' + tag
     with open('log_'+root,'w') as fp_stderr:
         with open('err_'+root,'w') as fp_stdout:
             subprocess.run(cmd, shell = True, stdout = fp_stdout, stderr = fp_stderr)
     print(open('log_'+root).readlines()[-1])
+
+# subprocess.run('for f in log_*.txt; do echo $f && tail -n 1 $f; done', shell=True, stdout = sys.stdout, stderr = sys.stderr)
 
 # Store all the outputs in zip archive
 os.makedirs('errlog')

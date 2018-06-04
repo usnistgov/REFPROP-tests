@@ -934,7 +934,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check Ttriple for all pure fluids (when pos
         int icomp = 1, kq = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
 
-        double p = 101.325, D, Dl, Dv, xliq[20], xvap[20], q = 0, u, h, s, cv, cp, w;
+        double p = 101.325, D = 0, Dl = 0, Dv = 0, xliq[20], xvap[20], q = 0, u = 0, h = 0, s = 0, cv = 0, cp = 0, w = 0;
         ierr = 0; char herr[255] = "";
 
         char htyp[4] = "EOS"; double Tmin, Tmax, Dmax, Pmax;

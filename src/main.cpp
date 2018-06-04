@@ -355,7 +355,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[flags],[roundtrips]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[roundtrips]") {
     std::string keys = "T;P;D;H;S;E";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
     for (auto iMass : {0}){//,1}){
@@ -419,6 +419,32 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[flag
             }
         }
     }
+}
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Reset all for flash", "[flags],[resetall]") {
+
+    auto doitmole = [this]() {
+        std::vector<double> zc(20, 0);
+        auto r0c = REFPROP("AMARILLO.MIX", "", "TC;DC", 0, 0, 0, 0, 0, zc);
+        std::vector<double> zmass = zc; double wm = 0;
+        XMASSdll(&(zc[0]), &(zmass[0]), wm);
+        double Tc = r0c.Output[0], Dc = r0c.Output[1];
+        // Find a point inside the isopleth of the phase envelope(VLE); this is our baseline state point
+        auto rc = REFPROP("AMARILLO.MIX", "TD", "H;D;S;CP;CV", 0, 0, 1, Tc, Dc*0.7, r0c.z);
+        return std::make_pair(rc, zmass);
+    };
+    auto doitmass = [this](std::vector<double> &zcmass) {
+        auto r0c = REFPROP("AMARILLO.MIX", "", "TC;DC", 0, 1, 0, 0, 0, zcmass);
+        double Tc = r0c.Output[0], Dc = r0c.Output[1];
+        auto rc = REFPROP("AMARILLO.MIX", "TD", "H;D;S;CP;CV", 0, 0, 1, Tc, Dc*0.7, zcmass);
+        return rc;
+    };
+    REFPROPResult r0; std::vector<double> zmass;
+    std::tie(r0, zmass) = doitmole();
+    int kflag = 0;
+    FLAGS("RESET ALL", 1, kflag);
+    auto r1 = doitmass(zmass);
+    CHECK(r0.ierr == r1.ierr);
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {

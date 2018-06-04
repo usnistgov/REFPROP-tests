@@ -355,6 +355,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Chempot=Gibbs for pure?", "[flash],[chempot]") {
+    int kflag = 0; FLAGS("SETREF", 2, kflag);
+    std::vector<double> z(20, 0); z[0] = 1;
+    auto r = REFPROP("Propane", "TP", "G;CPOT(1)", MOLAR_SI, 0, 0, 300, 0.1, z);
+    CAPTURE(r.hUnits);
+    CHECK(r.Output[1] == Approx(r.Output[0]));
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[roundtrips]") {
     std::string keys = "T;P;D;H;S;E";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };

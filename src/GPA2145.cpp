@@ -7,6 +7,16 @@
 #include "REFPROPtests/baseclasses.h"
 #include "REFPROPtests/utils.h"
 
+/**
+
+Erratum:
+
+Cl2 should not have flammability values in the standard; it is not a flammable substance
+Values for SO2 for HG, HV, ... seem incorrect
+Typo for C12 (dodecane) vapor pressure at 60 F.  Should be 0.00114 rather than 0.0014 psia
+
+ */
+
 std::string c1 = R"(Name;MM;TNBP;TTRP;PVAP(60);PVAP(100);TC;PC;DC;ACF;ZV(60);HGLQ;HG;HGVOL;HNLQ;HNVOL;HEATVAP;CP0(60);CV0(60);CSAT(60);k(60)
 methane;16.0425;-258.66;-296.42;6.02e23;6.02e23;-116.66;667.1;10.154;0.0114;6.02e23;6.02e23;23892;1010;6.02e23;909.4;219.6;0.5266;0.4028;6.02e23;1.3073
 ethane;30.069;-127.44;-297.01;495.62;6.02e23;89.91;706.7;12.871;0.0995;0.5788;22185;22334;1769.7;20281;1619;210.4;0.4079;0.3418;0.9664;1.1932

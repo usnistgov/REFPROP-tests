@@ -123,7 +123,7 @@ public:
         REFPROPResult res  = {z, Output, std::string(hUnits), iUnit, x, y, x3, q, ierr, std::string(herr) };
         return res;
     }
-    void FLAGS(const std::string &_hFlag, int jflag, int &kflag){
+    void FLAGS(const std::string &_hFlag, int jflag, int &kflag, bool check_kflag = true){
         char hFlag[256] = "";
         REQUIRE(_hFlag.size() <= 255);
         strcpy(hFlag, (_hFlag.c_str() + std::string(255 - _hFlag.size(), ' ')).c_str());
@@ -133,7 +133,7 @@ public:
         FLAGSdll(hFlag, jflag, kflag, ierr, herr, 255, 255);
         CAPTURE(herr);
         REQUIRE(ierr == 0);
-        if (jflag != -999){
+        if (jflag != -999 && check_kflag){
             REQUIRE(kflag == jflag);
         }
     }

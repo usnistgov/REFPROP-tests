@@ -465,9 +465,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {
     auto r1 = REFPROP("R32 * PROPANE", "", "TC", 0, 0, 1, 0, 0, z);
 
     // Turn off splines, back to original
-    int k = 0;
-    FLAGS("SPLINES OFF", 1, k);
-    FLAGS("SpLiNeS oFf", 1, k); // check case sensitivity (should not be case sensitive)
+    int k = 0; bool check_kflag = false;
+    FLAGS("SPLINES OFF", 1, k, check_kflag);
+    FLAGS("SpLiNeS oFf", 1, k, check_kflag); // check case sensitivity (should not be case sensitive)
 
     // Final result, should be same as r0
     auto r2 = REFPROP("R32 * PROPANE", "", "TC", 0, 0, 0, 0, 0, z);

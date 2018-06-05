@@ -73,10 +73,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[set
         double Tcspl = -1, Pcspl = -1, Dcspl = -1;
         double Wmol; WMOLdll(&(z[0]), Wmol);
         CRITPdll(&(z[0]),Tcspl,Pcspl,Dcspl,ierr,herr,255U);
-        CHECK(vals.Wmol == Approx(Wmol)); 
-        CHECK(vals.Tc == Approx(Tcspl));
-        CHECK(vals.pc == Approx(Pcspl));
-        CHECK(vals.rhoc == Approx(Dcspl));
+        CHECK(vals.Wmol == Approx(Wmol).epsilon(1e-2)); 
+        CHECK(vals.Tc == Approx(Tcspl).epsilon(1e-2));
+        CHECK(vals.pc == Approx(Pcspl).epsilon(1e-2));
+        CHECK(vals.rhoc == Approx(Dcspl).epsilon(1e-2));
         // Check molar composition matches what we loaded
         for (auto i = 0; i < vals.molar_composition.size(); ++i) {
             CHECK(z[i] == Approx(vals.molar_composition[i]));

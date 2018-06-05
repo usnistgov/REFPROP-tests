@@ -996,7 +996,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]
 
     auto fname = "R433B.MIX";
     std::vector<double> z(20, 1.0 / 20.0);
-    double iMass = 0;
+    int iMass = 0;
     auto r1 = REFPROP(fname, "", "TRED", 1, iMass, 0, 0.101325, 300, z);
     iMass = 1;
     auto r2 = REFPROP(fname, "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);

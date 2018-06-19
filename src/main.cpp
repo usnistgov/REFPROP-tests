@@ -8,6 +8,12 @@
 #include "REFPROPtests/utils.h"
 #include <numeric>
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Version", "[setup]") {
+    char hpath[10001] = "";
+    RPVersion(hpath, 10000);
+    CHECK(hpath[0] != '*');
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "R + 0 = Total?", "[flash],[rplus0]") {
     std::vector<double> z(20, 0.0);
     auto rR = REFPROP("Water","TP","PR;ER;HR;SR;CVR;CPR;AR;GR",0,0,0,298, 101.325, z );

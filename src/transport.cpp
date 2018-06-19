@@ -700,3 +700,12 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check very old fluid files with old transpo
         CHECK(r1.ierr < 100);
     }
 };
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check mixtures give warning for transport", "[transport],[mixtures]") {
+    
+    int ierr; std::string herr;
+    SETFLUIDS("CO2 * SO2", ierr, herr);
+    std::vector<double> z(20,0); z[0] = 0.4; z[1] = 0.6;
+    auto r1 = REFPROP("", "TD&", "ETA;TCX", 0, 0, 0, 300, 300, z);
+    CHECK(r1.ierr < 0);
+};

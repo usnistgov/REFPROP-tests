@@ -458,7 +458,119 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Reset all for flash", "[flags],[resetall]")
     int kflag = 0;
     FLAGS("RESET ALL", 1, kflag);
     auto r1 = doitmass(zmass);
+    CAPTURE(r0.herr);
+    CAPTURE(r1.herr);
     CHECK(r0.ierr == r1.ierr);
+}
+
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLEroundtrips]") {
+    std::string keys = "T;P;D;H;S;E;Qmass;Qmole";
+    std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
+    for (auto iMass : { 0 }) {//,1}){
+        for (std::string fld : {"AMARILLO.MIX", "XENON"}) {
+            for (bool satspln : {true}) {//, false}){
+                for (std::string & unit_string : unit_strings) {
+                    CAPTURE(iMass);
+                    CAPTURE(fld);
+                    CAPTURE(satspln);
+                    CAPTURE(unit_string);
+                    int UNITS = get_enum(unit_string);
+
+                    auto get_props = [keys](const REFPROPResult &res) {
+                        auto i = 0;
+                        std::map<std::string, double> props;
+                        for (auto && k : str_split(keys, ";")) {
+                            props[k] = res.Output[i];
+                            i++;
+                        }
+                        return props;
+                    };
+
+                    // Force a reset (TODO: remove this)
+                    int kflag = 0;
+                    FLAGS("RESET ALL", 1, kflag);
+                    FLAGS("CACHE", 3, kflag);
+
+                    // Calculation at critical point
+                    std::vector<double> zc(20, 0);
+                    auto r0c = REFPROP(fld, "", "TC;DC", UNITS, iMass, satspln, 0, 0, zc);
+                    std::vector<double> zmass = zc;
+                    double wm = 0;
+                    XMASSdll(&(zc[0]), &(zmass[0]), wm);
+                    double Tc = r0c.Output[0], Dc = r0c.Output[1];
+                    // Find a point inside the isopleth of the phase envelope(VLE); this is our baseline state point
+                    auto rc = REFPROP(fld, "TD", keys, UNITS, iMass, satspln, Tc, Dc*0.7, r0c.z);
+                    CAPTURE(rc.herr);
+                    REQUIRE(rc.ierr < 100);
+                    auto props0 = get_props(rc);
+                    REQUIRE(props0["D"] == Approx(Dc*0.7));
+                    REQUIRE(props0["T"] == Approx(Tc));
+
+                    FLAGS("RESET ALL", 1, kflag);
+                    auto r0cmass = REFPROP(fld, "", "TC;DC", UNITS, 1, satspln, 0, 0, zmass);
+                    double Tcmass = r0cmass.Output[0], Dcmass = r0cmass.Output[1];
+                    auto rcmass = REFPROP(fld, "TD", keys, UNITS, 1, satspln, Tcmass, Dcmass*0.7, zmass);
+                    auto props0mass = get_props(rcmass);
+                    REQUIRE(props0mass["Qmass"] == Approx(props0["Qmass"]));
+
+                    auto to_key = [](const std::string &pair) {
+                        std::vector<std::string> names = str_split(pair, "/");
+                        for (auto i = 0; i < 2; ++i) {
+                            if (names[i] == "Qmass" || names[i] == "Qmole") {
+                                names[i] = "Q";
+                            }
+                        }
+                        return names[0] + names[1];
+                    };
+
+                    // Run through all the flash calculations
+                    // Check the round-trip to get back to the starting point again
+                    for (std::string && pair : { "T/P", "D/T", "T/D", "H/P", "P/H", "P/S", "S/P", "T/S", "P/E", "S/T",
+                        "E/P", "P/D", "D/P", "D/H", "H/D", "D/S","S/D", "D/E", "E/D", "T/S", "H/S", "S/H",
+                        "Qmass/T", "T/Qmole", "Qmass/S", "S/Qmole", "D/Qmole" }) {
+                        std::vector<double> z;
+                        std::vector<std::string> names = str_split(pair, "/");
+                        std::string k0 = names[0], k1 = names[1];
+                        double v1 = props0[k0], v2 = props0[k1];
+                        int iMass_ = -1;
+                        if (k0 == "Qmass" || k1 == "Qmass") {
+                            iMass_ = 1;
+                            z = zmass; // mass composition
+                        }
+                        else {
+                            iMass_ = 0;
+                            z = r0c.z; // molar composition
+                        }
+                        auto r = REFPROP(fld, to_key(pair), keys, UNITS, iMass_, satspln, v1, v2, z);
+                        auto props = get_props(r);
+                        CAPTURE(iMass_);
+                        CAPTURE(v1);
+                        CAPTURE(v2);
+                        CAPTURE(pair);
+                        CAPTURE(r.herr);
+                        CHECK(r.ierr < 100);
+                        if (r.ierr > 100) { continue; } // Error already trapped
+                        CAPTURE(Tc);
+                        CAPTURE(Dc);
+                        double T_expected = (iMass_) ? props0mass["T"] : props0["T"];
+                        double P_expected = (iMass_) ? props0mass["P"] : props0["P"];
+                        double D_expected = (iMass_) ? props0mass["D"] : props0["D"];
+                        double Qmass_expected = (iMass_) ? props0mass["Qmass"] : props0["Qmass"];
+                        double Qmole_expected = (iMass_) ? props0mass["Qmole"] : props0["Qmole"];
+                        double Q_expected = (iMass_) ? props0mass["Qmass"] : props0["Qmole"];
+
+                        CHECK(r.q == Approx(Q_expected));
+                        CHECK(props["T"] == Approx(T_expected).epsilon(1e-3));
+                        CHECK(props["P"] == Approx(P_expected).epsilon(1e-3));
+                        CHECK(props["D"] == Approx(D_expected).epsilon(1e-3));
+                        CHECK(props["Qmass"] == Approx(Qmass_expected).epsilon(1e-3));
+                        CHECK(props["Qmole"] == Approx(Qmole_expected).epsilon(1e-3));
+                    }
+                }
+            }
+        }
+    }
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {
@@ -705,7 +817,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check super long list of fluids", "[100comp
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test mixture models of Thol", "[flash],[TholLNG]") {
     std::vector<double> z = { 0.5, 0.5 };
     int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
-    
+    int k = -1;
+    FLAGS("GERG", 1, k);
 
     CHECK(REFPROP("Methane * Butane", "TP", "D", MOLAR_BASE_SI, 0, 0, 500, 1e6, z).Output[0] == Approx(244.686));
     CHECK(REFPROP("Methane * Butane", "TP", "CP", MOLAR_BASE_SI, 0, 0, 500, 1e6, z).Output[0] == Approx(99.050));
@@ -718,6 +831,12 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test mixture models of Thol", "[flash],[Tho
     CHECK(REFPROP("Methane * pentane", "TP", "CP", MOLAR_BASE_SI, 0, 0, 500, 1e6, z).Output[0] == Approx(116.636));
     CHECK(REFPROP("Methane * pentane", "TP", "W", MOLAR_BASE_SI, 0, 0, 500, 1e6, z).Output[0] == Approx(311.216));
     CHECK(REFPROP("Methane * isopentane", "TP", "D", MOLAR_BASE_SI, 0, 0, 500, 1e6, z).Output[0] == Approx(247.6510495243));
+};
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check R404A", "[R404A]") {
+    std::vector<double> z = { 1.0 };
+    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
+    auto r = REFPROP("R404A.MIX", "PQ", "T", MOLAR_BASE_SI, 0, 0, 101325, 0, z);
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Qmass for single-phase point", "[flash],[props]") {
@@ -1003,17 +1122,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]
     auto fname = "R433B.MIX";
     std::vector<double> z(20, 1.0 / 20.0);
     int iMass = 0;
-    auto r1 = REFPROP(fname, "", "TRED", 1, iMass, 0, 0.101325, 300, z);
+    auto r1 = REFPROP(fname, "", "M;TC;PC;DC", 1, iMass, 0, 0.101325, 300, z);
     iMass = 1;
-    auto r2 = REFPROP(fname, "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);
+    auto r2 = REFPROP(fname, "", "TRED", 0, iMass, 1, 0, 0, z);
+    CHECK(r2.ierr > 100); // Error because composition given and it is not the mass composition
 
     // Water, to reset for sure
     REFPROP("Water", "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);
 
     auto r3 = REFPROP(fname, "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);
-    CHECK(r2.Output[0] == Approx(r3.Output[0]));
-    CHECK(r2.Output[1] == Approx(r3.Output[1]));
-    CHECK(r2.Output[2] == Approx(r3.Output[2]));
+    CHECK(r1.Output[0] == Approx(r3.Output[0]));
+    CHECK(r1.Output[1] == Approx(r3.Output[1]));
+    CHECK(r1.Output[2] == Approx(r3.Output[2]));
 
 };
 

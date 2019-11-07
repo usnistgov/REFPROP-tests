@@ -5,9 +5,9 @@
 ## Or just use docker-compose
 ##
 
-FROM ubuntu:17.10
+FROM ubuntu:18.04
 
-RUN apt-get -y -m update && apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov
+RUN apt-get -y -m update && apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov nano python3-pip
 
 # This ADD block forces a build (invalidates the cache) if the git repo contents have changed, otherwise leaves it untouched.
 # See https://stackoverflow.com/a/39278224
@@ -27,7 +27,7 @@ RUN mkdir build && cd build && \
     cmake .. -DREFPROP_FORTRAN_PATH=/REFPROP/FORTRAN -DCMAKE_BUILD_TYPE=Debug -DREFPROP_GCOV=ON -DREFPROP_NO_NUMPY=ON && \
     cmake --build .
 WORKDIR /REFPROP-cmake/build
-RUN cp -rfv /REFPROP/FLUIDS/ . && cp -rfv /REFPROP/MIXTURES/ . && echo `pwd` && echo `ls -l`
+RUN cp -rfv /REFPROP/FLUIDS/ . && cp -rfv /REFPROP/MIXTURES/ .
 
 # Build the testing EXE
 WORKDIR /REFPROP-tests

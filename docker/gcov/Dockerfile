@@ -5,9 +5,9 @@
 ## Or just use docker-compose
 ##
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
-RUN apt-get -y -m update && apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov nano python3-pip
+RUN apt-get -y -m update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov nano python3-pip
 
 # This ADD block forces a build (invalidates the cache) if the git repo contents have changed, otherwise leaves it untouched.
 # See https://stackoverflow.com/a/39278224
@@ -36,10 +36,10 @@ RUN mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --bu
 # Set the environment variables
 ENV RPPREFIX /REFPROP-cmake/build
 ENV RESOURCES /REFPROP-tests/resources
- 
+
 # Run the exe, generating gcov output, running from the REFPROP-cmake build
 WORKDIR /REFPROP-cmake/build
-CMD (/REFPROP-tests/build/main ~[Torture] 2>&1 | tee /output/log.txt || echo "Tests done") && \
+CMD (/REFPROP-tests/build/main ~[veryslow] 2>&1 | tee /output/log.txt || echo "Tests done") && \
     gcov CMakeFiles/refprop.dir/REFPROP/FORTRAN/*.gcno && \
     lcov --gcov-tool `which gcov` --capture --directory . --output-file coverage.info && \
     genhtml --output-directory html coverage.info && \

@@ -37,7 +37,10 @@ def run_one(args):
 
 if __name__ == '__main__':
 
-    sys.argv += ['--root', 'Q:/Public/Eric/install/ALPHA','--test','test']
+    mnt = '/media/Q/'
+    if sys.platform.startswith('win'):
+        mnt = 'Q:/'
+    sys.argv += ['--root', mnt+'Public/Eric/install/ALPHA','--test','test']
     parser = argparse.ArgumentParser(description='Run a specified test, and generate a zip file with perhaps relevant output')
     parser.add_argument('--root', type=str, required=True, nargs=1, 
         help='The root path of the REFPROP installation from which to take the folders FLUIDS, MIXTURES, and FORTRAN')

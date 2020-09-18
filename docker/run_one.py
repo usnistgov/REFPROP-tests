@@ -28,7 +28,7 @@ def run_one(args):
     test = args.test[0]
     build_REPROP_zip(root=root, zippath=os.path.join(test, 'REFPROP.zip'))
     with open('build_run.log', 'w') as stdout:
-        subprocess.check_call('docker-compose up --build', cwd=test)
+        subprocess.check_call('docker-compose up --build', cwd=test, shell=True)
 
     def debrief(recipients):
         """ 1. Collect the things from this test, make a zip file of them """
@@ -39,8 +39,8 @@ if __name__ == '__main__':
 
     mnt = '/media/Q/'
     if sys.platform.startswith('win'):
-        mnt = 'Q:/'
-    sys.argv += ['--root', mnt+'Public/Eric/INSTALL/ALPHA','--test','test']
+        mnt = 'Q:/Public/'
+    sys.argv += ['--root', mnt+'Eric/INSTALL/ALPHA','--test','test']
     parser = argparse.ArgumentParser(description='Run a specified test, and generate a zip file with perhaps relevant output')
     parser.add_argument('--root', type=str, required=True, nargs=1, 
         help='The root path of the REFPROP installation from which to take the folders FLUIDS, MIXTURES, and FORTRAN')

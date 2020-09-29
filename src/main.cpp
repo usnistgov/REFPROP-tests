@@ -376,6 +376,24 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Order of R32+yf should not matter", "[setup
     CHECK(r1.Output[1] == r2.Output[0]);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Order of ternary should not matter", "[setup],[fluidorder]") {
+    std::vector<std::string> fluidset = {"13BUTADIENE", "1PENTENE", "1BUTYNE"};
+    double T = 300; // K
+    double p = 10; // MPa
+    std::vector<double> z = { 1.0/3.0, 1.0/3.0, 1.0/3.0 };
+    std::vector<double> outputs;
+    // Check that ALL permutations of fluids give the same answer
+    std::sort(fluidset.begin(), fluidset .end());
+    do {
+        std::string fluidstr = str_join(fluidset, "*");
+        auto r = REFPROP(fluidstr, "TP", "D", 1, 0, 0, T, p, z);
+        outputs.push_back(r.Output[0]);
+    } while (std::next_permutation(fluidset.begin(), fluidset.end()));
+    double minval = *std::min_element(outputs.begin(), outputs.end()),
+           maxval = *std::max_element(outputs.begin(), outputs.end());
+    CHECK(minval == maxval);
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[roundtrips]") {
     std::string keys = "T;P;D;H;S;E";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };

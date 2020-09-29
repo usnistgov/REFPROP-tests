@@ -37,6 +37,18 @@ static std::vector<std::string> str_split(const std::string &s,
     return o;
 }
 
+/** Join a vector of strings into a single string, a la Python */
+static std::string str_join(const std::vector<std::string>& vals, const std::string& delimiter = "\n") {
+    if (vals.empty()) {
+        throw std::invalid_argument("vals can't be empty in str_join");
+    }
+    std::string o = vals[0];
+    for (auto i = 1; i < vals.size(); ++i){
+        o += delimiter + vals[i];
+    }
+    return o;
+}
+
 /** Get all the binary pairs that can be found in HMX.BNC
  */
 static std::vector<std::pair<std::string, std::string>> get_binary_pairs() {

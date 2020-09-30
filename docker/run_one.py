@@ -15,12 +15,13 @@ def build_REPROP_zip(*, root, zippath):
 
     with zipfile.ZipFile(zippath, 'w') as rpzip:
         for folder in ['FLUIDS','MIXTURES','FORTRAN']:
-            folder_path = os.path.join(dequote(root), folder, '*.*')
-            files = glob.glob(folder_path)
-            if not files:
-                raise ValueError('No files match '+folder_path)
-            for file in files:
-                rpzip.write(file, arcname=depath(file, folder=folder))
+            for stem in ['DLLFILES/*.*','*.*']:
+                folder_path = os.path.join(dequote(root), folder, stem)
+                files = glob.glob(folder_path)
+                if not files and stem == '*.*':
+                    raise ValueError('No files match '+folder_path)
+                for file in files:
+                    rpzip.write(file, arcname=depath(file, folder=folder))
 
 def run_one(args):
     """ Actually run the specified test """

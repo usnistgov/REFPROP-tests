@@ -1144,19 +1144,19 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check absolute paths are ok", "[setup]") {
 
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]") {
-
+    auto units = get_enum("DEFAULT");
     auto fname = "R433B.MIX";
     std::vector<double> z(20, 1.0 / 20.0);
     int iMass = 0;
-    auto r1 = REFPROP(fname, "", "M;TC;PC;DC", 1, iMass, 0, 0.101325, 300, z);
+    auto r1 = REFPROP(fname, "", "M;TC;PC;DC", units, iMass, 0, 0.101325, 300, z);
     iMass = 1;
-    auto r2 = REFPROP(fname, "", "TRED", 0, iMass, 1, 0, 0, z);
+    auto r2 = REFPROP(fname, "", "TRED", units, iMass, 1, 0, 0, z);
     CHECK(r2.ierr > 100); // Error because composition given and it is not the mass composition
 
     // Water, to reset for sure
-    REFPROP("Water", "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);
+    REFPROP("Water", "", "M;TC;PC;DC", units, iMass, 1, 0, 0, z);
 
-    auto r3 = REFPROP(fname, "", "M;TC;PC;DC", 0, iMass, 1, 0, 0, z);
+    auto r3 = REFPROP(fname, "", "M;TC;PC;DC", units, iMass, 1, 0, 0, z);
     CHECK(r1.Output[0] == Approx(r3.Output[0]));
     CHECK(r1.Output[1] == Approx(r3.Output[1]));
     CHECK(r1.Output[2] == Approx(r3.Output[2]));

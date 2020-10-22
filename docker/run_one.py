@@ -1,6 +1,12 @@
-import argparse, zipfile, os, glob, sys, subprocess, shutil
+import argparse, zipfile, os, glob, sys, subprocess, shutil, hashlib
 
 from ansi2html import Ansi2HTMLConverter
+
+def get_path_hash(root_path):
+    """ 
+    Utility function to hash the path to remove all the annoying path separtors and so on... 
+    """
+    return hashlib.sha224(root_path.encode('ascii')).hexdigest()
 
 def build_REFPROP_zip(*, root, zippath):
     """ Build a zip file with all the things to go into docker container """
@@ -28,32 +34,30 @@ def build_REFPROP_zip(*, root, zippath):
 def run_test(*, root, test):
     """ Actually run the specified test """
 
+    prefix = get_path_hash(root) + '_' + test
+
     # Wipe the output folder of the test
-    outfold = os.path.join(test, 'output')
-    if os.path.exists(outfold):
-        shutil.rmtree(outfold)
-    os.makedirs(outfold)
+    #outfold = os.path.join(test, 'output')
+    #if os.path.exists(outfold):
+    #    shutil.rmtree(outfold)
+    #os.makedirs(outfold)
 
     # Collect the REFPROP files
     build_REFPROP_zip(root=root, zippath=os.path.join(test, 'REFPROP.zip'))
 
     # Run the test
-    with open('build_run.log', 'w') as stdout:
+    with open(prefix+'_build_run.log', 'w') as stdout:
         subprocess.call('docker-compose up --build', cwd=test, shell=True, stdout=stdout, stderr=stdout)
 
     # Convert ANSI color codes in the log to html
-    html = Ansi2HTMLConverter().convert(open('build_run.log').read())
-    with open(test+'_build_run.html', 'w') as fp:
+    html = Ansi2HTMLConverter().convert(open(prefix+'_build_run.log').read())
+    with open(prefix+'_build_run.html', 'w') as fp:
         fp.write(html)
 
     # Collect the bits and pieces from the run into a zip file
-    shutil.make_archive(test, 'zip', os.path.join(test, 'output'))
+    shutil.make_archive(prefix, 'zip', os.path.join(test, 'output'))
 
 if __name__ == '__main__':
-
-    def test_from_args(args):
-        """ Pass-through function to extract the test arguments from argparse object """
-        run_test(root=args.root[0], test=args.test[0])
 
     mnt = '/media/Q/'
     if sys.platform.startswith('win'):
@@ -65,4 +69,4 @@ if __name__ == '__main__':
     parser.add_argument('--test', type=str, required=True, nargs=1, 
         help='The selected test to run', choices=['gcov','valgrind','test'])
     args = parser.parse_args()
-    test_from_args(args)
+    run_test(root=args.root[0], test=args.test[0])

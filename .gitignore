@@ -3,3 +3,4 @@ build/
 /docker/valgrind/output
 /codelite
 bld/
+/docker/.email_recipients.json

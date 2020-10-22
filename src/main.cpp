@@ -398,7 +398,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[roun
     std::string keys = "T;P;D;H;S;E";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
     for (auto iMass : {0}){//,1}){
-        for (std::string fld: {"AMARILLO.MIX","XENON"}){
+        for (std::string fld: {"XENON"}){ //"AMARILLO.MIX"
             for (bool satspln: {true}){//, false}){
                 for (std::string & unit_string : unit_strings) {
                     CAPTURE(iMass);
@@ -494,7 +494,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
     std::string keys = "T;P;D;H;S;E;Qmass;Qmole";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
     for (auto iMass : { 0 }) {//,1}){
-        for (std::string fld : {"AMARILLO.MIX", "XENON"}) {
+        for (std::string fld : { "XENON"}) { //"AMARILLO.MIX",
             for (bool satspln : {true}) {//, false}){
                 for (std::string & unit_string : unit_strings) {
                     CAPTURE(iMass);

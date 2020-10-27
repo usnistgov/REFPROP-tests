@@ -4,7 +4,7 @@
 
 FROM ubuntu:20.04
 
-RUN apt-get -y -m update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov
+RUN apt-get -y -m update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov python3-pip
 
 # This ADD forces a build (invalidates the cache) if the git repo contents have changed, otherwise leaves it untouched.
 # See https://stackoverflow.com/a/39278224
@@ -30,10 +30,16 @@ RUN cp -rfv /REFPROP/FLUIDS/ . && cp -rfv /REFPROP/MIXTURES/ . && echo `pwd` && 
 WORKDIR /REFPROP-tests
 RUN mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build .
 
+# A little python package for colorizing ANSI output from log as HTML
+RUN python3 -m pip install ansi2html
+
 # Set the environment variables
 ENV RPPREFIX /REFPROP-cmake/build
 ENV RESOURCES /REFPROP-tests/resources
 
-# Run the exe
-WORKDIR /REFPROP-tests/build
-CMD ./main --durations yes ~[veryslow] 2>&1 | tee /output/log.txt
+COPY run_test.py /
+
+# Run each tag of tests
+WORKDIR /
+# -u for run unbuffered
+CMD python3 -u run_test.py

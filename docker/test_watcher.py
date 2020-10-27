@@ -80,7 +80,7 @@ def infinite_watch(root_path, *, force=False):
         print('No update, going to sleep for 60 seconds...')
         time.sleep(60)
 
-test_suite = ['gcov', 'test']
+test_suite = ['test']
 
 if __name__ == '__main__':
     mnt = '/media/Q/'

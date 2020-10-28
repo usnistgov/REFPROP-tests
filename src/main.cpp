@@ -373,7 +373,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Order of R32+yf should not matter", "[setup
     std::vector<double> z1 = { 0.6867261958191739, 0.3132738041808261 }, z2 = { 0.3132738041808261, 0.6867261958191739};
     auto r1 = REFPROP("R32*R1234YF", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z1);
     auto r2 = REFPROP("R1234YF*R32", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z2);
-    CHECK(r1.Output[1] == r2.Output[0]);
+    CHECK(r1.Output[1] == Approx(r2.Output[0]).epsilon(1e-11));
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Order of ternary should not matter", "[setup],[fluidorder]") {

@@ -4,7 +4,7 @@ in the folder or subfolders, fire off all the tests and report results
 
 Ian Bell, Nov. 2020
 """
-import glob, sys, os, json, time, timeit
+import glob, sys, os, json, time, timeit, shutil
 
 import run_one
 import emailing

@@ -391,7 +391,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Order of ternary should not matter", "[setu
     } while (std::next_permutation(fluidset.begin(), fluidset.end()));
     double minval = *std::min_element(outputs.begin(), outputs.end()),
            maxval = *std::max_element(outputs.begin(), outputs.end());
-    CHECK(minval == maxval);
+    CHECK(minval == Approx(maxval).epsilon(1e-11));
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Homogeneous phase flash roundtrips", "[roundtrips]") {

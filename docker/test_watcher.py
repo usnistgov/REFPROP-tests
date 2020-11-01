@@ -13,14 +13,14 @@ def are_new_files(root_path):
     """
     Check if there are updates to anything in the root_path folder or subfolders.
 
-    Return True if a modification is found, or if the cache file doee not exist
+    Return True if a modification is found, or if the cache file does not exist
     Return False if files are up-to-date
     """
     
     time_function = os.path.getmtime
 
     # Find the most recently modified file in root and all folders (recursively)
-    globs = glob.glob(root_path + '/*') + glob.glob(root_path + '/**/*')
+    globs = glob.glob(root_path + '/*') + glob.glob(root_path + '/**/*') + glob.glob(root_path + '/.*')
     LatestFile = max(globs, key=time_function)
     seconds_since_epoch = time_function(LatestFile)
     print('Most recent update:', LatestFile, '@', time.ctime(seconds_since_epoch))
@@ -80,12 +80,12 @@ def infinite_watch(root_path, *, force=False):
         print('No update, going to sleep for 60 seconds...')
         time.sleep(60)
 
-test_suite = ['test']
+test_suite = ['test','gcov','valgrind']
 
 if __name__ == '__main__':
     mnt = '/media/Q/'
     if sys.platform.startswith('win'):
         mnt = 'Q:/Public/'
     # sys.argv += [mnt+'Eric/INSTALL/1000/10.0']
-    sys.argv += [mnt+'Eric/INSTALL/ALPHA']
+    # sys.argv += [mnt+'Eric/INSTALL/ALPHA']
     infinite_watch(root_path=sys.argv[-1])

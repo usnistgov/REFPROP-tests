@@ -13,7 +13,7 @@ for g in glob.glob('/output/*'):
 # Collect the list of tags to be run
 all_tags = []
 if os.path.exists('/REFPROP/.just_these_tags'):
-    all_tags = [line.strip() for line in open('/REFPROP/.just_these_tags').readlines()]
+    all_tags = [line.strip() for line in open('/REFPROP/.just_these_tags').readlines() if line]
 else:
     output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
     for il, line in enumerate(output.split('\n')[1::]):

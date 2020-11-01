@@ -1,7 +1,6 @@
 import subprocess, os, sys, shutil, glob, timeit
 
 tic = timeit.default_timer()
-output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
 
 # Wipe contents of output folder 
 # This script is running inside the docker container, so this should be allowed
@@ -11,12 +10,20 @@ for g in glob.glob('/output/*'):
     else:
         os.remove(g)
 
-for il, line in enumerate(output.split('\n')[1::]):
-
-    if not line or '[' not in line: continue
-    tag = '[' + line.split('[')[1]
-    if 'veryslow' in tag: continue # Don't run the veryslow tests
-#    if 'predef_mix' not in tag: continue
+# Collect the list of tags to be run
+all_tags = []
+if os.path.exists('/REFPROP/.just_these_tags'):
+    all_tags = [line.strip() for line in open('/REFPROP/.just_these_tags').readlines()]
+else:
+    output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
+    for il, line in enumerate(output.split('\n')[1::]):
+        if not line or '[' not in line: continue
+        tag = '[' + line.split('[')[1]
+        if 'veryslow' in tag: continue # Don't run the veryslow tests
+    #    if 'predef_mix' not in tag: continue
+        all_tags.append(tag)
+        
+for tag in all_tags:
     root =  tag.replace('[', '').replace(']','') + '.txt'
     print(tag, ' --> ', root)
 

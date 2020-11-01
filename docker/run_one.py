@@ -31,6 +31,10 @@ def build_REFPROP_zip(*, root, zippath):
                 for file in files:
                     rpzip.write(file, arcname=depath(file, folder=folder))
 
+        taglist = os.path.join(root,'.just_these_tags')
+        if os.path.exists(taglist):
+            rpzip.write(taglist, arcname=depath(taglist, folder='.'))
+
 def run_test(*, root, test):
     """ Actually run the specified test """
 

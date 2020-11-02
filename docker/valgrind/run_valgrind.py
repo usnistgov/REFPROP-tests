@@ -27,7 +27,7 @@ for tag in all_tags:
     root =  tag.replace('[', '').replace(']','') + '.txt'
     print(tag, ' --> ', root)
 
-    cmd = 'valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main ' + tag
+    cmd = 'timeout 60m valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main ' + tag
     with open('/output/log_'+root,'w') as fp_stderr:
         with open('/output/err_'+root,'w') as fp_stdout:
             subprocess.run(cmd, shell = True, stdout = fp_stdout, stderr = fp_stderr)    

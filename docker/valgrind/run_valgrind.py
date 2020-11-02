@@ -23,16 +23,25 @@ else:
     #    if 'predef_mix' not in tag: continue
         all_tags.append(tag)
 
+tag_times = {}
 for tag in all_tags:
     root =  tag.replace('[', '').replace(']','') + '.txt'
     print(tag, ' --> ', root)
 
     cmd = 'timeout 60m valgrind --tool=memcheck --error-limit=no --track-origins=yes /REFPROP-tests/build/main ' + tag
+    tic1 = timeit.default_timer()
     with open('/output/log_'+root,'w') as fp_stderr:
         with open('/output/err_'+root,'w') as fp_stdout:
             subprocess.run(cmd, shell = True, stdout = fp_stdout, stderr = fp_stderr)    
+    toc1 = timeit.default_timer()
+    tag_times[tag] = toc1-tic1
 
     print(open('/output/log_'+root).readlines()[-1])
+
+# Print times taken for each tag
+print('Time (in sec) taken for each tag')
+for k, v in tag_times.items():
+    print(k, v)
 
 # Store all the outputs in zip archive
 os.makedirs('/output/errors')

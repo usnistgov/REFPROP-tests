@@ -89,54 +89,40 @@ public:
                 }
                 case 3:
                 {
-                    char hFld[255]; strcpy(hFld, in.FluidName.c_str());
-                    char hIn[255] = "";
-                    char hOut[10000]; strcpy(hOut, (in.OutputCode + "(" + std::to_string(int(in.Prop1)) + ")").c_str());
-
-                    int iUnit = 0, ierr = 0, iMass = 0, iFlag = 0;
-                    double a = 0, b = 0, q = -1; double z[20], Output[200], x[20], y[20], x3[20]; char hUnits[255], herr[255];
+                    int iMass = 0, iFlag = 0;
+                    double a = 0, b = 0; std::vector<double> z(20, 0.0);
                     int unit_system = get_enum("DEFAULT");
-                    CAPTURE(hIn);
-                    CAPTURE(hOut);
-                    REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, z, Output, hUnits, iUnit, x, y, x3, q, ierr, herr, 10000, 255, 255, 255, 255);
-                    CAPTURE(herr);
-                    CHECK(ierr < 100);
-                    CHECK(Output[0] == Approx(expected).epsilon(1e-5));
+                    std::string inString = in.OutputCode + "(" + std::to_string(int(in.Prop1)) + ")";
+                    auto r = REFPROP(in.FluidName, "", inString, unit_system, iMass, iFlag, a, b, z);
+                    CAPTURE(r.herr);
+                    CHECK(r.ierr < 100);
+                    CHECK(r.Output[0] == Approx(expected).epsilon(1e-5));
                     break;
                 }
                 case 5:
                 case 6:
                 case 7:
                 {
-                    char hFld[255]; strcpy(hFld, in.FluidName.c_str());
-                    char hIn[255]; strcpy(hIn, in.InpCode.c_str());
-                    char hOut[10000]; 
+                    std::string outString = in.OutputCode;
                     if (in.Ninputs == 7){
-                        strcpy(hOut, (in.OutputCode + "(" + std::to_string(int(in.Prop3)) + ")") .c_str());
+                        outString += "(" + std::to_string(int(in.Prop3)) + ")";
                     }
-                    else {
-                        strcpy(hOut, in.OutputCode.c_str());
-                    }
-
-                    int iUnitOut = 0, ierr = 0, iMass = 0, iFlag = 0;
-                    double a = in.Prop1, b = in.Prop2, q = -1; double z[20], Output[200], x[20], y[20], x3[20]; char hUnits[255], herr[255];
+                    int iMass = 0, iFlag = 0;
+                    double a = in.Prop1, b = in.Prop2; std::vector<double> z(20, 0.0);
                     int unit_system  = get_enum(in.Units);
                     CAPTURE(unit_system);
                     CAPTURE(in.FluidName);
                     CAPTURE(in.Ninputs);
-                    CAPTURE(hIn);
-                    CAPTURE(hOut);
                     CAPTURE(in.Units);
                     CAPTURE(in.Prop1);
                     CAPTURE(in.Prop2);
                     if (in.Ninputs == 7) {
                         CAPTURE(in.Prop3);
                     }
-                    
-                    REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, z, Output, hUnits, iUnitOut, x, y, x3, q, ierr, herr, 10000, 255, 255, 255, 255);
-                    CAPTURE(herr);
-                    CHECK(ierr < 100);
-                    CHECK(Output[0] == Approx(expected).epsilon(1e-5));
+                    auto r = REFPROP(in.FluidName, in.InpCode, outString, unit_system, iMass, iFlag, a, b, z);
+                    CAPTURE(r.herr);
+                    CHECK(r.ierr < 100);
+                    CHECK(r.Output[0] == Approx(expected).epsilon(1e-5));
                     break;
                 }
                 default: {

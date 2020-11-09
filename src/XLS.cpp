@@ -8,8 +8,8 @@ struct XLSin
     std::string OutputCode, FluidName, InpCode, Units;
     double Prop1, Prop2, Prop3;
     int Ninputs;
-    XLSin(){};
-    XLSin(const std::string &OutputCode, const std::string &FluidName) : OutputCode(OutputCode), FluidName(FluidName), Ninputs(2) {};
+    XLSin() : Prop1(-19999999999), Prop2(-999999999), Prop3(-999999999), Ninputs(2), Units("DEFAULT"), OutputCode(""), FluidName(""), InpCode("") {};
+    XLSin(const std::string &OutputCode, const std::string &FluidName) : OutputCode(OutputCode), FluidName(FluidName), Prop1(-9999999999), Prop2(-999999999), Prop3(-999999999), Ninputs(2), Units("DEFAULT") {};
     template<typename T1> XLSin(const std::string &OutputCode, const std::string &FluidName, T1 Prop1) : OutputCode(OutputCode), FluidName(FluidName), Prop1(Prop1), Prop2(-99999999), Prop3(-99999999), Ninputs(3) {};
     template<typename T1> XLSin(const std::string &OutputCode, const std::string &FluidName, const std::string &InpCode, const std::string &Units, T1 Prop1) : OutputCode(OutputCode), FluidName(FluidName), InpCode(InpCode), Units(Units), Prop1(Prop1), Prop2(-99999999), Prop3(-99999999), Ninputs(5) {};
     template<typename T1, typename T2> XLSin(const std::string &OutputCode, const std::string &FluidName, const std::string &InpCode, const std::string &Units, T1 Prop1, T2 Prop2) : OutputCode(OutputCode), FluidName(FluidName), InpCode(InpCode), Units(Units), Prop1(Prop1), Prop2(Prop2), Prop3(-99999999), Ninputs(6) {};
@@ -79,8 +79,10 @@ public:
                     int unit_system = get_enum("DEFAULT");
                     CAPTURE(in.FluidName);
                     CAPTURE(in.OutputCode);
+                    CAPTURE(in.Units);
                     double a = in.Prop1, b = in.Prop2;
                     std::vector<double> z(20,0.0);
+                    CAPTURE(unit_system);
                     auto r = REFPROP(in.FluidName, "", in.OutputCode, unit_system, iMass, iFlag, a, b, z);
                     CAPTURE(r.herr);
                     CHECK(r.ierr < 100);
@@ -90,10 +92,13 @@ public:
                 case 3:
                 {
                     int iMass = 0, iFlag = 0;
-                    double a = 0, b = 0; std::vector<double> z(20, 0.0);
+                    double a = in.Prop1, b = in.Prop2; std::vector<double> z(20, 0.0);
                     int unit_system = get_enum("DEFAULT");
-                    std::string inString = in.OutputCode + "(" + std::to_string(int(in.Prop1)) + ")";
-                    auto r = REFPROP(in.FluidName, "", inString, unit_system, iMass, iFlag, a, b, z);
+                    CAPTURE(in.Units);
+                    CAPTURE(unit_system);
+                    std::string outString = in.OutputCode + "(" + std::to_string(int(in.Prop1)) + ")";
+                    CAPTURE(outString);
+                    auto r = REFPROP(in.FluidName, "", outString, unit_system, iMass, iFlag, a, b, z);
                     CAPTURE(r.herr);
                     CHECK(r.ierr < 100);
                     CHECK(r.Output[0] == Approx(expected).epsilon(1e-5));

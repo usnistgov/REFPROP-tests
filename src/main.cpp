@@ -903,20 +903,21 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check fluid files with unicode in them", "[
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture", "[flash]"){
-    char hfld[10000] = "NITROGEN|WATER|CO2|H2S|METHANE|ETHANE|PROPANE|ISOBUTAN|BUTANE|IPENTANE|PENTANE";
+    char hfld[10001] = "NITROGEN|WATER|CO2|H2S|METHANE|ETHANE|PROPANE|ISOBUTAN|BUTANE|IPENTANE|PENTANE";
     std::vector<double> z = { 1.2000036000108E-03,7.000021000063E-06,.828792486377459,2.000006000018E-04,.160400481201444,7.6000228000684E-03,1.4000042000126E-03,1.000003000009E-04,2.000006000018E-04,0,1.000003000009E-04 };
     while (z.size() < 20) {
         z.push_back(20);
     }
     int ierr = 0, nc = 11;
-    char herr[255], hhmx[] = "HMX.BNC", href[] = "DEF";
+    char herr[256] = "", hhmx[256] = "HMX.BNC", href[4] = "DEF";
     SETUPdll(nc, hfld, hhmx, href, ierr, herr, 10000, 255, 3, 255);
     REQUIRE(ierr == 0);
 
     ierr = 0;
     double x[20] = { 1.0 }, y[20] = { 1.0 }, T = 313.15, p = 400, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
     TPFLSHdll(T, p, &(z[0]), d, dl, dv, x, y, q, u, h, s, cp, cv, w, ierr, herr, 255);
-    CAPTURE(herr);
+    std::string sherr(herr);
+    CAPTURE(sherr);
     REQUIRE(ierr == 0);
 };
 

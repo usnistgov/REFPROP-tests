@@ -36,6 +36,12 @@ for tag in all_tags:
     toc1 = timeit.default_timer()
     tag_times[tag] = toc1-tic1
 
+    # Copy a debugging file to the output if present
+    src_memorytest = 'memorytest.txt'
+    dest_memorytest = '/output/memorytest_'+root
+    if os.path.exists(src_memorytest):
+        shutil.move(src_memorytest, dest_memorytest)
+
     print(open('/output/log_'+root).readlines()[-1])
 
 # Print times taken for each tag

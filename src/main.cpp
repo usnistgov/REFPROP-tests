@@ -902,7 +902,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check fluid files with unicode in them", "[
     REQUIRE(ierr == 0);
 };
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture", "[flash]"){
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture", "[flash],[TPflash]"){
     char hfld[10001] = "NITROGEN|WATER|CO2|H2S|METHANE|ETHANE|PROPANE|ISOBUTAN|BUTANE|IPENTANE|PENTANE";
     std::vector<double> z = { 1.2000036000108E-03,7.000021000063E-06,.828792486377459,2.000006000018E-04,.160400481201444,7.6000228000684E-03,1.4000042000126E-03,1.000003000009E-04,2.000006000018E-04,0,1.000003000009E-04 };
     while (z.size() < 20) {

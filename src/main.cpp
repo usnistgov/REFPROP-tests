@@ -922,6 +922,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture", 
     REQUIRE(ierr == 0);
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture w/ REFPROP function", "[flash],[REFPROPTPflash]") {
+    std::string fluids = "NITROGEN*WATER*CO2*H2S*METHANE*ETHANE*PROPANE*ISOBUTAN*BUTANE*IPENTANE*PENTANE";
+    std::vector<double> z = { 1.2000036000108E-03,7.000021000063E-06,.828792486377459,2.000006000018E-04,.160400481201444,7.6000228000684E-03,1.4000042000126E-03,1.000003000009E-04,2.000006000018E-04,0,1.000003000009E-04 };
+    double T = 313.15, p = 400;
+    auto r2 = REFPROP(fluids, "TP", "D", 0, 0, 0, T, p, z);
+    REQUIRE(r2.ierr == 0);
+};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "EnablePR", "[setup]") {
     // SETUP
     int ierr = 0, nc = 2;

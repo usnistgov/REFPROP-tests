@@ -1051,11 +1051,11 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP for all pure fluids (when possibl
             }
         }
 
-        double wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas, z[] = { 1.0 };
+        double wmm = -1, ttrp = -1, tnbpt = -1, tc = -1, pc = -1, Dc = -1, Zc = -1, acf = -1, dip = -1, Rgas = -1, z[20] = { 1.0 };
         int icomp = 1, kq = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
 
-        double T, p = 101.325, D=0, Dl = 0, Dv = 0, xliq[20], xvap[20], q = 0, u = 0, h = 0, s = 0, cv = 0, cp = 0, w = 0;
+        double T = -1, p = 101.325, D=0, Dl = 0, Dv = 0, xliq[20], xvap[20], q = 0, u = 0, h = 0, s = 0, cv = 0, cp = 0, w = 0;
         int ierr = 0; char herr[255] = "";
 
         char htyp[4] = "EOS"; double Tmin, Tmax, Dmax, Pmax;
@@ -1086,14 +1086,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check Ttriple for all pure fluids (when pos
         CAPTURE(herrs);
         CHECK(ierr == 0);
 
-        double wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas, z[] = { 1.0 };
+        double wmm = -1, ttrp = -1, tnbpt = -1, tc = -1, pc = -1, Dc = -1, Zc = -1, acf = -1, dip = -1, Rgas = -1, z[20] = { 1.0 };
         int icomp = 1, kq = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
 
         double p = 101.325, D = 0, Dl = 0, Dv = 0, xliq[20], xvap[20], q = 0, u = 0, h = 0, s = 0, cv = 0, cp = 0, w = 0;
         ierr = 0; char herr[255] = "";
 
-        char htyp[4] = "EOS"; double Tmin, Tmax, Dmax, Pmax;
+        char htyp[4] = "EOS"; double Tmin = -1, Tmax = -1, Dmax = -1, Pmax = -1;
         LIMITSdll(htyp, z, Tmin, Tmax, Dmax, Pmax, 3);
         if (Tmin > ttrp) {
             // Skip fluids where Tmin < Trip
@@ -1115,11 +1115,11 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check acentric factor for all pure fluids (
         CAPTURE(herrs);
         CHECK(ierr == 0);
 
-        double wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas, z[] = { 1.0 };
+        double wmm = -1, ttrp = -1, tnbpt = -1, tc = -1, pc = -1, Dc = -1, Zc = -1, acf = -1, dip = -1, Rgas = -1, z[20] = { 1.0 };
         int icomp = 1, kq = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
 
-        char htyp[4] = "EOS"; double Tmin, Tmax, Dmax, Pmax;
+        char htyp[4] = "EOS"; double Tmin = -1, Tmax = -1, Dmax = -1, Pmax = -1;
         LIMITSdll(htyp, z, Tmin, Tmax, Dmax, Pmax, 3);
         std::vector<double> zz(20,0); zz[0] = 1;
         auto r = REFPROP("","TQ","P",0,0,0,0.7*tc,0,zz);

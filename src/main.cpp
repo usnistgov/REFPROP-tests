@@ -906,16 +906,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check TP flash of multicomponent mixture", 
     char hfld[10001] = "NITROGEN|WATER|CO2|H2S|METHANE|ETHANE|PROPANE|ISOBUTAN|BUTANE|IPENTANE|PENTANE";
     std::vector<double> z = { 1.2000036000108E-03,7.000021000063E-06,.828792486377459,2.000006000018E-04,.160400481201444,7.6000228000684E-03,1.4000042000126E-03,1.000003000009E-04,2.000006000018E-04,0,1.000003000009E-04 };
     while (z.size() < 20) {
-        z.push_back(20);
+        z.push_back(0.0);
     }
     int ierr = 0, nc = 11;
-    char herr[256] = "", hhmx[256] = "HMX.BNC", href[4] = "DEF";
+    char herr[280] = "", hhmx[256] = "HMX.BNC", href[4] = "DEF";
     SETUPdll(nc, hfld, hhmx, href, ierr, herr, 10000, 255, 3, 255);
     REQUIRE(ierr == 0);
 
     ierr = 0;
-    double x[20] = { 1.0 }, y[20] = { 1.0 }, T = 313.15, p = 400, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
-    TPFLSHdll(T, p, &(z[0]), d, dl, dv, x, y, q, u, h, s, cp, cv, w, ierr, herr, 255);
+    std::vector<double> x(20, 0.0), y(20, 0.0);
+    double T = 313.15, p = 400, d = -1, dl = -1, dv = -1, h = -1, s = -1, u = -1, cp = -1, cv = -1, q = 0, w = -1;
+    TPFLSHdll(T, p, &(z[0]), d, dl, dv, &(x[0]), &(y[0]), q, u, h, s, cp, cv, w, ierr, herr, 255);
     std::string sherr(herr);
     CAPTURE(sherr);
     REQUIRE(ierr == 0);
@@ -1200,7 +1201,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check full absolute paths are ok", "[setup]
         std::string flds = normalize_path(std::string(std::getenv("RPPREFIX")) + "/FLUIDS/R32.FLD") + "|" + normalize_path(std::string(std::getenv("RPPREFIX")) + "/FLUIDS/PROPANE.FLD");
         flds += std::string(10000 - flds.size(), '\0');
         char * hfld = const_cast<char *>(flds.c_str());
-        int ierr = 0, nc = 2; char hdef[4] = "DEF", herr[255];
+        int ierr = 0, nc = 2; char hdef[4] = "DEF", herr[255] = "";
         SETUPdll(nc, hfld, hhmx, hdef, ierr, herr, 10000, 255, 3, 255);
         CAPTURE(herr);
         CHECK(ierr == 0);

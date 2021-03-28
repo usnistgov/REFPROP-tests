@@ -361,6 +361,13 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Uninitialized ierr", "[ierr]") {
+    std::vector<double> z(20, 0); z[0] = 1.0;
+    auto r = REFPROP("1-Butyne", "DP", "T;P;S;H;S", 2, 0, 0, 300, 4.2, z);
+    CAPTURE(r.hUnits);
+    CHECK(r.ierr == -1);
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Chempot=Gibbs for pure?", "[flash],[chempot]") {
     int kflag = 0; FLAGS("SETREF", 2, kflag);
     std::vector<double> z(20, 0); z[0] = 1;

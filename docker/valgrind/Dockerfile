@@ -40,6 +40,8 @@ RUN pip3 install ansi2html
 # Copy the build script
 ADD run_valgrind.py /
 
+RUN echo "[setmix]" >> /REFPROP/.just_these_tags
+
 # Run each tag of tests, looking for memory issues
 WORKDIR /
 # -u for run unbuffered

@@ -14,7 +14,7 @@ endif()
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 include_directories("${CMAKE_SOURCE_DIR}/externals/Catch/single_include")
 include_directories("${CMAKE_SOURCE_DIR}/externals/REFPROP-headers/")
 include_directories("${CMAKE_SOURCE_DIR}/include/")

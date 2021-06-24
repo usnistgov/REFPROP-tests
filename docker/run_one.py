@@ -48,9 +48,12 @@ def run_test(*, root, test):
 
     # Collect the REFPROP files
     build_REFPROP_zip(root=root, zippath=os.path.join(test, 'REFPROP.zip'))
+    print('zip built')
 
     # Run the test
-    with open(prefix+'_build_run.log', 'w') as stdout:
+    logfile = prefix+'_build_run.log'
+    print('logging to', logfile)
+    with open(logfile, 'w') as stdout:
         subprocess.call('docker-compose up --build', cwd=test, shell=True, stdout=stdout, stderr=stdout)
 
     # Convert ANSI color codes in the log to html
@@ -63,10 +66,15 @@ def run_test(*, root, test):
 
 if __name__ == '__main__':
 
+    build_REFPROP_zip(root='Q:/Public/Eric/INSTALL/1000/10.0', zippath='test/REFPROP.zip')
+    quit()
+
     mnt = '/media/Q/'
     if sys.platform.startswith('win'):
         mnt = 'Q:/Public/'
-    sys.argv += ['--root', mnt+'Eric/INSTALL/1000/10.0','--test','test']
+    # sys.argv += ['--root', mnt+'Eric/INSTALL/BETA','--test','test']
+    sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','test']
+
     parser = argparse.ArgumentParser(description='Run a specified test, and generate a zip file with perhaps relevant output')
     parser.add_argument('--root', type=str, required=True, nargs=1, 
         help='The root path of the REFPROP installation from which to take the folders FLUIDS, MIXTURES, and FORTRAN')

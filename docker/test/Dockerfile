@@ -37,6 +37,9 @@ RUN python3 -m pip install ansi2html
 ENV RPPREFIX /REFPROP-cmake/build
 ENV RESOURCES /REFPROP-tests/resources
 
+RUN apt-get install nano
+RUN pip3 install ctREFPROP
+
 COPY run_test.py /
 
 # Run each tag of tests

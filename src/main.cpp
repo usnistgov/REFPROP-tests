@@ -1835,6 +1835,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check that all fluids load properly", "[set
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check that it is possible to set predefined mixture and get NCOMP", "[setup],[setmix]") {
+    std::string mix = "AIR.MIX";
+    CAPTURE(mix);
+    auto [z, ierr, herr] = SETMIXTURE(mix);
+    CAPTURE(herr);
+    CHECK(ierr == 0); 
+    auto a = ALLPROPS("NCOMP", 1, 0, 0, 0, 0, z);
+    CAPTURE(a.herr);
+    CHECK(a.ierr == 0);
+};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check that setting transport model for benzene doesn't change ammonia model", "[ETA],[NH3]") {
     std::vector<double> z(20, 1.0);
 

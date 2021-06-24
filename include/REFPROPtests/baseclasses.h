@@ -21,6 +21,14 @@ struct REFPROPResult {
     std::string herr;
 };
 
+struct ALLPROPSResult {
+    std::vector<double> Output;
+    std::string hUnits;
+    std::vector<int> iUnit;
+    int ierr;
+    std::string herr;
+};
+
 class REFPROPDLLFixture
 {
 private:
@@ -123,6 +131,30 @@ public:
         REFPROPResult res  = {z, Output, std::string(hUnits), iUnit, x, y, x3, q, ierr, std::string(herr) };
         return res;
     }
+    auto ALLPROPS(const std::string& _hOut, int unit_system, int iMass, int iFlag, double T_K, double rho_moldm3, const std::vector<double>& z) {
+        char hOut[256];
+        REQUIRE(_hOut.size() < 254);
+        // Pad z with zeros
+        auto znew = z;
+        if (z.size() < 20) {
+            auto old_size = z.size();
+            znew.resize(20);
+            for (auto i = old_size; i < 20; ++i) {
+                znew[i] = 0;
+            }
+        }
+        REQUIRE(znew.size() >= 20);
+        strcpy(hOut, (_hOut + std::string(255 - _hOut.size(), ' ')).c_str());
+
+        std::vector<double> Output(200, 0.0);
+        int ierr = 0;
+        std::vector<int> iUnit(200);
+        char herr[256] = "", hUnits[10000] = "";
+
+        ALLPROPSdll(hOut, unit_system, iMass, iFlag, T_K, rho_moldm3, &(znew[0]), &(Output[0]), hUnits, &(iUnit[0]), ierr, herr, 255, 255, 255);
+        ALLPROPSResult res = {Output, std::string(hUnits), iUnit, ierr, std::string(herr) };
+        return res;
+    }
     void FLAGS(const std::string &_hFlag, int jflag, int &kflag, bool check_kflag = true){
         char hFlag[256] = "";
         REQUIRE(_hFlag.size() <= 255);
@@ -148,6 +180,21 @@ public:
             ERRMSGdll(ierr, herrsetup, 255);
         }
         herr = std::string(herrsetup);
+    }
+
+    auto SETMIXTURE(const std::string &MIX) {
+        char hMix[10001] = "";
+        REQUIRE(MIX.size() <= 10000);
+        strcpy(hMix, (MIX.c_str() + std::string(10000 - MIX.size(), ' ')).c_str());
+        int ierr = 0;
+        std::vector<double> z(20);
+        SETMIXTUREdll(hMix, &(z[0]), ierr, 10000);
+        char herrsetup[255] = "";
+        if (ierr != 0) {
+            ERRMSGdll(ierr, herrsetup, 255);
+        }
+        std::string herr = std::string(herrsetup);
+        return std::make_tuple(z, ierr, herr);
     }
     std::pair<int, std::string> SETMOD(int Ncomp, const std::string &type, const std::string &mix, const std::string &model) {
         char htype[4] = "", hmix[4] = "", hmodel[4] = "";

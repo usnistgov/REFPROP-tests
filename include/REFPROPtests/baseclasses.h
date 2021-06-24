@@ -132,8 +132,11 @@ public:
         return res;
     }
     auto ALLPROPS(const std::string& _hOut, int unit_system, int iMass, int iFlag, double T_K, double rho_moldm3, const std::vector<double>& z) {
-        char hOut[10000];
+        // Prepare hOut string
+        char hOut[10001];
         REQUIRE(_hOut.size() < 10000);
+        strcpy(hOut, (_hOut + std::string(10000 - _hOut.size(), ' ')).c_str());
+
         // Pad z with zeros
         auto znew = z;
         if (z.size() < 20) {
@@ -144,12 +147,11 @@ public:
             }
         }
         REQUIRE(znew.size() >= 20);
-        strcpy(hOut, (_hOut + std::string(10000 - _hOut.size()-1, ' ')).c_str());
-
+        
         std::vector<double> Output(200, 0.0);
         int ierr = 0;
         std::vector<int> iUnit(200);
-        char herr[256] = "", hUnits[10000] = "";
+        char herr[256] = "", hUnits[10001] = "";
 
         ALLPROPSdll(hOut, unit_system, iMass, iFlag, T_K, rho_moldm3, &(znew[0]), &(Output[0]), hUnits, &(iUnit[0]), ierr, herr, 10000, 10000, 255);
         ALLPROPSResult res = {Output, std::string(hUnits), iUnit, ierr, std::string(herr) };

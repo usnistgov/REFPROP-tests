@@ -144,7 +144,7 @@ public:
             }
         }
         REQUIRE(znew.size() >= 20);
-        strcpy(hOut, (_hOut + std::string(10000 - _hOut.size(), ' ')).c_str());
+        strcpy(hOut, (_hOut + std::string(10000 - _hOut.size()-1, ' ')).c_str());
 
         std::vector<double> Output(200, 0.0);
         int ierr = 0;

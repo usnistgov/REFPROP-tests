@@ -218,6 +218,24 @@ public:
         GETMODdll(Ncomp, htype, hcode, hcite, 3, 3, 255);
         return std::make_tuple(std::string(hcode), std::string(hcite));
     }
+    auto SATSPLN(const std::vector<double>& z) {
+        int ierr = -1;
+        char herr[256] = "";
+
+        // Pad z with zeros
+        auto znew = z;
+        if (z.size() < 20) {
+            auto old_size = z.size();
+            znew.resize(20);
+            for (auto i = old_size; i < 20; ++i) {
+                znew[i] = 0;
+            }
+        }
+        REQUIRE(znew.size() >= 20);
+
+        SATSPLNdll(&(znew[0]), ierr, herr, 255);
+        return std::make_tuple(ierr, herr);
+    }
 };
 
 #endif

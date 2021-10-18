@@ -368,6 +368,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Uninitialized ierr", "[ierr]") {
     CHECK(r.ierr == -1);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "DSAT compositions", "[DSAT]") {
+    auto mix_str = "AIR.MIX";
+    auto m = SETMIXTURE(mix_str);
+    int UNITS_SI = get_enum("SI");
+    auto [splierr, splherr] = SATSPLN(std::get<0>(m));
+    auto density = 301.0;
+    auto r = REFPROP("", "DSAT", "T;DLIQ;DVAP", UNITS_SI, 0, 0, density, 0, std::get<0>(m));
+    CAPTURE(r.hUnits);
+    auto T = r.Output[0], Dliq = r.Output[1], Dvap = r.Output[2];
+    CHECK(std::abs(Dliq - Dvap) > 1);
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Chempot=Gibbs for pure?", "[flash],[chempot]") {
     int kflag = 0; FLAGS("SETREF", 2, kflag);
     std::vector<double> z(20, 0); z[0] = 1;

@@ -1794,7 +1794,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all variables that do not require sta
             WARN("Unable to load the fluids:"+ pair.first + "*" + pair.second);
             continue;
         }
-        auto get_Tred = [this, &pair, &joined, &variable_names](bool forwards) {
+        
+        auto get_Tred = [this, &pair, &joined, &variable_names](bool forwards, int &ierrbuff, std::string &herrbuff) {
             auto flds = (forwards) ? pair.first + "*" + pair.second : pair.second + "*" + pair.first;
             std::vector<double> z;
             if (forwards) {
@@ -1807,21 +1808,35 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all variables that do not require sta
             auto r = REFPROP(flds, " ", joined, 0, 0, 0, 0, 0, z);
             CAPTURE(r.herr);
             CAPTURE(r.ierr);
-            bool acceptable_ierr = (r.ierr < 0 ||  r.ierr == 318);
+            bool acceptable_ierr = (r.ierr < 0 ||  r.ierr == 318 || r.ierr == 313);
             CHECK(acceptable_ierr);
+            ierrbuff = r.ierr;
+            herrbuff = r.herr;
             return std::vector<double>(r.Output.begin(), r.Output.begin() + Nvars);
         };
         auto pair_joined = std::get<0>(pair) +  "+" + std::get<1>(pair);
-        auto forwards = get_Tred(true), back = get_Tred(false), diff = forwards;
-        for (auto i = 0; i < forwards.size(); ++i) {
+        int ierr_forwards, ierr_backwards;
+        std::string herr_forwards, herr_backwards;
+        auto forwards = get_Tred(true, ierr_forwards, herr_forwards), back = get_Tred(false, ierr_backwards, herr_backwards), diff = forwards;
+        REQUIRE(ierr_forwards == ierr_backwards);
+        REQUIRE(herr_forwards == herr_backwards);
+        if (ierr_forwards == 318  // Probably not Type I
+            || ierr_forwards == 313 // No critical spline included
+            ) {
+            // Allow for binaries to not allow for critical points
+            continue;
+        }
+        CAPTURE(ierr_forwards);
+        CAPTURE(herr_forwards);
 
+        for (auto i = 0; i < forwards.size(); ++i) {
             diff[i] = std::abs(forwards[i] - back[i]);
             CAPTURE(pair_joined); 
             CAPTURE(variable_names[i]);
             CAPTURE(forwards[i]);
             CAPTURE(back[i]);
             CHECK(forwards[i] > 0);
-            CHECK(diff[i]< 1e-8);
+            CHECK(diff[i]< 1e-6);
         }
     }
 };

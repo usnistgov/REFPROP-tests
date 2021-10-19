@@ -234,6 +234,7 @@ class GPAValidationFixture : public REFPROPDLLFixture {
 public:
     
     void payload() {
+        std::vector<double> z(20, 1);
         int ENGLISH = get_enum("ENGLISH");
 
         std::vector<std::string> keys;
@@ -254,9 +255,12 @@ public:
             for (auto i = 1; i < elements.size(); ++i){
                 auto k = keys[i];
                 double val = string_to_double(elements[i]);
-                if (std::abs(val-6.02e23) < 1){ continue; }
+                if (val > 6.01e23 && val < 6.03e23){  // Placeholder for invalid inputs
+                    continue; 
+                }
+                CAPTURE(val);
                 CAPTURE(k);
-                std::vector<double> z(20,1);
+                
                 if (k == "PVAP(60)")
                     r = REFPROP(name, "TQ", "P", ENGLISH, 0, 0, 60, 0, z);
                 else if (k == "PVAP(100)")

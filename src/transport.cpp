@@ -697,6 +697,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check very old fluid files with old transpo
         auto r = REFPROP("","","TC;DC",0,0,0,0,0,z);
         auto Tc = r.Output[0], Dc = r.Output[1];
         auto r1 = REFPROP("", "TD&", "ETA;TCX", 0, 0, 0, Tc*1.1, Dc*1.1, z);
+        CAPTURE(r1.herr);
         CHECK(r1.ierr < 100);
     }
 };

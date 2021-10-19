@@ -1028,13 +1028,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[flash
     for (auto &fld : get_pure_fluids_list()) {
         {
             std::vector<double> z(20,1.0); 
-            auto rs = REFPROP(fld, "", "TC", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+            auto rs = REFPROP(fld, "", "TC", DEFAULT, 0, 0, 0, 0, z);
             CAPTURE(fld);
             CAPTURE(rs.herr);
             CAPTURE(rs.ierr);
             double Tc = rs.Output[0];
-            auto rv = REFPROP(fld, "Tq", "P;DLIQ;DVAP", MOLAR_BASE_SI, 0, 0, 0.9*Tc, 0, z); // VLE
-            auto ra = REFPROP(fld, "", "ANC-TP;ANC-TDL;ANC-TDV", MOLAR_BASE_SI, 0, 0, 0.9*Tc, 0, z); // Ancillary
+            auto rv = REFPROP(fld, "Tq", "P;DLIQ;DVAP", DEFAULT, 0, 0, 0.9*Tc, 0, z); // VLE
+            auto ra = REFPROP(fld, "", "ANC-TP;ANC-TDL;ANC-TDV", DEFAULT, 0, 0, 0.9*Tc, 0, z); // Ancillary
+            int kph = 1,  // liquid, but it doesn't matter
+                iprop = 1;  // temperature
+            auto g = SATGUESS(kph, iprop, 0.9*Tc, z);
+            std::valarray<double> rg = { g.T, g.D, g.Dy };
+
             int ierr = 0; std::string herr;
             SETFLUIDS(fld, ierr, herr);
             CAPTURE(herr);
@@ -1055,6 +1060,11 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[flash
                 CAPTURE(name);
                 CAPTURE(tol);
                 CHECK(ra.Output[i] == Approx(rv.Output[i]).epsilon(tol));
+
+                // Check error between SATGUESS and values from ANC-TXX, should be zero
+                double err_g_perc = std::abs(rg[i] / ra.Output[i] - 1) * 100;
+                CAPTURE(err_g_perc);
+                CHECK(err_g_perc == Approx(0.0).epsilon(1e-10));
             }
         }
     }

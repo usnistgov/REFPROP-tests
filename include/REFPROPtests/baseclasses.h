@@ -29,6 +29,13 @@ struct ALLPROPSResult {
     std::string herr;
 };
 
+struct SATGUESSResult {
+    double T, p, D, h, s, Dy;
+    std::vector<double> y;
+    int ierr;
+    char herr[256] = "";
+};
+
 class REFPROPDLLFixture
 {
 private:
@@ -236,6 +243,29 @@ public:
 
         SATSPLNdll(&(znew[0]), ierr, herr, 255);
         return std::make_tuple(ierr, herr);
+    }
+    auto SATGUESS(int kph, int iprop, double val, const std::vector<double>& z) {
+
+        // Pad z with zeros
+        auto znew = z;
+        if (z.size() < 20) {
+            auto old_size = z.size();
+            znew.resize(20);
+            for (auto i = old_size; i < 20; ++i) {
+                znew[i] = 0;
+            }
+        }
+        REQUIRE(znew.size() >= 20);
+        SATGUESSResult o; 
+        o.y.resize(20);
+        switch (iprop) {
+        case 1:
+            o.T = val; break;
+        default:
+            throw std::invalid_argument("Bah");
+        }
+        SATGUESSdll(kph, iprop, &(znew[0]), o.T, o.p, o.D, o.h, o.s, o.Dy, &(o.y[0]),o.ierr, o.herr, 255);
+        return o;
     }
 };
 

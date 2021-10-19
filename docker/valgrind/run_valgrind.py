@@ -14,6 +14,10 @@ for g in glob.glob('/output/*'):
 all_tags = []
 if os.path.exists('/REFPROP/.just_these_tags'):
     all_tags = [line.strip() for line in open('/REFPROP/.just_these_tags').readlines() if line]
+elif '--catchargs' in sys.argv:
+    iargs = sys.argv.index('--catchargs')
+    args = sys.argv[iargs+1]
+    all_tags = args.split(',')
 else:
     output = subprocess.run('/REFPROP-tests/build/main -t', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
     for il, line in enumerate(output.split('\n')[1::]):

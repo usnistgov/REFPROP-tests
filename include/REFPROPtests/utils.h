@@ -4,10 +4,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp> 
 #include <boost/algorithm/string/trim.hpp>
+
 #include <locale>
 #include <regex>
 #include <string>
 #include <sstream>
+#include <valarray>
 
 /**  Read in an entire file in one shot
  */
@@ -205,6 +207,17 @@ static std::vector<std::string> fluids_with_PH0_or_PX0() {
                 break;
             }
         }
+    }
+    return o;
+}
+
+/// Vector (actually std::valarray) of linearly-spaced values 
+template<typename T>
+std::valarray<double> linspace(T xmin, T xmax, std::size_t N) {
+    std::valarray<T> o(N); 
+    auto dx = (xmax - xmin) / (N - 1);
+    for (auto i = 0; i < N; ++i) {
+        o[i] = xmin + dx * i;
     }
     return o;
 }

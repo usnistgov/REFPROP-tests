@@ -38,8 +38,9 @@ public:
         reload();
         DEFAULT = get_enum("DEFAULT");
         MOLAR_SI = get_enum("MOLAR SI");
+        MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     }
-    int DEFAULT, MOLAR_SI;
+    int DEFAULT, MOLAR_SI, MOLAR_BASE_SI;
     void reload() {
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(RPPREFIX != nullptr);

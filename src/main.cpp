@@ -380,6 +380,20 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "DSAT compositions", "[DSAT]") {
     CHECK(std::abs(Dliq - Dvap) > 1);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "DSAT nitrogen", "[DSAT]") {
+
+    // At the triple point, get the densities
+    std::vector<double> z(20, 0.0);
+    auto rTRP = REFPROP("NITROGEN", "TRIP", "DLIQ;DVAP", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+    REQUIRE(rTRP.ierr == 0);
+    auto Dmin = rTRP.Output[1], Dmax = rTRP.Output[0];
+    for (auto density : linspace(Dmin, Dmax, 100)){
+        auto rD = REFPROP("", "DSAT", "T;DLIQ;DVAP", MOLAR_BASE_SI, 0, 0, density, 0, z);
+        CAPTURE(rD.hUnits);
+        CHECK(rD.ierr == 0);
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Chempot=Gibbs for pure?", "[flash],[chempot]") {
     int kflag = 0; FLAGS("SETREF", 2, kflag);
     std::vector<double> z(20, 0); z[0] = 1;
@@ -832,7 +846,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test PX0 for mixtures", "[setup],[PX0],[PX0
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check mysterious bug with molar mass", "[R134AMM]") {
     std::vector<double> z0(20,0.0); z0[0] = 1.0;
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     //auto r0 = REFPROP("Water", "PQ", "T", MOLAR_BASE_SI, 0, 0, 101325, 0, z0);
     /*int DEFAULT = get_enum("DEFAULT");
     int SI = get_enum("SI");
@@ -844,7 +857,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mysterious bug with molar mass", "[R1
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Molar mass of R134a", "[file_loading],[setup]") {
     std::vector<double> z = { 1.0 };
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     REQUIRE(REFPROP("R134A", " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z).Output[0] == Approx(REFPROP("R134A", " ", "M", MOLAR_SI, 0, 0, 0, 0, z).Output[0] / 1000));
     REQUIRE(REFPROP("R134A", " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z).Output[0] == Approx(0.10203).epsilon(1e-3));
 };
@@ -853,7 +865,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check super long list of fluids", "[100comp
     std::vector<double> z = { 1.0 };
     std::string flds = "Water";
     for (auto i = 0; i < 100; ++i) { flds += "*Water"; }
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     auto r = REFPROP(flds, " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z);
     CAPTURE(r.herr);
     REQUIRE(r.ierr > 100); // [TODO] force to be a 109 error
@@ -861,7 +872,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check super long list of fluids", "[100comp
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test mixture models of Thol", "[flash],[TholLNG]") {
     std::vector<double> z = { 0.5, 0.5 };
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     int k = -1;
     FLAGS("GERG", 1, k);
 
@@ -880,13 +890,11 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test mixture models of Thol", "[flash],[Tho
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check R404A", "[R404A]") {
     std::vector<double> z = { 1.0 };
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     auto r = REFPROP("R404A.MIX", "PQ", "T", MOLAR_BASE_SI, 0, 0, 101325, 0, z);
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Qmass for single-phase point", "[flash],[props]") {
     std::vector<double> z = { 1.0 };
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
     auto r = REFPROP("Propane", "TP", "Qmass", MOLAR_BASE_SI, 0, 0, 273.15, 101325, z);
     auto Qmass2 = r.q;
     REQUIRE(Qmass2 == Approx(998).margin(1));
@@ -1020,7 +1028,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[flash
     for (auto &fld : get_pure_fluids_list()) {
         {
             std::vector<double> z(20,1.0); 
-            int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
             auto rs = REFPROP(fld, "", "TC", MOLAR_BASE_SI, 0, 0, 0, 0, z);
             CAPTURE(fld);
             CAPTURE(rs.herr);
@@ -1063,7 +1070,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP for all pure fluids (when possibl
             REQUIRE(ierr == 0);
         }
 
-        int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
         {
             int iMass = 0, iFlag = 0;
             std::vector<double> z = { 0.5,0.5 }; double a = 1, Q = 0.0;
@@ -1197,7 +1203,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]
 
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check full absolute paths are ok", "[setup],[FDIR]") {
-    int MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
 
     std::string hmx = std::string(std::getenv("RPPREFIX")) + "/FLUIDS/HMX.BNC";
     hmx = normalize_path(hmx);

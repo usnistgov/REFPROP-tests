@@ -11,10 +11,11 @@
 
 Erratum:
 
-Cl2 should not have flammability values in the standard; it is not a flammable substance
+Chlorine should not have flammability values in the standard; it is not a flammable substance
+Acentric factor for chlorine is 0.07
 Values for SO2 for HG, HV, ... seem incorrect
 Typo for C12 (dodecane) vapor pressure at 60 F.  Should be 0.00114 rather than 0.0014 psia
-acentric factor for chlorine is 0.07
+Several inputs for n-hexadecane are invalid because 60 F is below its triple point temperature 
  */
 
 std::string c1 = R"(Name;MM;TNBP;TTRP;PVAP(60);PVAP(100);TC;PC;DC;ACF;ZV(60);HGLQ;HG;HGVOL;HNLQ;HNVOL;HEATVAP;CP0(60);CV0(60);CSAT(60);k(60)

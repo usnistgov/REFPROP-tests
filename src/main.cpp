@@ -1041,7 +1041,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[flash
             int kph = 1,  // liquid, but it doesn't matter
                 iprop = 1;  // temperature
             auto g = SATGUESS(kph, iprop, 0.9*Tc, z);
-            std::valarray<double> rg = { g.T, g.D, g.Dy };
+            std::valarray<double> rg = { g.p, g.D, g.Dy };
 
             int ierr = 0; std::string herr;
             SETFLUIDS(fld, ierr, herr);

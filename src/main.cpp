@@ -1811,9 +1811,13 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all variables that do not require sta
             CHECK(acceptable_ierr);
             return std::vector<double>(r.Output.begin(), r.Output.begin() + Nvars);
         };
+        auto pair_joined = std::get<0>(pair) +  "+" + std::get<1>(pair);
         auto forwards = get_Tred(true), back = get_Tred(false), diff = forwards;
         for (auto i = 0; i < forwards.size(); ++i) {
+
             diff[i] = std::abs(forwards[i] - back[i]);
+            CAPTURE(pair_joined); 
+            CAPTURE(variable_names[i]);
             CAPTURE(forwards[i]);
             CAPTURE(back[i]);
             CHECK(forwards[i] > 0);

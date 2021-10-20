@@ -14,7 +14,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Version", "[setup]") {
     CHECK(hpath[0] != '*');
     std::vector<double> z(20, 0.0); 
     auto r = REFPROP("", "", "DLL#", DEFAULT, 0, 0, 0, 0, z);
-    CHECK(hpath == r.herr);
+    boost::algorithm::trim(r.hUnits);
+    std::string shpath(hpath);
+    boost::algorithm::trim(shpath);
+    CHECK(shpath == r.hUnits);
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "R + 0 = Total?", "[flash],[rplus0]") {

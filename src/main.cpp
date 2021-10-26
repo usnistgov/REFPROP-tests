@@ -659,6 +659,22 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {
     CHECK(r0.Output[0] == Approx(r2.Output[0]).epsilon(1e-14));
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly applied to R13+R1234yf ", "[setup][BIP]") {
+    int ierr = -1; std::string herr;
+    SETFLUIDS("R13;R1234yf", ierr, herr);
+    REQUIRE(ierr == -117);
+    // Get the parameters
+    int icomp = 1, jcomp = 2;
+    ierr = 0;
+    char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
+    double fij[6];
+    GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
+    CHECK(fij[0] == 1.0);
+    CHECK(fij[1] != 1.0);
+    CHECK(fij[2] == 1.0);
+    CHECK(fij[3] != 1.0);
+
+};
 TEST_CASE_METHOD(REFPROPDLLFixture, "Unset bounds", "[flags]") {
     std::vector<double> z(20, 1.0); z[0] = 0.4; z[1] = 0.6;
 

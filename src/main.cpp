@@ -660,19 +660,41 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Unset splines", "[flags]") {
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly applied to R13+R1234yf ", "[setup][BIP]") {
-    int ierr = -1; std::string herr;
-    SETFLUIDS("R13;R1234yf", ierr, herr);
-    REQUIRE(ierr == -117);
-    // Get the parameters
-    int icomp = 1, jcomp = 2;
-    ierr = 0;
-    char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
-    double fij[6];
-    GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
-    CHECK(fij[0] == 1.0);
-    CHECK(fij[1] != 1.0);
-    CHECK(fij[2] == 1.0);
-    CHECK(fij[3] != 1.0);
+    SECTION("Without absolute paths") {
+        int ierr = -1; std::string herr;
+        SETFLUIDS("R13;R1234yf", ierr, herr);
+        REQUIRE(ierr == -117);
+        // Get the parameters
+        int icomp = 1, jcomp = 2;
+        ierr = 0;
+        char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
+        double fij[6];
+        GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
+        CHECK(fij[0] == 1.0);
+        CHECK(fij[1] != 1.0);
+        CHECK(fij[2] == 1.0);
+        CHECK(fij[3] != 1.0);
+    }
+    SECTION("With absolute paths") {
+        int ierr = -1; std::string herr;
+        auto fld1 = normalize_path(std::string(std::getenv("RPPREFIX")) + "/FLUIDS/R13.FLD");
+        auto fld2 = normalize_path(std::string(std::getenv("RPPREFIX")) + "/FLUIDS/R1234YF.FLD");
+        SETFLUIDS(fld1 +";" + fld2, ierr, herr);
+        REQUIRE(ierr == -117);
+        // Get the parameters
+        int icomp = 1, jcomp = 2;
+        ierr = 0;
+        char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
+        double fij[6];
+        GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
+        CHECK(fij[0] == 1.0);
+        CHECK(fij[1] != 1.0);
+        CHECK(fij[2] == 1.0);
+        CHECK(fij[3] != 1.0);
+    }
+};
+
+
 
 };
 TEST_CASE_METHOD(REFPROPDLLFixture, "Unset bounds", "[flags]") {

@@ -49,9 +49,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check spinodals", "[spinodal]") {
     std::vector<double> z(20, 0.0); z[1] = 0;
     double p = 101.325;
     auto r = REFPROP("WATER", "PQ", "DLIQ;LIQSPNDL;VAPSPNDL;DVAP;T",DEFAULT, 0, 0, p, 0, z);
-    double dliq = r.Output[0], liqspndl = r.Output[1], vapspndl = r.Output[2], dvap = r.Output[3], T = r.Output[4]; 
+    //double dliq = r.Output[0], dvap = r.Output[3]; 
+    double liqspndl = r.Output[1], vapspndl = r.Output[2], T = r.Output[4];
     double p_vapspndl = REFPROP("WATER", "TD&", "P", DEFAULT, 0, 0, T, vapspndl, z).Output[0];
-    double p_vapspndl2 = REFPROP("WATER", "DT&", "P", DEFAULT, 0, 0, vapspndl, T, z).Output[0];
+    //double p_vapspndl2 = REFPROP("WATER", "DT&", "P", DEFAULT, 0, 0, vapspndl, T, z).Output[0];
     double p_liqspndl = REFPROP("WATER", "TD&", "P", DEFAULT, 0, 0, T, liqspndl, z).Output[0];
     REQUIRE(p_liqspndl < p);
     REQUIRE(p_vapspndl > p);
@@ -623,7 +624,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
                         double D_expected = (iMass_) ? props0mass["D"] : props0["D"];
                         double Qmass_expected = (iMass_) ? props0mass["Qmass"] : props0["Qmass"];
                         double Qmole_expected = (iMass_) ? props0mass["Qmole"] : props0["Qmole"];
-                        double Q_expected = (iMass_) ? props0mass["Qmass"] : props0["Qmole"];
+                        //double Q_expected = (iMass_) ? props0mass["Qmass"] : props0["Qmole"];
 
                         //CHECK(r.q == Approx(Q_expected));
                         CHECK(props["T"] == Approx(T_expected).epsilon(1e-3));
@@ -794,8 +795,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test surface tension for ST1 models", "[sur
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test out of range value yields big error", "[flash][ierr]") {
+    std::vector<double> z(20, 1.0);
     SECTION("A little bit too big pressure") {
-        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 200e6, { 1.0 });
+        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 200e6, z);
         CAPTURE(r.herr);
         CAPTURE(r.Output[0]);
         std::string note = "200 MPa should yield small error code greater than 0 and the given value";
@@ -805,7 +807,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test out of range value yields big error", 
         CHECK(r.Output[0] > 0);
     }
     SECTION("Huge pressure") {
-        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 1e16, { 1.0 });
+        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 1e16, z);
         CAPTURE(r.herr);
         CAPTURE(r.Output[0]);
         std::string note = "1e16 MPa should yield failure, no result, and out of bound pressure error";
@@ -1250,7 +1252,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check acentric factor for all pure fluids (
         CHECK(ierr == 0);
 
         double wmm = -1, ttrp = -1, tnbpt = -1, tc = -1, pc = -1, Dc = -1, Zc = -1, acf = -1, dip = -1, Rgas = -1, z[20] = { 1.0 };
-        int icomp = 1, kq = 1;
+        int icomp = 1;
         INFOdll(icomp, wmm, ttrp, tnbpt, tc, pc, Dc, Zc, acf, dip, Rgas);
 
         char htyp[4] = "EOS"; double Tmin = -1, Tmax = -1, Dmax = -1, Pmax = -1;

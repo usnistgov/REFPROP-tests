@@ -561,7 +561,6 @@ class TransportValidationFixture : public REFPROPDLLFixture
 public:
 
     void payload() {
-        int MOLAR_BASE_SI = get_enum("MOLAR BASE SI   ");
         for (auto el : transport_validation_data) {
 
             // Get the inputs

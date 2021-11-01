@@ -793,6 +793,28 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test surface tension for ST1 models", "[sur
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Test out of range value yields big error", "[flash][ierr]") {
+    SECTION("A little bit too big pressure") {
+        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 200e6, { 1.0 });
+        CAPTURE(r.herr);
+        CAPTURE(r.Output[0]);
+        std::string note = "200 MPa should yield small error code greater than 0 and the given value";
+        CAPTURE(note);
+        CHECK(r.ierr < 100);
+        CHECK(r.ierr > 0);
+        CHECK(r.Output[0] > 0);
+    }
+    SECTION("Huge pressure") {
+        auto r = REFPROP("H2S", "TP", "D", MOLAR_BASE_SI, 0, 0, 300, 1e16, { 1.0 });
+        CAPTURE(r.herr);
+        CAPTURE(r.Output[0]);
+        std::string note = "1e16 MPa should yield failure, no result, and out of bound pressure error";
+        CAPTURE(note);
+        CHECK(r.Output[0] < 0);
+        CHECK(r.ierr > 100);
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
     auto flds_with_PH0 = fluids_with_PH0_or_PX0();
     REQUIRE(flds_with_PH0.size() > 0);

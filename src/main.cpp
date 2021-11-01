@@ -1255,6 +1255,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check acentric factor for all pure fluids (
 
         char htyp[4] = "EOS"; double Tmin = -1, Tmax = -1, Dmax = -1, Pmax = -1;
         LIMITSdll(htyp, z, Tmin, Tmax, Dmax, Pmax, 3);
+
+        if (0.7 * tc < Tmin) {
+            continue;
+        }
         std::vector<double> zz(20,0); zz[0] = 1;
         auto r = REFPROP("","TQ","P",0,0,0,0.7*tc,0,zz);
 

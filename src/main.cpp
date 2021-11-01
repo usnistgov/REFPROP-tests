@@ -767,6 +767,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check AGA8 stays on after SETFLUIDS", "[fla
 
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test surface tension H2O + X fails", "[surten]") {
+    std::string note = "It had been agreed that water + X for anything without an ST1 model would be an ierr of 518, but flash calls are tried (and fail) in some cases, so the pass to check for existence of model seems to come after the flash attempt";
+    CAPTURE(note);
     for (auto &&other : get_pure_fluids_list()) {
         if (other=="WATER"){ continue; }
         std::vector<double> z(20,0); z[0] = 0.4; z[1] = 0.6;
@@ -931,6 +933,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check super long list of fluids", "[100comp
     std::string flds = "Water";
     for (auto i = 0; i < 100; ++i) { flds += "*Water"; }
     auto r = REFPROP(flds, " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+    std::string note = "The problem here is that if you provide too many components, that should not be allowed and you should get an error message";
+    CAPTURE(note);
     CAPTURE(r.herr);
     REQUIRE(r.ierr > 100); // [TODO] force to be a 109 error
 };
@@ -1510,9 +1514,13 @@ TEST_CASE_METHOD(GETSETKTV, "Check BIP for R32 + CO2", "[BIP]") {
     CHECK(ierr == 0);
     // Get them from GETKTV
     auto vals = get_values();
-    // And also get them from the REFPROP function
-    std::vector<double> z(20, 1); 
-    auto R2 = REFPROP("R32 * CO2","","FIJMIX",0,0,0,1,2,z);
+    // And also get them from the REFPROP function with FIJMIX
+    std::vector<double> z(20, 0.5); 
+    auto R2 = REFPROP("","","FIJMIX",0,0,0,1,2,z);
+    std::string note = "The problem here is that FIJMIX does not return the correct values";
+    CAPTURE(note);
+    CAPTURE(R2.herr);
+    CHECK(R2.ierr == 0);
     // The expected values
     std::vector<double> betasFij = { 1.0, 0.9978225, 1.0, 1.0058521, 0.0};
     for (auto i = 0U; i < 5U; ++i) {

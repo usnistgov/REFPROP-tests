@@ -291,10 +291,20 @@ std::vector<vel> transport_validation_data = {
     // From Mylona, JPCRD, 2014
     {"EthylBenzene", "T", 617, "Dmass", 316, "V", 33.22e-6, 1e-2},
 
-    // Heavy Water, IAPWS formulation
-    {"HeavyWater", "T", 0.5000*643.847, "Dmass", 3.07 * 358, "V", 12.0604912273*55.2651e-6, 1e-5},
-    {"HeavyWater", "T", 0.9000*643.847, "Dmass", 2.16 * 358, "V", 1.6561616211*55.2651e-6, 1e-5},
-    {"HeavyWater", "T", 1.2000*643.847, "Dmass", 0.8 * 358, "V", 0.7651099154*55.2651e-6, 1e-5},
+    // Heavy Water, Assael et al., JPCRD, 2021
+    {"HeavyWater", "T", 298.15, "Dmass", 0   , "V", 10.035938e-6, 1e-8},
+    {"HeavyWater", "T", 298.15, "Dmass", 1105, "V", 1092.6424e-6, 1e-8},
+    {"HeavyWater", "T", 298.15, "Dmass", 1130, "V", 1088.3626e-6, 1e-8},
+    {"HeavyWater", "T", 373.15, "Dmass", 1064, "V", 326.63791e-6, 1e-8},
+    {"HeavyWater", "T", 775.00, "Dmass", 1   , "V", 29.639474e-6, 1e-8},
+    {"HeavyWater", "T", 775.00, "Dmass", 100 , "V", 31.930085e-6, 1e-8},
+    {"HeavyWater", "T", 775.00, "Dmass", 400 , "V", 53.324172e-6, 1e-4}, // Assumption of mu_1 = 1 not good for this point
+    {"HeavyWater", "T", 644.101, "Dmass", 145, "V", 26.640959e-6, 1e-8},
+    {"HeavyWater", "T", 644.101, "Dmass", 245, "V", 32.119967e-6, 1e-8},
+    {"HeavyWater", "T", 644.101, "Dmass", 295, "V", 36.828275e-6, 1e-8},
+    {"HeavyWater", "T", 644.101, "Dmass", 345, "V", 43.225017e-6, 1e-8},
+    {"HeavyWater", "T", 644.101, "Dmass", 395, "V", 47.193530e-6, 1e-8},
+    {"HeavyWater", "T", 644.101, "Dmass", 445, "V", 50.241640e-6, 1e-8},
 
     // Toluene, Avgeri, JPCRD, 2015
     {"Toluene", "T", 300, "Dmass", 1e-10, "V", 7.023e-6, 1e-4},
@@ -586,10 +596,12 @@ public:
                 double Output[200], x[20], y[200], x3[20];
                 REFPROPdll(hfld2, hin, hout, MOLAR_BASE_SI, iMass, iFlag, el.v1, el.v2, z, Output, hUnits, iUnit, x, y, x3, q, ierr, herr, 10000, 255, 255, 255, 255);
                 CAPTURE(herr);
+                CAPTURE(ierr);
                 CAPTURE(Output[0]);
                 CHECK(ierr < 100);
-
+                CAPTURE("ERROR: This error code needs to be > 100!");
                 T_K = el.v1; D_molm3 = Output[0];
+                CHECK(D_molm3 >= 0);
             }
             else if (el.in1 == "T" && el.in2 == "Q") {
                 double q = 0;
@@ -608,8 +620,19 @@ public:
                 CAPTURE(err);
                 CHECK(false);
             }
+            if (ierr > 100) {
+                continue;
+            }
             CAPTURE(T_K);
             CAPTURE(D_molm3);
+            if (D_molm3 < 0 && ierr == 0) {
+                std::string errmsg = "Can't have negative density from flash and also ierr of zero";
+                CAPTURE(errmsg);
+                CAPTURE(ierr);
+                CAPTURE(herr);
+                CHECK(false);
+                continue;
+            }
 
             {
                 // Check with REFPROP function
@@ -631,6 +654,7 @@ public:
                     CHECK(false);
                 }
                 
+                CAPTURE(r.ierr);
                 CAPTURE(r.herr);
                 CAPTURE(r.hUnits);
                 CHECK(ierr < 100);

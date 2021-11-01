@@ -63,8 +63,10 @@ public:
         };
 
         std::vector<double> zz(1, 1);
-        auto res = REFPROP("", "flags", "SETREF", 0, 0, 2, 0, 0, zz);
-        CHECK(res.ierr == 0);
+        auto res = REFPROP("", "FLAGS", "SETREF", 0, 0, 2, 0, 0, zz);
+        //int k = -1;
+        //FLAGS("SETREF", 2, k, true);
+        //CHECK(res.ierr == 0);
     }
 
     void payload() {
@@ -113,19 +115,30 @@ public:
                         outString += "(" + std::to_string(int(in.Prop3)) + ")";
                     }
                     int iMass = 0, iFlag = 0;
-                    double a = in.Prop1, b = in.Prop2; std::vector<double> z(20, 0.0);
+                    double a = in.Prop1, b = in.Prop2; std::vector<double> z(20, -1.0);
                     int unit_system  = get_enum(in.Units);
                     CAPTURE(unit_system);
                     CAPTURE(in.FluidName);
+                    CAPTURE(in.InpCode);
+                    CAPTURE(outString);
                     CAPTURE(in.Ninputs);
                     CAPTURE(in.Units);
-                    CAPTURE(in.Prop1);
-                    CAPTURE(in.Prop2);
+                    CAPTURE(a);
+                    CAPTURE(b);
+
+                    // Check that the flag for resetting of reference state is still enabled
+                    int kSETREF = -1;
+                    FLAGS("SETREF", -999, kSETREF, true);
+                    CHECK(kSETREF == 2);
+
                     if (in.Ninputs == 7) {
                         CAPTURE(in.Prop3);
                     }
                     auto r = REFPROP(in.FluidName, in.InpCode, outString, unit_system, iMass, iFlag, a, b, z);
                     CAPTURE(r.herr);
+                    if (r.ierr > 100) {
+                        int rrrr = 0;
+                    }
                     CHECK(r.ierr < 100);
                     CHECK(r.Output[0] == Approx(expected).epsilon(1e-5));
                     break;

@@ -65,7 +65,7 @@ class ClassRunner():
                     failure_count = r['failure_count']
                     j[unhash[r['pathhash']]] = f'<a href="{url}">{failure_count} failures</a>'
                 o.append(j)
-        pandas.DataFrame(o).to_html('report.html', index=False, escape=False)
+        pandas.DataFrame(o).sort_values(by='tag').to_html('report.html', index=False, escape=False)
 
     def compare(self):
         self._expand_DLL()

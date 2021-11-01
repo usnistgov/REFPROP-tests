@@ -46,7 +46,7 @@ class ClassRunner():
             'pathhash': pathhash
         }
 
-    def build_tag_report(self, tags):
+    def build_tag_report(self, tags, sort_by = None):
         o = []
         unhash = {}
         for tag in tags:
@@ -65,12 +65,16 @@ class ClassRunner():
                     failure_count = r['failure_count']
                     j[unhash[r['pathhash']]] = f'<a href="{url}">{failure_count} failures</a>'
                 o.append(j)
-        pandas.DataFrame(o).sort_values(by='tag').to_html('report.html', index=False, escape=False)
+        if sort_by is not None:
+            by = sort_by
+        else:
+            by = 'tag'
+        pandas.DataFrame(o).sort_values(by=by).to_html('report.html', index=False, escape=False)
 
-    def compare(self):
+    def compare(self, sort_by = None):
         self._expand_DLL()
         self.tags = self._collect_tag_list()
-        self.build_tag_report(self.tags)
+        self.build_tag_report(self.tags, sort_by=sort_by)
 
 if __name__ == '__main__':
     print('Can\'t run this file directly')

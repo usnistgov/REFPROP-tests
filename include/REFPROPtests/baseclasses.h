@@ -112,21 +112,20 @@ public:
         return ienum;
     }
 
-    REFPROPResult REFPROP(const std::string &_hFld, const std::string &_hIn, const std::string &_hOut, int unit_system, int iMass, int iFlag, double a, double b, const std::vector<double> &z) {
+    REFPROPResult REFPROP(const std::string &_hFld, const std::string &_hIn, const std::string &_hOut, int unit_system, int iMass, int iFlag, double a, double b, std::vector<double> &z) {
         char hFld[10001], hIn[256], hOut[256];
         REQUIRE(_hFld.size() < 9999);
         REQUIRE(_hIn.size() < 254);
         REQUIRE(_hOut.size() < 254);
         // Pad z with zeros
-        auto znew = z;
-        if (znew.size() < 20){
-            auto old_size = znew.size();
-            znew.resize(20);
+        if (z.size() < 20){
+            auto old_size = z.size();
+            z.resize(20);
             for (auto i = old_size; i < 20; ++i) {
-                znew[i] = 0;
+                z[i] = 0;
             }
         }
-        REQUIRE(znew.size() >= 20);
+        REQUIRE(z.size() >= 20);
         strcpy(hFld, (_hFld + std::string(10000-_hFld.size(),' ')).c_str());
         strcpy(hIn, (_hIn + std::string(255-_hIn.size(), ' ')).c_str());
         strcpy(hOut, (_hOut + std::string(255-_hOut.size(), ' ')).c_str());
@@ -136,7 +135,7 @@ public:
         int iUnit = 0, ierr = 0;
         char herr[256] = "", hUnits[256] = "";
 
-        REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, &(znew[0]), &(Output[0]), hUnits, iUnit, &(x[0]), &(y[0]), &(x3[0]), q, ierr, herr, 10000, 255, 255, 255, 255);
+        REFPROPdll(hFld, hIn, hOut, unit_system, iMass, iFlag, a, b, &(z[0]), &(Output[0]), hUnits, iUnit, &(x[0]), &(y[0]), &(x3[0]), q, ierr, herr, 10000, 255, 255, 255, 255);
         REFPROPResult res  = {z, Output, std::string(hUnits), iUnit, x, y, x3, q, ierr, std::string(herr) };
         return res;
     }

@@ -1095,6 +1095,15 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "PRVLE calling FLAGS(\"PR\")", "[PR]") {
     CHECK(r2.Output[1] != Approx(r1.Output[1]).margin(0.1)); // VT should change density
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check always get error code of 501 for missing melting curve", "[melt]") 
+{
+    std::vector<double> z(20, 0); z[0] = 1.0;
+    auto r = REFPROP("ACETONE", "TMELT", "P", MOLAR_BASE_SI, 0, 0, 0.0, 101325, z);
+    CHECK(r.ierr == 501);
+    auto r2 = REFPROP("ACETONE", "TMELT", "P", MOLAR_BASE_SI, 0, 0, 100.0, 101325, z);
+    CHECK(r2.ierr == 501);
+};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "PRVLE calling PREOS", "[PR]") {
 
     std::vector<double> z(20, 0); z[0] = 0.4; z[1] = 0.6;

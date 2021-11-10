@@ -541,10 +541,11 @@ std::vector<vel> transport_validation_data = {
     { "Methanol", "T", 400, "Dmass", 690, "L", 183.59e-3, 1e-2 },
     { "Methanol", "T", 500, "Dmass", 10, "L", 40.495e-3, 1e-2 },
 
-    // Heavy Water, IAPWS formulation
-    { "HeavyWater", "T", 0.5000*643.847, "Dmass", 3.07 * 358, "L", 835.786416818*0.742128e-3, 1e-5 },
-    { "HeavyWater", "T", 0.9000*643.847, "Dmass", 2.16 * 358, "L", 627.777590127*0.742128e-3, 1e-5 },
-    { "HeavyWater", "T", 1.2000*643.847, "Dmass", 0.8 * 358, "L", 259.605241187*0.742128e-3, 1e-5 },
+    // Heavy Water, IAPWS '22 formulation
+    { "HeavyWater","T",298.15,"Dmass",0,"L",17.7498e-3,1e-5 },
+    { "HeavyWater","T",298.15,"Dmass",1104.5,"L",599.557e-3,1e-5 },
+    { "HeavyWater","T",298.15,"Dmass",1200,"L",690.421e-3,1e-5 },
+    { "HeavyWater","T",825.00,"Dmass",0,"L",76.4492e-3,1e-5 },
 
     // Vassiliou, JPCRD, 2015
     { "Cyclopentane", "T", 512, "Dmass", 1e-12, "L", 37.042e-3, 1e-5 },

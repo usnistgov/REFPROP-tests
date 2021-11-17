@@ -82,6 +82,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[set
         // Turn on splines
         int ierr = 0; char herr[255] = "";
         SATSPLNdll(&(z[0]), ierr, herr, 255U);
+        CAPTURE(herr);
+        CHECK(ierr == 0);
+        
         // Get critical point
         double Tcspl = -1, Pcspl = -1, Dcspl = -1;
         double Wmol; WMOLdll(&(z[0]), Wmol);
@@ -90,6 +93,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[set
         CHECK(vals.Tc == Approx(Tcspl).epsilon(1e-2));
         CHECK(vals.pc == Approx(Pcspl).epsilon(1e-2));
         CHECK(vals.rhoc == Approx(Dcspl).epsilon(1e-2));
+        // Check that the Tc, pc, and rhoc are pretty much consistent by evaluation of p(T,rho);
+        double pchk = -1; PRESSdll(Tcspl, Dcspl, &(z[0]), pchk);
+        CHECK(pchk == Approx(Pcspl).epsilon(1e-2));
         // Check molar composition matches what we loaded
         for (auto i = 0; i < vals.molar_composition.size(); ++i) {
             CHECK(z[i] == Approx(vals.molar_composition[i]));

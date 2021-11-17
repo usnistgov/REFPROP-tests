@@ -822,9 +822,15 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
     REQUIRE(flds_with_PH0.size() > 0);
     for (auto &&fluid : flds_with_PH0) {
         std::vector<double> z(20,1.0);
-        auto r = REFPROP(fluid, " ", "TRED;DRED", 1, 0, 0, 0, 0, z);
-        double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau;
+        auto r = REFPROP(fluid, " ", "TRED;DRED;TMAX;TMIN", 1, 0, 0, 0, 0, z);
+        double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau, Tmax = r.Output[2], Tmin = r.Output[3];
+        T = std::min(T, Tmax);
+        T = std::max(T, Tmin);
+        CAPTURE(T);
+        CAPTURE(Tmin);
+        CAPTURE(Tmax);
         CAPTURE(fluid);
+        CAPTURE(rho);
         CHECK(r.ierr < 100);
 
         reload();
@@ -842,6 +848,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
             REQUIRE(kflag == jflag);
         }
         r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr); 
         CHECK(r.ierr == 0);
         std::vector<double> normal = std::vector<double>(r.Output.begin(), r.Output.begin() + 5); 
 
@@ -855,6 +862,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
             REQUIRE(kflag == jflag);
         }
         r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr);
         CHECK(r.ierr == 0);
         std::vector<double> with_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin()+5);
         

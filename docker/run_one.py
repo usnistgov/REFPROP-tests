@@ -4,7 +4,7 @@ from ansi2html import Ansi2HTMLConverter
 
 def get_path_hash(root_path):
     """ 
-    Utility function to hash the path to remove all the annoying path separtors and so on... 
+    Utility function to hash the path to remove all the annoying path separators and so on... 
     """
     return hashlib.sha224(root_path.encode('ascii')).hexdigest()
 
@@ -46,6 +46,9 @@ def run_test(*, root, test):
     #    shutil.rmtree(outfold)
     #os.makedirs(outfold)
 
+    if not os.path.exists(root):
+        return
+
     # Collect the REFPROP files
     build_REFPROP_zip(root=root, zippath=os.path.join(test, 'REFPROP.zip'))
     print('zip built')
@@ -53,16 +56,22 @@ def run_test(*, root, test):
     # Run the test
     logfile = prefix+'_build_run.log'
     print('logging to', logfile)
-    with open(logfile, 'w') as stdout:
-        subprocess.call('docker-compose up --build', cwd=test, shell=True, stdout=stdout, stderr=stdout)
+    try:
+        with open(logfile, 'w') as stdout:
+            subprocess.check_call('docker-compose up --build', cwd=test, shell=True, stdout=stdout, stderr=stdout)
 
-    # Convert ANSI color codes in the log to html
-    html = Ansi2HTMLConverter().convert(open(prefix+'_build_run.log').read())
-    with open(prefix+'_build_run.html', 'w') as fp:
-        fp.write(html)
+        # Convert ANSI color codes in the log to html
+        html = Ansi2HTMLConverter().convert(open(prefix+'_build_run.log').read())
+        with open(prefix+'_build_run.html', 'w') as fp:
+            fp.write(html)
 
-    # Collect the bits and pieces from the run into a zip file
-    shutil.make_archive(prefix, 'zip', os.path.join(test, 'output'))
+        # Collect the bits and pieces from the run into a zip file
+        shutil.make_archive(prefix, 'zip', os.path.join(test, 'output'))
+    except:
+        lines = open(logfile).readlines()
+        numlines = min(20, len(lines)-1)
+        print('Tail of logfile:', ''.join(lines[-numlines::]))
+        raise
 
 if __name__ == '__main__':
 
@@ -73,6 +82,8 @@ if __name__ == '__main__':
     if sys.platform.startswith('win'):
         mnt = 'Q:/Public/'
     # sys.argv += ['--root', mnt+'Eric/INSTALL/BETA','--test','test']
+    # sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','valgrind']
+    # sys.argv += ['--root', r'Q:/Public/Eric/INSTALL/1000/10.0','--test','test']
     sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','test']
 
     parser = argparse.ArgumentParser(description='Run a specified test, and generate a zip file with perhaps relevant output')

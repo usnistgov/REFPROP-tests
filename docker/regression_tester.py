@@ -16,7 +16,7 @@ class ClassRunner():
         for p in self.paths:
             self._build_one(p)
 
-    def _expand_DLL(self):
+    def _expand_ZIP(self):
         for path in self.paths:
             h = run_one.get_path_hash(path)
             test = self.test
@@ -72,7 +72,7 @@ class ClassRunner():
         pandas.DataFrame(o).sort_values(by=by).to_html('report.html', index=False, escape=False)
 
     def compare(self, sort_by = None):
-        self._expand_DLL()
+        self._expand_ZIP()
         self.tags = self._collect_tag_list()
         self.build_tag_report(self.tags, sort_by=sort_by)
 

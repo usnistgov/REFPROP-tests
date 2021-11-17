@@ -841,6 +841,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
 
         reload();
         r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr); 
         CHECK(r.ierr == 0);
         std::vector<double> default_ = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
@@ -872,8 +873,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
         CHECK(r.ierr == 0);
         std::vector<double> with_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin()+5);
         
-        CAPTURE(T);
-        CAPTURE(rho);
         CHECK(normal.size() == with_PX0.size());
         CHECK(default_.size() == with_PX0.size());
         for (auto i = 0; i < normal.size(); ++i) {

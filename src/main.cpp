@@ -823,6 +823,25 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test out of range value yields big error", 
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Test XMASS,XMOLE,NCOMP", "[setup],[predef_mixes]") {
+    auto [z,ierr,herr] = SETMIXTURE("AIR.MIX");
+    SECTION("NCOMP") {
+        auto r = REFPROP("", "", "NCOMP", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+        CHECK(r.Output[0] == 3);
+        CHECK(r.ierr == 0);
+    }
+    SECTION("XMASS") {
+        auto r = REFPROP("", "", "XMASS", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+        CHECK(r.Output[0] == 0.755704007799347);
+        CHECK(r.ierr == -852);
+    }
+    SECTION("XMOLE") {
+        auto r = REFPROP("", "", "XMOLE", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+        CHECK(r.Output[0] == 0.7812);
+        CHECK(r.ierr == -852);
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
     auto flds_with_PH0 = fluids_with_PH0_or_PX0();
     REQUIRE(flds_with_PH0.size() > 0);

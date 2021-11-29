@@ -554,6 +554,13 @@ std::vector<vel> transport_validation_data = {
     { "Isopentane", "T", 460, "Dmass", 329.914, "L", 59.649e-3, 1e-1 },
     { "n-Pentane", "T", 460, "Dmass", 1e-12, "L", 34.048e-3, 1e-5 },
     { "n-Pentane", "T", 460, "Dmass", 377.687, "L", 71.300e-3, 1e-1 },
+    
+    // Perkins, R.A., Huber, M.L. & Assael, M.J. Int J Thermophys 43, 12 (2022). https://doi.org/10.1007/s10765-021-02941-7
+    { "RE347MCC","T",273.0,"Dmass",0.00,"L",0.010088,1e-6 },
+    { "RE347MCC","T",273.0,"Dmass",1475.0,"L",0.070957,1e-6 },
+    { "RE347MCC","T",435.0,"Dmass",0.00,"L",0.023416,1e-6 },
+    { "RE347MCC","T",435.0,"Dmass",300.0,"L",0.033789,1e-6 },
+
 
 };
 

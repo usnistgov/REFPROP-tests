@@ -579,6 +579,16 @@ std::vector<vel> transport_validation_data = {
     {"R1336MZZE", "T", 298, "Dmass", 0.0, "L", 12.404656e-3, 1e-8},
     {"R1336MZZE", "T", 298, "Dmass", 1340.0, "L", 71.773531e-3, 1e-8},
 
+    { "R113", "T", 300, "Dmass", 0.0, "L", 7.2162851e-3, 1e-8 },
+    { "R113", "T", 300, "Dmass", 1559.0, "L", 71.819605e-3, 1e-8 },
+
+
+    // ***********************************************************
+    //                    SURFACE TENSION
+    // ***********************************************************
+    // (technically not a transport property, but can use same architecture)
+
+    { "R113", "T", 300, "Q", 0.0, "I", 17.010746e-3, 1e-8 },
 };
 
 class TransportValidationFixture : public REFPROPDLLFixture
@@ -672,6 +682,10 @@ public:
                     r = REFPROP(el.fluid, "TD&", "ETA", MOLAR_BASE_SI, iMass, iFlag, T_K, D_molm3, z);
                     actual = r.Output[0]; // [Pa-s]
                 }
+                else if (el.out == "I") {
+                    r = REFPROP(el.fluid, "TD&", "STN", MOLAR_BASE_SI, iMass, iFlag, T_K, D_molm3, z);
+                    actual = r.Output[0]; // N/m
+                }
                 else {
                     std::string err = "Output variable is invalid: " + el.out;
                     CAPTURE(err);
@@ -708,6 +722,9 @@ public:
                 }
                 else if (el.out == "V") {
                     actual = eta / 1e6; // uPa-s to Pa-s
+                }
+                else if (el.out == "I") {
+                    actual = el.expected; // This is to skip the TRNPRP test
                 }
                 else {
                     std::string err = "Output variable is invalid: " + el.out;

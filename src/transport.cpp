@@ -775,3 +775,33 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mixtures give warning for transport",
     auto r1 = REFPROP("", "TD&", "ETA;TCX", 0, 0, 0, 300, 300, z);
     CHECK(r1.ierr < 0);
 };
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Ddil", "[Ddil]") {
+    // At this state point, experimental value is etaexp = 10.8 uPa*s
+    double T_K = 293.138, p_MPa = 0.101, rho_kgm3 = 0.40648, xmole_H2 = 0.4823;
+    std::vector<double> z(20, 0.0); z[0] = xmole_H2; z[1] = 1 - xmole_H2;
+
+    char* RESOURCES = std::getenv("RESOURCES");
+    REQUIRE(RESOURCES != nullptr);
+
+    // Map from HMX file to expected result
+    std::unordered_map<std::string, double> value_map{
+        {"HMX10.0_H2NH3.BNC", 10.603},
+        {"HMX10.0_H2NH3_correctedDdil.BNC", 10.892},
+        {"HMX10.0_H2NH3_incorrectDdil.BNC", 11.479},
+        {"HMX10.0_H2NH3_Ddilordering.BNC", 10.892},
+    };
+    int kflag = -999;
+    for (auto &pair : value_map) {
+        int ierr = 0; std::string herr;
+        std::string HMX_path = std::string(RESOURCES) + "/Ddil/" + pair.first;
+        FLAGS("Reset HMX", 1, kflag, false /*check_kflag*/); 
+        SETUP(2, "H2*NH3", HMX_path, "DEF", ierr, herr);
+        CHECK(ierr == 0);
+        double expected = pair.second;
+        auto r = REFPROP("", "TP", "VIS;D", MASS_BASE_SI, 0, 0, T_K, p_MPa * 1e6, z);
+        double eta_calc = r.Output[0]*1e6;
+        //double rho_calc = r.Output[1];
+        CHECK(eta_calc == Approx(expected).margin(0.001));
+    }
+}

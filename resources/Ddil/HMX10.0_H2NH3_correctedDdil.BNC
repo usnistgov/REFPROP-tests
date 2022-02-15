@@ -1,0 +1,45 @@
+HMX               !Mnemonic for mixture model, must match hfmix on call to SETUP.
+4                 !Version number
+
+! Changelog:
+
+
+#BNC              !Binary mixing coefficients
+BNC
+? Binary mixing coefficients for the various mixing rules used with the HMX model:
+!
+?Hydrogen/Ammonia                                          [H2/NH3]
+?T. Neumann et al., FPE, 2020. DOI:https://doi.org/10.1016/j.fluid.2020.112496; corrigendum: DOI: DOI:https://doi.org/10.1016/j.fluid.2020.112749
+  8d757b40/e9847540
+    BHA      0.98824        1.1266         1.0103         0.7298         1.             0.             0. 0. 0. 0. 0. 0.
+    TC7      0.             0.             0.             0.             0.             0.             0. 0. 0. 0. 0. 0.
+    VC7      0.             0.             0.             0.             0.             0.             0. 0. 0. 0. 0. 0.
+    TR2     -0.66550        0.99846        0.             0.             0.             0.             0. 0. 0. 0. 0. 0.
+!
+
+
+#MXM              !Mixture model specification
+BHA  Neumann model for the hydrogen-ammonia mixture
+?
+?```````````````````````````````````````````````````````````````````````````````
+?T. Neumann, M. Thol, I. Bell, E.W. Lemmon, and R. Span,
+? Fundamental Thermodynamic Models for Mixtures Containing Ammonia
+? Fluid Phase Equilib., v. 511, May 2020, 112496
+? DOI:https://doi.org/10.1016/j.fluid.2020.112496
+? Corrigendum: DOI:https://doi.org/10.1016/j.fluid.2020.112749
+?
+?Hydrogen-Ammonia
+?
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV    Fij    not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  2 4      0        0 0      2 12     0 0      0 0         !Nterm, Nxcoef, spare, Nspecterms, Nspeccoefs, spare, spare
+ -3.73558        1.28    1.    1.                          !a(i),t(i),d(i),c(i)
+ -7.47092        2.05    2.    1.
+  1.98413        2.6     1.    2. 2.  -0.61   -2.06   0.79   0.8      0. 0. 0.   !a(i),t(i),d(i),p1(i),p2(i),eta(i),beta(i),gamma(i),epsilon(i)
+  1.87191        3.13    2.    2. 2.  -1.6    -1.74   2.1    1.62     0. 0. 0.
+
+
+@END
+c        1         2         3         4         5         6         7         8
+c2345678901234567890123456789012345678901234567890123456789012345678901234567890

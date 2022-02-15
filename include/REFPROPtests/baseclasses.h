@@ -46,8 +46,9 @@ public:
         DEFAULT = get_enum("DEFAULT");
         MOLAR_SI = get_enum("MOLAR SI");
         MOLAR_BASE_SI = get_enum("MOLAR BASE SI");
+        MASS_BASE_SI = get_enum("MASS BASE SI");
     }
-    int DEFAULT, MOLAR_SI, MOLAR_BASE_SI;
+    int DEFAULT, MOLAR_SI, MOLAR_BASE_SI, MASS_BASE_SI;
     void reload() {
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(RPPREFIX != nullptr);
@@ -189,6 +190,17 @@ public:
         if (ierr != 0) {
             ERRMSGdll(ierr, herrsetup, 255);
         }
+        herr = std::string(herrsetup);
+    }
+    void SETUP(const int nc_, const std::string& flds, const std::string &HMX, const std::string &ref, int& ierr, std::string& herr) {
+        char hFlds[10001] = "", hhmx[256] = "", href[4] = "";
+        REQUIRE(flds.size() <= 10000);
+        strcpy(hFlds, (flds.c_str() + std::string(10000 - flds.size(), ' ')).c_str());
+        strcpy(hhmx, (HMX.c_str() + std::string(255 - HMX.size(), ' ')).c_str());
+        strcpy(href, (ref.c_str() + std::string(3 - ref.size(), ' ')).c_str());
+        char herrsetup[255] = ""; 
+        int nc = nc_;
+        SETUPdll(nc, hFlds, hhmx, href, ierr, herrsetup, 10000, 255, 3, 255);
         herr = std::string(herrsetup);
     }
 

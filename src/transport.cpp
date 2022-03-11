@@ -805,3 +805,13 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Ddil", "[Ddil]") {
         CHECK(eta_calc == Approx(expected).margin(0.001));
     }
 }
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "helium viscosity regression", "[transport]") {
+    int MassSI = get_enum("Mass SI"); // unit in MASS SI
+    int iMass = 0; // 0: molar fraction, 1 : mass fraction, in this code we only use pure fluid, 0 or 1 either OK.
+    int iFlag = 0; // 0: don't call SATSPLN, 1: call SATSPLN
+    std::vector<double> z (20, 1.0);
+
+    auto r = REFPROP("helium", "TP", "VIS", MassSI, iMass, iFlag, 300, 1.0, z);
+    CHECK(r.Output[0] == Approx(20.0).margin(1.0));
+}

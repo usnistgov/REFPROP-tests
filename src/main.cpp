@@ -406,7 +406,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
         CAPTURE(r.hUnits);
         CAPTURE(val.v);
         CAPTURE(val.k);
-        CHECK_THAT(val.v, WithinAbsMatcher(r.Output[0], 1e-2));
+        CAPTURE(r.herr);
+        CHECK_THAT(val.v, WithinRelMatcher(r.Output[0], 1e-2));
     }
 }
 

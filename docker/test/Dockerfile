@@ -2,7 +2,7 @@
 ## Just use docker-compose to spin up this job
 ##
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 RUN apt-get -y -m update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake python3-numpy g++ gfortran git zip python3-six lcov python3-pip
 

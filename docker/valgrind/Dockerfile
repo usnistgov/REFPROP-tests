@@ -3,7 +3,7 @@
 ## Run me as: docker container run -it --mount type=bind,src="$(pwd)"/output,dst=/output gcov
 ##
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 RUN apt-get -y -m update &&  DEBIAN_FRONTEND=noninteractive apt-get install -y cmake python3 python3-numpy python3-pip g++ gfortran git zip valgrind
 

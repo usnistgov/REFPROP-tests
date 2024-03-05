@@ -6,10 +6,12 @@ Some of these tests are based on the tests implemented in the CoolProp program (
 
 #include <cstdlib>
 
-#include "catch.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+using Catch::Matchers::WithinAbsMatcher;
+using Catch::Matchers::WithinRelMatcher;
 
 #include "REFPROPtests/baseclasses.h"
-#include <boost/filesystem.hpp>
 
 static double fudge = 1000;
 
@@ -799,12 +801,16 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Ddil", "[Ddil]") {
         std::string HMX_path = std::string(RESOURCES) + "/Ddil/" + pair.first;
         FLAGS("Reset HMX", 1, kflag, false /*check_kflag*/); 
         SETUP(2, "H2*NH3", HMX_path, "DEF", ierr, herr);
+        REQUIRE(std::filesystem::exists(HMX_path));
+        CAPTURE(HMX_path);
+        CAPTURE(herr);
         CHECK(ierr == 0);
         double expected = pair.second;
-        auto r = REFPROP("", "TP", "VIS;D", MASS_BASE_SI, 0, 0, T_K, p_MPa * 1e6, z);
+        auto r = REFPROP("", "TP", "VIS;D;TCX", MASS_BASE_SI, 0, 0, T_K, p_MPa * 1e6, z);
         double eta_calc = r.Output[0]*1e6;
         //double rho_calc = r.Output[1];
-        CHECK(eta_calc == Approx(expected).margin(0.001));
+        double lambda_calc = r.Output[1];
+        CHECK_THAT(eta_calc, WithinAbsMatcher(expected, 0.001));
     }
 }
 
@@ -815,5 +821,5 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "helium viscosity regression", "[transport]"
     std::vector<double> z (20, 1.0);
 
     auto r = REFPROP("helium", "TP", "VIS", MassSI, iMass, iFlag, 300, 1.0, z);
-    CHECK(r.Output[0] == Approx(20.0).margin(1.0));
+    CHECK_THAT(r.Output[0], WithinAbsMatcher(20.0, 1.0));
 }

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.15)
 project (REFPROPTests)
 
 # Turn on more warnings in VS and turn off secure deprecation warnings
@@ -15,7 +15,8 @@ endif()
 add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
 set(CMAKE_CXX_STANDARD 17)
-include_directories("${CMAKE_SOURCE_DIR}/externals/Catch/single_include")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/externals/Catch")
+
 include_directories("${CMAKE_SOURCE_DIR}/externals/REFPROP-headers/")
 include_directories("${CMAKE_SOURCE_DIR}/include/")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso/include")
@@ -27,7 +28,8 @@ file(GLOB APP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 # The main EXE
 add_executable(main ${APP_SOURCES})
 # The required dependencies
-target_link_libraries(main Boost::filesystem)
+target_link_libraries(main PUBLIC Boost::filesystem  PRIVATE Catch2WithMain)
+add_test(normal_tests main)
 
 if (WIN32)
     # For windows, the MemoryModule too

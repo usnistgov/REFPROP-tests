@@ -1,4 +1,13 @@
-#include "catch.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+using Catch::Matchers::WithinAbsMatcher;
+using Catch::Matchers::WithinRelMatcher;
+
+// Approx() is deprecated and should be removed, but
+// no good drop-in solution is available
+#include <catch2/catch_approx.hpp>
+using Catch::Approx;
+
 #include <utility>
 #include "REFPROPtests/baseclasses.h"
 

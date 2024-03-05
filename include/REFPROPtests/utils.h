@@ -1,7 +1,6 @@
 #ifndef REFPROP_TESTS_UTILS
 #define REFPROP_TESTS_UTILS
 
-#include <boost/filesystem.hpp>
 #include <boost/foreach.hpp> 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -9,7 +8,9 @@
 #include <regex>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <valarray>
+#include <filesystem>
 
 /**  Read in an entire file in one shot
  */
@@ -56,7 +57,7 @@ static std::string str_join(const std::vector<std::string>& vals, const std::str
 static std::vector<std::pair<std::string, std::string>> get_binary_pairs() {
     char* RPPREFIX = std::getenv("RPPREFIX");
     REQUIRE(strlen(RPPREFIX) != 0);
-    namespace fs = boost::filesystem;
+    namespace fs = std::filesystem;
 
     fs::path target(fs::path(RPPREFIX) / fs::path("FLUIDS") / fs::path("HMX.BNC"));
     std::string contents = get_file_contents(target.string());
@@ -107,7 +108,7 @@ struct predef_mix_values {
 static predef_mix_values get_predef_mix_values(const std::string &fname) {
     char* RPPREFIX = std::getenv("RPPREFIX");
     REQUIRE(strlen(RPPREFIX) != 0);
-    namespace fs = boost::filesystem;
+    namespace fs = std::filesystem;
 
     fs::path target(fs::path(RPPREFIX) / fs::path("MIXTURES") / fs::path(fname));
     std::string contents = get_file_contents(target.string());
@@ -140,15 +141,17 @@ static predef_mix_values get_predef_mix_values(const std::string &fname) {
  *  path separator for the given platform
  */
 static std::string normalize_path(const std::string &path_as_string) {
-    namespace fs = boost::filesystem;
-    return boost::filesystem::canonical(fs::path(path_as_string)).string();
+    namespace fs = std::filesystem;
+    return fs::canonical(fs::path(path_as_string)).string();
 }
 
 /** Glue two path segments together and then normalize
 */
 static std::string path_join_and_norm(const std::string &left, const std::string &right){
-    namespace fs = boost::filesystem;
-    return normalize_path((fs::path(left) / fs::path("/") / fs::path(right)).string());
+    namespace fs = std::filesystem;
+    fs::path p{fs::path(left) / fs::path(right)};
+    std::string s = p.string();
+    return fs::canonical(p).string();
 }
 
 /** Find all files in a given folder that match the specified file extension
@@ -156,16 +159,11 @@ static std::string path_join_and_norm(const std::string &left, const std::string
  */
 static std::vector<std::string> get_files_in_folder(const std::string &folder, const std::string &extension) {
     
-    namespace fs = boost::filesystem;
     std::vector<std::string> files;
-
-    fs::directory_iterator it(folder), eod;
-    BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
-    {
-        if (fs::is_regular_file(p) && p.extension() == fs::path(extension))
-        {
-            std::string s = fs::canonical(p).filename().replace_extension("").string();
-            files.push_back(s);
+    for (auto const& dir_entry : std::filesystem::directory_iterator{ folder }) {
+        auto path = dir_entry.path();
+        if (path.extension() == extension) {
+            files.push_back(path.string());
         }
     }
     return files;
@@ -175,7 +173,7 @@ static std::vector<std::string> get_files_in_folder(const std::string &folder, c
 static std::vector<std::string> get_files_in_RPPREFIX_folder(const std::string &folder, const std::string &extension) {
     char* RPPREFIX = std::getenv("RPPREFIX");
     REQUIRE(strlen(RPPREFIX) != 0);
-    namespace fs = boost::filesystem;
+    namespace fs = std::filesystem;
 
     fs::path targetDir(fs::path(RPPREFIX) / fs::path(folder));
     return get_files_in_folder(targetDir.string(), extension);
@@ -197,7 +195,7 @@ static std::vector<std::string> fluids_with_PH0_or_PX0() {
     for (auto &fluid : get_pure_fluids_list()) {
         char* RPPREFIX = std::getenv("RPPREFIX");
         REQUIRE(strlen(RPPREFIX) != 0);
-        namespace fs = boost::filesystem;
+        namespace fs = std::filesystem;
         std::string path = (fs::path(RPPREFIX) / fs::path("FLUIDS") / fs::path(fluid+".FLD")).string();
         std::string contents = get_file_contents(path);
         for (auto &line : str_split(contents)) {

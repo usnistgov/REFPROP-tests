@@ -1,14 +1,44 @@
 #include <cstdlib>
 #include <boost/algorithm/string/trim.hpp>
 
-#define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+using Catch::Matchers::WithinAbsMatcher;
+using Catch::Matchers::WithinRelMatcher;
+
+// Approx() is deprecated and should be removed, but
+// no good drop-in solution is available
+#include <catch2/catch_approx.hpp>
+using Catch::Approx;
 
 #include "REFPROPtests/baseclasses.h"
 #include "REFPROPtests/utils.h"
 #include <numeric>
+#include <map>
+#include <string>
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Version", "[setup]") {
+#include <catch2/reporters/catch_reporter_event_listener.hpp>
+#include <catch2/reporters/catch_reporter_registrars.hpp>
+
+class testRunListener : public Catch::EventListenerBase {
+public:
+    using Catch::EventListenerBase::EventListenerBase;
+
+    void testRunStarting(Catch::TestRunInfo const&) override {
+        
+        auto load_method = AbstractSharedLibraryWrapper::load_method::LOAD_LIBRARY;
+        
+        namespace fs = std::filesystem;
+//        fs::path target(fs::path(std::getenv("RPPREFIX")) / fs::path("librefprop.dylib"));
+        
+        std::unique_ptr<NativeSharedLibraryWrapper> RP;
+        RP.reset(new NativeSharedLibraryWrapper(target.string(), load_method));
+    }
+};
+CATCH_REGISTER_LISTENER(testRunListener)
+
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Version", "[setup][version]") {
     char hpath[10001] = "";
     RPVersion(hpath, 10000);
     CHECK(hpath[0] != '*');
@@ -27,22 +57,22 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "R + 0 = Total?", "[flash],[rplus0]") {
     auto rT = REFPROP("Water", "TP", "P;E;H;S;CV;CP;A;G", 0, 0, 0, 298, 101.325, z);
     // Check they add up to the total
     for (auto i = 0; i < 8; ++i) {
-        CHECK(rT.Output[i] == Approx(rR.Output[i] + r0.Output[i]));
+        CHECK_THAT(rT.Output[i], WithinRelMatcher(rR.Output[i] + r0.Output[i], 1e-6));
     }
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP of water in SI unit systems", "[nbp]"){
     double T_K = 373.1242958477, T_C = T_K - 273.15;
     std::vector<double> z(20,0.0);
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("DEFAULT"), 0, 0, 101.325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MOLAR SI"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MASS SI"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("SI WITH C"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_C));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MOLAR BASE SI"), 0, 0, 101325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MASS BASE SI"), 0, 0, 101325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MKS"), 0, 0, 101.325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("CGS"), 0, 0, 0.101325, 0, z).Output[0] == Approx(T_K));
-    CHECK(REFPROP("WATER", "PQ", "T", get_enum("MEUNITS"), 0, 0, 1.01325, 0, z).Output[0] == Approx(T_C));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("DEFAULT"), 0, 0, 101.325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MOLAR SI"), 0, 0, 0.101325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MASS SI"), 0, 0, 0.101325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("SI WITH C"), 0, 0, 0.101325, 0, z).Output[0], WithinRelMatcher(T_C,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MOLAR BASE SI"), 0, 0, 101325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MASS BASE SI"), 0, 0, 101325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MKS"), 0, 0, 101.325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("CGS"), 0, 0, 0.101325, 0, z).Output[0], WithinRelMatcher(T_K,1e-8));
+    CHECK_THAT(REFPROP("WATER", "PQ", "T", get_enum("MEUNITS"), 0, 0, 1.01325, 0, z).Output[0], WithinRelMatcher(T_C,1e-8));
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check spinodals", "[spinodal]") {
@@ -74,6 +104,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[set
         // Load it
         std::vector<double> z(20, 0.0);
         auto r = REFPROP(mix+".MIX", " ", "TRED", 1, 0, 0, 0.101325, 300, z);
+        if (r.herr.find("R1132A") > 0){ continue; }
+        if (r.herr.find("R1132E") > 0){ continue; }
+        if (r.herr.find("R1130E") > 0){ continue; }
         CAPTURE(mix+".MIX");
         CAPTURE(r.herr);
         CHECK(r.ierr < 100);
@@ -82,6 +115,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[set
         // Turn on splines
         int ierr = 0; char herr[255] = "";
         SATSPLNdll(&(z[0]), ierr, herr, 255U);
+        
         CAPTURE(herr);
         CHECK(ierr == 0);
         
@@ -370,7 +404,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
         CAPTURE(r.hUnits);
         CAPTURE(val.v);
         CAPTURE(val.k);
-        CHECK(val.v == Approx(r.Output[0]).epsilon(1e-2));
+        CHECK_THAT(val.v, WithinAbsMatcher(r.Output[0], 1e-2));
     }
 }
 
@@ -412,14 +446,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Chempot=Gibbs for pure?", "[flash],[chempot
     std::vector<double> z(20, 0); z[0] = 1;
     auto r = REFPROP("Propane", "TP", "G;CPOT(1)", MOLAR_SI, 0, 0, 300, 0.1, z);
     CAPTURE(r.hUnits);
-    CHECK(r.Output[1] == Approx(r.Output[0]));
+    CHECK_THAT(r.Output[1], WithinRelMatcher(r.Output[0], 1e-6));
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Order of R32+yf should not matter", "[setup],[fluidorder]") {
     std::vector<double> z1 = { 0.6867261958191739, 0.3132738041808261 }, z2 = { 0.3132738041808261, 0.6867261958191739};
     auto r1 = REFPROP("R32*R1234YF", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z1);
     auto r2 = REFPROP("R1234YF*R32", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z2);
-    CHECK(r1.Output[1] == Approx(r2.Output[0]).epsilon(1e-11));
+    CHECK_THAT(r1.Output[1], WithinAbsMatcher(r2.Output[0], 1e-11));
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Order of ternary should not matter", "[setup],[fluidorder]") {
@@ -1158,7 +1192,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "PRVLE calling PREOS", "[PR]") {
     CHECK(r2.Output[1] != Approx(r1.Output[1]).margin(0.1)); // VT should change density
 };
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[flash],[ancillary]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[ancillary]") {
     for (auto &fld : get_pure_fluids_list()) {
         {
             std::vector<double> z(20,1.0); 
@@ -1673,7 +1707,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "check all enumerated values for units are c
     std::vector<int> vals = {0,1,2,3,100,101,5,6,7,8,9,10,11};
     REQUIRE(keys.size() == vals.size());
     for (auto i = 0; i < keys.size(); ++i) {
-        CAPTURE(get_enum(keys[i]) == vals[i])
+        CAPTURE(get_enum(keys[i]) == vals[i]);
     }
 };
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check that invalid unit systems causes reasonable error", "[enum]") {

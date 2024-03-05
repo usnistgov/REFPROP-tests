@@ -1,7 +1,13 @@
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+using Catch::Matchers::WithinAbsMatcher;
+using Catch::Matchers::WithinRelMatcher;
 
-#include <cstdlib>
+// Approx() is deprecated and should be removed, but
+// no good drop-in solution is available
+#include <catch2/catch_approx.hpp>
+using Catch::Approx;
 
-#include "catch.hpp"
 #include <numeric>
 
 #include "REFPROPtests/baseclasses.h"
@@ -278,10 +284,10 @@ public:
             auto r = REFPROP("", "TD&", "P;CV;CP;W", MOLAR_SI, iMass, iFlag, data.T_K, data.D_molL, z);
             CAPTURE(r.herr);
             CHECK(r.ierr == 0);
-            CHECK(r.Output[0] == Approx(data.P_MPa).epsilon(2e-3));
-            CHECK(r.Output[1] == Approx(data.cv_JmolK).epsilon(2e-3));
-            CHECK(r.Output[2] == Approx(data.cp_JmolK).epsilon(2e-3));
-            CHECK(r.Output[3] == Approx(data.w_ms).epsilon(2e-3));
+            CHECK_THAT(r.Output[0], WithinAbsMatcher(data.P_MPa, 2e-3));
+            CHECK_THAT(r.Output[1], WithinAbsMatcher(data.cv_JmolK, 2e-3));
+            CHECK_THAT(r.Output[2], WithinAbsMatcher(data.cp_JmolK, 2e-3));
+            CHECK_THAT(r.Output[3], WithinAbsMatcher(data.w_ms, 2e-3));
         }
     }
 };

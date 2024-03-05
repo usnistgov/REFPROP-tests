@@ -28,14 +28,14 @@ file(GLOB APP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 # The main EXE
 add_executable(main ${APP_SOURCES})
 # The required dependencies
-target_link_libraries(main PUBLIC Boost::filesystem  PRIVATE Catch2WithMain)
+target_link_libraries(main PUBLIC Boost::filesystem PRIVATE Catch2WithMain)
 add_test(normal_tests main)
 
 if (WIN32)
     # For windows, the MemoryModule too
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/externals/manyso")
-    target_link_libraries(main MemoryModule)
+    target_link_libraries(main PRIVATE MemoryModule)
 endif()
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
-    target_link_libraries(main ${CMAKE_DL_LIBS})
+    target_link_libraries(main PRIVATE ${CMAKE_DL_LIBS})
 endif()

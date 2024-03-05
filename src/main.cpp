@@ -1235,12 +1235,16 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[ancil
                 CAPTURE(err_perc);
                 CAPTURE(name);
                 CAPTURE(tol);
-                CHECK(ra.Output[i] == Approx(rv.Output[i]).epsilon(tol));
+                CAPTURE(rv.herr);
+                CAPTURE(rg[i]);
+                CAPTURE(rv.Output[i]);
+                CAPTURE(ra.Output[i]);
+                CHECK_THAT(ra.Output[i], WithinRelMatcher(rv.Output[i], tol));
 
                 // Check error between SATGUESS and values from ANC-TXX, should be zero
                 double err_g_perc = std::abs(rg[i] / ra.Output[i] - 1) * 100;
                 CAPTURE(err_g_perc);
-                CHECK(err_g_perc == Approx(0.0).epsilon(1e-10));
+                CHECK(err_g_perc < 1e-10);
             }
         }
     }

@@ -30,9 +30,8 @@ public:
         
         namespace fs = std::filesystem;
 //        fs::path target(fs::path(std::getenv("RPPREFIX")) / fs::path("librefprop.dylib"));
-        
-        std::unique_ptr<NativeSharedLibraryWrapper> RP;
-        RP.reset(new NativeSharedLibraryWrapper(target.string(), load_method));
+//        std::unique_ptr<NativeSharedLibraryWrapper> RP;
+//        RP.reset(new NativeSharedLibraryWrapper(target.string(), load_method));
     }
 };
 CATCH_REGISTER_LISTENER(testRunListener)

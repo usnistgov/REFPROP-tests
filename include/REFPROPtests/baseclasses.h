@@ -62,7 +62,11 @@ public:
 #endif
 
 #else
+#if !defined(__APPLE__)
         std::string shared_library_filename = "librefprop.so";
+#else
+        std::string shared_library_filename = "librefprop.dylib";
+#endif
 #endif
 
         std::string shared_library_path = path_join_and_norm(std::string(RPPREFIX), shared_library_filename);

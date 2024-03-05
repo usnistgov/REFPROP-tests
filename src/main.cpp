@@ -140,8 +140,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CRITP w/o splines for all predefined mixtur
     for (auto &&mix : get_predefined_mixtures_list()) {
         // Load it
         std::vector<double> z(20, 0.0);
-        auto r = REFPROP(mix + ".MIX", " ", "TRED", 1, 0, 0, 0.101325, 300, z);
-        CAPTURE(mix + ".MIX");
+        auto r = REFPROP(mix, " ", "TRED", 1, 0, 0, 0.101325, 300, z);
+        CAPTURE(mix);
         CAPTURE(r.herr);
         CHECK(r.ierr < 100);
         
@@ -452,6 +452,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Order of R32+yf should not matter", "[setup
     std::vector<double> z1 = { 0.6867261958191739, 0.3132738041808261 }, z2 = { 0.3132738041808261, 0.6867261958191739};
     auto r1 = REFPROP("R32*R1234YF", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z1);
     auto r2 = REFPROP("R1234YF*R32", "TQmolar", "D", 20, 0, 0, 352.448, 0.0, z2);
+    CAPTURE(r1.herr);
+    CAPTURE(r2.herr);
     CHECK_THAT(r1.Output[1], WithinAbsMatcher(r2.Output[0], 1e-11));
 }
 
@@ -893,7 +895,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
 
         reload();
         r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
-        CAPTURE(r.herr); 
+        CAPTURE(T);
+        CAPTURE(r.herr);
         CHECK(r.ierr == 0);
         std::vector<double> default_ = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
@@ -955,12 +958,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test PX0 for mixtures", "[setup],[PX0],[PX0
         if (r.ierr > 100) {
             continue;
         }
+        CAPTURE(r.herr);
         CAPTURE(fluids);
+        CAPTURE(T);
+        CAPTURE(rho);
         CHECK(r.ierr < 100);
+        
         mixes_run++;
 
         reload();
         r = REFPROP(fluids, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr);
         CHECK(r.ierr < 100);
         std::vector<double> default_ = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
@@ -974,6 +982,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test PX0 for mixtures", "[setup],[PX0],[PX0
             REQUIRE(kflag == jflag);
         }
         r = REFPROP(fluids, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr);
         CHECK(r.ierr < 100);
         std::vector<double> normal = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
@@ -1369,13 +1378,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]
     int iMass = 0;
     auto r1 = REFPROP(fname, "", "M;TC;PC;DC", units, iMass, 0, 0.101325, 300, z);
     iMass = 1;
-    auto r2 = REFPROP(fname, "", "TRED", units, iMass, 1, 0, 0, z);
+    auto r2 = REFPROP("", "", "TRED", units, iMass, 1, 0, 0, z);
+    CAPTURE("This should be an error because the provided composition does not match the predefined mixture file");
     CHECK(r2.ierr > 100); // Error because composition given and it is not the mass composition
 
     // Water, to reset for sure
     REFPROP("Water", "", "M;TC;PC;DC", units, iMass, 1, 0, 0, z);
 
-    auto r3 = REFPROP(fname, "", "M;TC;PC;DC", units, iMass, 1, 0, 0, z);
+    auto r3 = REFPROP("", "", "M;TC;PC;DC", units, iMass, 1, 0, 0, z);
     CHECK(r1.Output[0] == Approx(r3.Output[0]));
     CHECK(r1.Output[1] == Approx(r3.Output[1]));
     CHECK(r1.Output[2] == Approx(r3.Output[2]));
@@ -1680,6 +1690,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Ancillary curves for D2O of Herrig", "[D2O]
     }
     for (auto i = 0; i < 4; ++i){
         CAPTURE(i);
+        CAPTURE(b[i].herr);
         CHECK(b[i].Output[0] == Approx(0.327390934e-1));
     }
 };
@@ -2032,7 +2043,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "One call to transport for N2", "[OneN2]") {
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "CheckZEZEstimated", "[setup]") {
-    std::string flds = "R134A*R1234ZEZ" + std::string(500, '\0');
+    std::string flds = "R134A*R1234ZEZ" + std::string(500, ' ');
     std::vector<double> z = { 0.5,0.5 };
     auto r = REFPROP(flds, " ", "FIJMIX", 0, 0, 0, 1, 2, z);
     CAPTURE(r.herr);
@@ -2062,7 +2073,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check that it is possible to set predefined
     auto [z, ierr, herr] = SETMIXTURE(mix);
     CAPTURE(herr);
     CHECK(ierr == 0); 
-    auto a = ALLPROPS("NCOMP", 1, 0, 0, 0, 0, z);
+    auto a = ALLPROPS("NCOMP", 1, 0, 0, 300, 300, z);
     CAPTURE(a.herr);
     CHECK(a.ierr == 0);
 };

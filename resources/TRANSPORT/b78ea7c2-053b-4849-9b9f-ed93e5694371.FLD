@@ -135,7 +135,7 @@ ECS  Extended Corresponding States model (C12 reference); fit to extremely limit
 1000.              !upper temperature limit [K]
 500000.            !upper pressure limit [kPa]
 10.                !maximum density [mol/L]
-FEQ c12.fld
+FEQ C12.FLD
 VS1                !model for reference fluid viscosity
 TC1                !model for reference fluid thermal conductivity
 1                  !Lennard-Jones flag (0 or 1) (0 => use estimates)

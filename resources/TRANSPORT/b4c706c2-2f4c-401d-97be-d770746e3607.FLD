@@ -556,7 +556,7 @@ ECS  Extended Corresponding States model (R134a reference);     predictive mode.
 1350.0             !upper temperature limit [K]
 1000000.0          !upper pressure limit [kPa]
 73.96              !maximum density [mol/L]
-FEQ r134a.fld
+FEQ R134A.FLD
 VS1                !model for reference fluid viscosity
 TC1                !model for reference fluid thermal conductivity
 1                  !Lennard-Jones flag (0 or 1) (0 => use estimates)

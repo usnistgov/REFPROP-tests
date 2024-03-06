@@ -199,7 +199,7 @@ ECS  Extended Corresponding States model for transport props (R134a ref. fluid).
 600.0              !upper temperature limit [K]
 40000.0            !upper pressure limit [kPa]
 11.60              !maximum density [mol/L]
-FEQ R134a.fld
+FEQ R134A.FLD
 VS1                !model for reference fluid viscosity
 TC1                !model for reference fluid thermal conductivity
 1                  !Lennard-Jones flag (0 or 1) (0 => use estimates)

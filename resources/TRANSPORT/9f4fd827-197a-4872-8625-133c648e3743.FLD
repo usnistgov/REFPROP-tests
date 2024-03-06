@@ -510,7 +510,7 @@ ECS  Extended Corresponding States model (Nitrogen reference);  predictive mode.
 400.0              !upper temperature limit [K]
 40000.0            !upper pressure limit [kPa]
 27.03              !maximum density [mol/L]
-FEQ nitrogen.fld
+FEQ NITROGEN.FLD
 VS1                !model for reference fluid viscosity
 TC1                !model for reference fluid thermal conductivity
 1                  !Lennard-Jones flag (0 or 1) (0 => use estimates)

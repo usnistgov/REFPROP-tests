@@ -325,7 +325,7 @@ ECS  Extended Corresponding States model (Propane reference);   predictive mode.
 620.0              !upper temperature limit [K]
 800000.0           !upper pressure limit [kPa]
 35.57              !maximum density [mol/L]
-FEQ propane.fld
+FEQ PROPANE.FLD
 VS1                !model for reference fluid viscosity
 TC1                !model for reference fluid thermal conductivity
 1                  !Lennard-Jones flag (0 or 1) (0 => use estimates)

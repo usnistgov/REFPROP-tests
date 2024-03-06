@@ -2117,8 +2117,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check that it is possible to set predefined
     auto [z, ierr, herr] = SETMIXTURE(mix);
     CAPTURE(herr);
     CHECK(ierr == 0); 
-    auto a = ALLPROPS("NCOMP", 1, 0, 0, 300, 300, z);
+    auto a = REFPROP("", "","NCOMP", 1, 0, 0, 100, 0, z);
     CAPTURE(a.herr);
+    CHECK(a.Output[0] == 3);
     CHECK(a.ierr == 0);
 };
 

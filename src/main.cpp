@@ -881,12 +881,42 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test XMASS,XMOLE,NCOMP", "[setup],[predef_m
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Loading mixture yields weird composition bug", "[setup],[PX0]") {
+    auto with_PH0 = fluids_with_PH0_or_PX0();
+    REQUIRE(with_PH0.size() > 0);
+    int Ncomp = 5;
+    std::vector<double> z(Ncomp, 1/static_cast<double>(Ncomp));
+    int mixes_run = 0;
+    for (auto i0 = 0; i0 < with_PH0.size(); ++i0) {
+        
+        // Build fluid string
+        std::string fluids = with_PH0[i0];
+        for (auto j = 1; j < Ncomp; ++j){
+            auto ii = (i0 + j) % (with_PH0.size() - 1); // mod to wrap around
+            fluids += "*" + with_PH0[ii];
+        }
+        
+        auto r = REFPROP(fluids, " ", "TRED;DRED", 1, 0, 0, 0, 0, z);
+        auto note = "When you pass a set of absolute paths into REFPROP, delimited by *, there is some conflict with the passed in z array";
+        CAPTURE(note);
+        CAPTURE(r.herr);
+        CHECK(r.ierr == 0);
+        mixes_run += 1;
+        if (mixes_run > 10){
+            break;
+        }
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
     auto flds_with_PH0 = fluids_with_PH0_or_PX0();
     REQUIRE(flds_with_PH0.size() > 0);
     for (auto &&fluid : flds_with_PH0) {
         std::vector<double> z(20,1.0);
-        auto r = REFPROP(fluid, " ", "TRED;DRED;TMAX;TMIN", 1, 0, 0, 0, 0, z);
+        
+        std::string herr; int ierr;
+        SETFLUIDS(fluid, ierr, herr);
+        auto r = REFPROP("", " ", "TRED;DRED;TMAX;TMIN", 1, 0, 0, 0, 0, z);
         double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau, Tmax = r.Output[2], Tmin = r.Output[3];
         T = std::min(T, Tmax);
         T = std::max(T, Tmin);
@@ -898,7 +928,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
         CHECK(r.ierr < 100);
 
         reload();
-        r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        
+        CAPTURE(herr);
+        CHECK(ierr == 0);
+        r = REFPROP("", "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
         CAPTURE(T);
         CAPTURE(r.herr);
         CHECK(r.ierr == 0);
@@ -913,8 +946,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
             REQUIRE(ierr == 0);
             REQUIRE(kflag == jflag);
         }
-        r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
-        CAPTURE(r.herr); 
+        r = REFPROP("", "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        CAPTURE(r.herr);
         CHECK(r.ierr == 0);
         std::vector<double> normal = std::vector<double>(r.Output.begin(), r.Output.begin() + 5); 
 
@@ -927,7 +960,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
             REQUIRE(ierr == 0);
             REQUIRE(kflag == jflag);
         }
-        r = REFPROP(fluid, "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
+        r = REFPROP("", "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
         CAPTURE(r.herr);
         CHECK(r.ierr == 0);
         std::vector<double> with_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin()+5);
@@ -953,11 +986,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test PX0 for mixtures", "[setup],[PX0],[PX0
         std::string fluids = with_PH0[i0];
         for (auto j = 1; j < Ncomp; ++j){
             auto ii = (i0 + j) % (with_PH0.size() - 1); // mod to wrap around
-            fluids += " * " + with_PH0[ii];
+            fluids += "*" + with_PH0[ii];
         }
         
         // Can you load and get reducing state?
-        auto r = REFPROP(fluids, " ", "TRED;DRED", 1, 0, 0, 0, 0, z);
+        std::string herr; int ierr = -1;
+        SETFLUIDS(fluids, ierr, herr);
+        CHECK(ierr == 0);
+        auto r = REFPROP("", " ", "TRED;DRED", 1, 0, 0, 0, 0, z);
         double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau;
         if (r.ierr > 100) {
             continue;

@@ -908,7 +908,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Loading mixture yields weird composition bu
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[setup],[PX0]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
     auto flds_with_PH0 = fluids_with_PH0_or_PX0();
     REQUIRE(flds_with_PH0.size() > 0);
     for (auto &&fluid : flds_with_PH0) {

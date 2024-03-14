@@ -35,23 +35,30 @@ def build_REFPROP_zip(*, root, zippath):
         if os.path.exists(taglist):
             rpzip.write(taglist, arcname=depath(taglist, folder='.'))
 
-def run_test(*, root, test):
+def run_test(*, root, test, ofprefix, clean=False):
     """ Actually run the specified test """
 
-    prefix = get_path_hash(root) + '_' + test
+    prefix = os.path.join(ofprefix, get_path_hash(root) + '_' + test)
 
-    # Wipe the output folder of the test
-    #outfold = os.path.join(test, 'output')
-    #if os.path.exists(outfold):
-    #    shutil.rmtree(outfold)
-    #os.makedirs(outfold)
+    if clean:
+        # Wipe the output folder of the test
+        outfold = os.path.join(test, 'output')
+        print('cleaning', outfold)
+        if os.path.exists(outfold):
+           shutil.rmtree(outfold)
+        os.makedirs(outfold)
 
     if not os.path.exists(root):
+        print(os.path.abspath(os.curdir))
+        print('Does not exist: ' + root)
         return
 
     # Collect the REFPROP files
-    build_REFPROP_zip(root=root, zippath=os.path.join(test, 'REFPROP.zip'))
-    print('zip built')
+    zip_destination = os.path.join(test, 'REFPROP.zip')
+    if os.path.exists(zip_destination):
+        os.remove(zip_destination)
+    build_REFPROP_zip(root=root, zippath=zip_destination)
+    print(f'zip built in {zip_destination} from {root}')
 
     # Run the test
     logfile = prefix+'_build_run.log'

@@ -5,6 +5,8 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 using Catch::Matchers::WithinAbsMatcher;
 using Catch::Matchers::WithinRelMatcher;
+using Catch::Matchers::WithinAbs;
+using Catch::Matchers::WithinRel;
 
 // Approx() is deprecated and should be removed, but
 // no good drop-in solution is available
@@ -2200,3 +2202,29 @@ public:
     }
 };
 TEST_CASE_METHOD(SUBTVALIDATION, "Check sublimation pressures", "[sublimation]") { payload(); };
+
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check refrigerant models", "[HMX]"){
+    std::vector<std::tuple<std::string,double,double,double,double,double,double>> chkvals = {
+        {"R32", 1.0, 439.0, 6520.0, 351.2550000000000, 8150.0845999999992, -0.54027465374297},
+        {"R1234YF", 1.0, 460.0, 3344.0, 367.8500000000000, 4180.0000000000000, -0.46835370596876},
+        {"R125", 1.0, 424.0, 3823.0, 339.1730000000000, 4779.0000000000000, -0.45506005234449},
+        {"R152A", 1.0, 483.0, 4457.0, 386.4110000000000, 5571.4499999999998, -0.50742149570151},
+        {"R1234ZEE", 1.0, 478.0, 3432.0, 382.5130000000000, 4290.0000000000000, -0.46340978447230},
+        {"R227EA", 1.0, 469.0, 2796.0, 374.9000000000000, 3495.0000000000000, -0.44238576197982},
+        {"R32*R1234YF", 0.4, 445.0, 4149.0, 355.8223718962623, 5186.1403601482143, -0.47311064743911},
+        {"R32*R1234ZEE", 0.4, 451.0, 4242.0, 360.5363396425610, 5302.9894479051318, -0.48576186760231},
+        {"R125*R1234YF", 0.4, 445.0, 3513.0, 355.9041714483963, 4391.8742755801022, -0.46576307479447},
+        {"R1234YF*R152A", 0.4, 469.0, 3930.0, 374.8173271996727, 4912.7184190598955, -0.48967548916638},
+        {"R1234ZEE*R227EA", 0.4, 470.0, 3023.0, 376.0139530327517, 3778.4584946374848, -0.45378834770736}
+    };
+    
+    for (auto & [name, z_1, T_K, rho_molm3, T_red, rho_red, alphar] : chkvals){
+        std::vector<double> z; if (z_1 == 1.0){ z = {1.0}; } else {z = {z_1, 1-z_1};}
+        auto r3 = REFPROP(name, "TD&", "PHIR00", MOLAR_BASE_SI, 0, 0, T_K, rho_molm3, z);
+        auto actual = r3.Output[0];
+        CAPTURE(name);
+        CAPTURE(r3.herr);
+        CHECK_THAT(actual, WithinRel(alphar, 1e-10));
+    }
+}

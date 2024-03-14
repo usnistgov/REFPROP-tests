@@ -883,7 +883,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test XMASS,XMOLE,NCOMP", "[setup],[predef_m
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Loading mixture yields weird composition bug", "[setup],[PX0]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Loading mixture yields weird composition bug", "[setup]") {
     auto with_PH0 = fluids_with_PH0_or_PX0();
     REQUIRE(with_PH0.size() > 0);
     int Ncomp = 5;

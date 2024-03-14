@@ -12,6 +12,8 @@ using Catch::Approx;
 
 #include "REFPROPtests/baseclasses.h"
 
+#include "AGA8GERG2008.cpp"
+
 // A structure to hold the values for one validation call
 struct G08El
 {
@@ -236,6 +238,8 @@ public:
         CHECK(r.ierr == 0);
     }
     void payload() {
+        
+        SetupGERG();
 
         int MOLAR_SI = get_enum("MOLAR SI   ");
         set_flag();
@@ -288,6 +292,25 @@ public:
             CHECK_THAT(r.Output[1], WithinAbsMatcher(data.cv_JmolK, 2e-3));
             CHECK_THAT(r.Output[2], WithinAbsMatcher(data.cp_JmolK, 2e-3));
             CHECK_THAT(r.Output[3], WithinAbsMatcher(data.w_ms, 2e-3));
+            
+            auto r2 = REFPROP("", "", "R", MOLAR_SI, iMass, iFlag, data.T_K, data.D_molL, z);
+            CHECK_THAT(r2.Output[0], WithinAbsMatcher(8.314472, 1e-12));
+            
+            if (FLAG == "GERG 2008"){
+                auto alphaig00_RP = REFPROP("", "TD&", "PHIG00", MOLAR_SI, iMass, iFlag, data.T_K, data.D_molL, z).Output[0];
+                auto alphaig20_RP = REFPROP("", "TD&", "PHIG20", MOLAR_SI, iMass, iFlag, data.T_K, data.D_molL, z).Output[0];
+                std::vector<double> molefracs = z;
+                molefracs.insert(molefracs.begin(), 0);
+                double alphaig_GERG[3];
+                Alpha0GERG(data.T_K, data.D_molL, molefracs, alphaig_GERG);
+                CAPTURE(alphaig00_RP);
+                CAPTURE(alphaig20_RP);
+                CAPTURE(alphaig_GERG[0]);
+                CAPTURE(alphaig_GERG[1]);
+                CAPTURE(alphaig_GERG[2]);
+                CHECK_THAT(alphaig_GERG[0], WithinRelMatcher(alphaig00_RP, 1e-10));
+                CHECK_THAT(alphaig_GERG[2], WithinRelMatcher(alphaig20_RP, 1e-10));
+            }
         }
     }
 };

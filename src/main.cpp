@@ -1252,7 +1252,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ancillaries for pure fluids", "[ancil
             CAPTURE(rs.ierr);
             double Tc = rs.Output[0];
             auto rv = REFPROP(fld, "Tq", "P;DLIQ;DVAP", DEFAULT, 0, 0, 0.9*Tc, 0, z); // VLE
-            CHECK(REFPROP(fld, "", "ANC-TP;ANC-TDL;ANC-TDV", DEFAULT, 0, 0, 0.9*Tc, 0, z).ierr > 100);
+            CHECK(REFPROP(fld, "", "ANC-TP;ANC-TDL;ANC-TDV", DEFAULT, 0, 0, 0.9*Tc, 0, z).ierr == 871);
 //            auto ra = REFPROP(fld, "TQ", "PANC;DANC", DEFAULT, 0, 0, 0.9*Tc, 0, z); // Ancillary
             int kph = 1,  // liquid, but it doesn't matter
                 iprop = 1;  // temperature

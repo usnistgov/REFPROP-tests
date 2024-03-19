@@ -12,7 +12,7 @@ using Catch::Approx;
 
 #include "REFPROPtests/baseclasses.h"
 
-#include "AGA8GERG2008.cpp"
+#include "AGA8GERG2008.cxx"
 
 // A structure to hold the values for one validation call
 struct G08El

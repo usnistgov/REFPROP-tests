@@ -484,10 +484,10 @@ public:
                 double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa;
                 PropertiesDetail(data.T_K, data.D_molL, molefracs, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa);
                 
-                CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, 2e-4));
-                CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, 2e-4));
-                CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, 2e-4));
-                CHECK_THAT(r.Output[3], WithinRelMatcher(w_ms, 2e-4));
+                CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, 2e-5));
+                CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, 2e-5));
+                CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, 2e-5));
+                CHECK_THAT(r.Output[3], WithinRelMatcher(w_ms, 2e-5));
             }
             
 //            CHECK_THAT(r.Output[0], WithinAbsMatcher(data.P_MPa, 2e-3));

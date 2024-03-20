@@ -12,7 +12,15 @@ using Catch::Approx;
 
 #include "REFPROPtests/baseclasses.h"
 
-#include "AGA8GERG2008.cxx"
+#include "AGA8Detail.h"
+#include "AGA8GERG2008.h"
+
+void Alpha0GERG(const double T, const double D, const std::vector<double> &x, double a0[3]);
+void AlpharGERG(const int iprop, const double T, const double D, const std::vector<double> &x, double ar[4][4]);
+
+void xTermsDetail(const std::vector<double> &x);
+void Alpha0Detail(const double T, const double D, const std::vector<double> &x, double a0[3]);
+void AlpharDetail(const int itau, const int idel, const double T, const double D, double ar[4][4]);
 
 // A structure to hold the values for one validation call
 struct G08El
@@ -231,6 +239,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all pure fluids", "[GERG20081]"){
     SetupGERG();
     std::string FLAG = "GERG 2008";
     int FLAG_value = 1;
+    Catch::StringMaker<double>::precision = 15;
 
     int MOLAR_SI = get_enum("MOLAR SI   ");
     
@@ -380,6 +389,7 @@ public:
     void payload() {
         
         SetupGERG();
+        SetupDetail();
 
         int MOLAR_SI = get_enum("MOLAR SI   ");
         
@@ -411,7 +421,9 @@ public:
                 FLAGS(FLAG,-999,kflag);
                 CAPTURE(kflag);
                 CAPTURE(FLAG);
-                CHECK(kflag == 2);
+                if (FLAG == "GERG 2008"){
+                    CHECK(kflag == 2);
+                }
             }
             
             std::array<double, 21> zperc = mixture_comps[data.GasNo - 2]; // the first Gas No is 2 -> index of 0 in vector
@@ -440,22 +452,43 @@ public:
             CAPTURE(r.herr);
             CHECK(r.ierr == 0);
             
-            std::vector<double> molefracs(21); double zsumm = 0.0; for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] = zperc[i]/100.0; zsumm += molefracs[i]; } for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] /= zsumm; }
-            molefracs.insert(molefracs.begin(), 0);
-            CAPTURE(molefracs);
-            double alphaig_GERG[3];
-            Alpha0GERG(data.T_K, data.D_molL, molefracs, alphaig_GERG);
-            double alphar_GERG[4][4];
-            AlpharGERG(1, data.T_K, data.D_molL, molefracs, alphar_GERG);
-            CAPTURE(alphaig_GERG);
-            CAPTURE(alphar_GERG);
-            double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A;
-            PropertiesGERG(data.T_K, data.D_molL, molefracs, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A);
-            
-            CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, 2e-4));
-            CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, 2e-4));
-            CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, 2e-4));
-            CHECK_THAT(r.Output[3], WithinRelMatcher(w_ms, 2e-4));
+            if (FLAG == "GERG 2008"){
+                std::vector<double> molefracs(21); double zsumm = 0.0; for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] = zperc[i]/100.0; zsumm += molefracs[i]; } for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] /= zsumm; }
+                molefracs.insert(molefracs.begin(), 0);
+                CAPTURE(molefracs);
+                double alphaig_GERG[3];
+                Alpha0GERG(data.T_K, data.D_molL, molefracs, alphaig_GERG);
+                double alphar_GERG[4][4];
+                AlpharGERG(1, data.T_K, data.D_molL, molefracs, alphar_GERG);
+                CAPTURE(alphaig_GERG);
+                CAPTURE(alphar_GERG);
+                double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A;
+                PropertiesGERG(data.T_K, data.D_molL, molefracs, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A);
+                
+                CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, 2e-4));
+                CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, 2e-4));
+                CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, 2e-4));
+                CHECK_THAT(r.Output[3], WithinRelMatcher(w_ms, 2e-4));
+            }
+            else if (FLAG == "AGA8"){
+                std::vector<double> molefracs(21); double zsumm = 0.0; for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] = zperc[i]/100.0; zsumm += molefracs[i]; } for (auto i = 0U; i < zperc.size(); ++i){ molefracs[i] /= zsumm; }
+                molefracs.insert(molefracs.begin(), 0);
+                CAPTURE(molefracs);
+                double alphaig_DETAIL[3];
+                Alpha0Detail(data.T_K, data.D_molL, molefracs, alphaig_DETAIL);
+                double alphar_DETAIL[4][4];
+                xTermsDetail(molefracs);
+                AlpharDetail(1, 0, data.T_K, data.D_molL, alphar_DETAIL);
+                CAPTURE(alphaig_DETAIL);
+                CAPTURE(alphar_DETAIL);
+                double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa;
+                PropertiesDetail(data.T_K, data.D_molL, molefracs, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa);
+                
+                CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, 2e-4));
+                CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, 2e-4));
+                CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, 2e-4));
+                CHECK_THAT(r.Output[3], WithinRelMatcher(w_ms, 2e-4));
+            }
             
 //            CHECK_THAT(r.Output[0], WithinAbsMatcher(data.P_MPa, 2e-3));
 //            CHECK_THAT(r.Output[1], WithinAbsMatcher(data.cv_JmolK, 2e-3));

@@ -1305,11 +1305,15 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP for all pure fluids (when possibl
             REQUIRE(ierr == 0);
         }
 
+        double pt, Tsatmin;
+        
         {
             int iMass = 0, iFlag = 0;
             std::vector<double> z = { 0.5,0.5 }; double a = 1, Q = 0.0;
-            auto r = REFPROP(fld, "TRIP", "P", MOLAR_BASE_SI, iMass, iFlag, a, Q, z);
-            double pt = r.Output[0];
+            auto rTsatmin = REFPROP(fld, "", "Tmin", MOLAR_BASE_SI, iMass, iFlag, a, Q, z);
+            Tsatmin = rTsatmin.Output[0];
+            auto r = REFPROP(fld, "TQ", "P", MOLAR_BASE_SI, iMass, iFlag, Tsatmin, Q, z);
+            pt = r.Output[0];
             CAPTURE(fld);
             CAPTURE(r.herr);
             CHECK(r.ierr < 100);
@@ -1333,6 +1337,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check NBP for all pure fluids (when possibl
         PQFLSHdll(p, q, z, kq, T, D, Dl, Dv, xliq, xvap, u, h, s, cv, cp, w, ierr, herr, 255);
         CAPTURE(fld);
         CAPTURE(herr);
+        CAPTURE(pt);
+        CAPTURE(Tsatmin);
         CHECK(ierr < 100);
         if (T < Tmin) { continue; }
         CHECK(T == Approx(tnbpt).margin(0.01));

@@ -281,7 +281,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all pure fluids", "[GERG20081]"){
         CAPTURE(FLAG);
 //        CHECK(kflag == FLAG_value);
         
-        std::vector<double> zGERG(21, 0.0); zGERG[i+1] = 1.0;
+        std::vector<double> zGERG(22, 0.0); zGERG[i+1] = 1.0;
         double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A;
         PropertiesGERG(T_K, D_molL, zGERG, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A);
         
@@ -347,7 +347,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all binaries", "[GERG20082]"){
             CAPTURE(components[j]);
             CHECK(kflag == 2);
             
-            std::vector<double> zGERG = z; zGERG.insert(zGERG.begin(), 0);
+            std::vector<double> zGERG = z/* 20 els */; zGERG.insert(zGERG.begin(), 0) /* 21 for 0 pre-pad */; zGERG.push_back(0); /*22 with pre and post pad */
             double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A;
             PropertiesGERG(T_K, D_molL, zGERG, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A);
             

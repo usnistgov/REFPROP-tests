@@ -65,7 +65,7 @@ def run_test(*, root, test, ofprefix, clean=False):
     print('logging to', logfile)
     try:
         with open(logfile, 'w') as stdout:
-            subprocess.check_call('docker-compose up --build', cwd=test, shell=True, stdout=stdout, stderr=stdout)
+            subprocess.check_call('docker-compose up --build && docker-compose down --rmi', cwd=test, shell=True, stdout=stdout, stderr=stdout)
 
         # Convert ANSI color codes in the log to html
         html = Ansi2HTMLConverter().convert(open(prefix+'_build_run.log').read())

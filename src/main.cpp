@@ -918,8 +918,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         
         std::string herr; int ierr;
         SETFLUIDS(fluid, ierr, herr);
-        auto r = REFPROP("", " ", "TRED;DRED;TMAX;TMIN", 1, 0, 0, 0, 0, z);
-        double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau, Tmax = r.Output[2], Tmin = r.Output[3];
+        auto r = REFPROP("", " ", "TRED;DRED;TMAX;TMIN;R", 1, 0, 0, 0, 0, z);
+        double tau = 0.9, delta = 1.1, rho = delta*r.Output[1], T = r.Output[0] / tau, Tred = r.Output[0], Tmax = r.Output[2], Tmin = r.Output[3], R = r.Output[4];
         T = std::min(T, Tmax);
         T = std::max(T, Tmin);
         CAPTURE(T);
@@ -927,6 +927,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         CAPTURE(Tmax);
         CAPTURE(fluid);
         CAPTURE(rho);
+        CAPTURE(R);
         CHECK(r.ierr < 100);
 
         reload();
@@ -951,7 +952,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         r = REFPROP("", "TD&", "PHIG00;PHIG10;PHIG11;PHIG01;PHIG20", 1, 0, 0, T, rho, z);
         CAPTURE(r.herr);
         CHECK(r.ierr == 0);
-        std::vector<double> normal = std::vector<double>(r.Output.begin(), r.Output.begin() + 5); 
+        std::vector<double> no_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
         reload();
         {
@@ -967,11 +968,34 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         CHECK(r.ierr == 0);
         std::vector<double> with_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin()+5);
         
-        CHECK(normal.size() == with_PX0.size());
+        CHECK(no_PX0.size() == with_PX0.size());
         CHECK(default_.size() == with_PX0.size());
-        for (auto i = 0; i < normal.size(); ++i) {
-            CHECK(normal[i] == Approx(default_[i]).margin(1e-8)); 
-            CHECK(normal[i] == Approx(with_PX0[i]).margin(1e-6));
+        
+        double s_default = R*(default_[1]-default_[0]);
+        double s_withPX0 = R*(with_PX0[1]-with_PX0[0]);
+        double s_noPX0 = R*(no_PX0[1]-no_PX0[0]);
+        double h_default = R*T*(1+default_[1]);
+        double h_withPX0 = R*T*(1+with_PX0[1]);
+        double h_noPX0 = R*T*(1+no_PX0[1]);
+        
+        double deltasR = (s_default-s_noPX0)/(R); // The change to be added to the leading term
+        CAPTURE(deltasR);
+        double deltahRT = -(h_default-h_noPX0)/(R*Tred); // The change to the second leading term that is required
+        CAPTURE(deltahRT);
+        CAPTURE(h_default);
+        CAPTURE(h_noPX0);
+        CAPTURE(h_withPX0);
+        CAPTURE(s_default);
+        CAPTURE(s_noPX0);
+        CAPTURE(s_withPX0);
+
+//        std::cout << std::setprecision(18) << deltasR << " " << fluid << std::endl;
+//        std::cout << std::setprecision(18) << deltahRT <<  " " << fluid << std::endl;
+        
+        for (auto i = 0; i < no_PX0.size(); ++i) {
+            CAPTURE(i);
+            CHECK(with_PX0[i] == Approx(default_[i]).margin(1e-14));
+            CHECK(no_PX0[i] == Approx(with_PX0[i]).margin(1e-10));
         }
     }
 };

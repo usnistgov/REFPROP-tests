@@ -1096,11 +1096,20 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check super long list of fluids", "[100comp
     std::vector<double> z = { 1.0 };
     std::string flds = "Water";
     for (auto i = 0; i < 100; ++i) { flds += "*Water"; }
-    auto r = REFPROP(flds, " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z);
-    std::string note = "The problem here is that if you provide too many components, that should not be allowed and you should get an error message";
-    CAPTURE(note);
-    CAPTURE(r.herr);
-    REQUIRE(r.ierr > 100); // [TODO] force to be a 109 error
+    SECTION("With SETFLUIDSdll"){
+        int ierr = -1; std::string herr = "";
+        SETFLUIDS(flds, ierr, herr);
+        CAPTURE(ierr);
+        CAPTURE(herr);
+        CHECK(ierr > 100);
+    }
+    SECTION("With REFPROP"){
+        auto r = REFPROP(flds, " ", "M", MOLAR_BASE_SI, 0, 0, 0, 0, z);
+        std::string note = "The problem here is that if you provide too many components, that should not be allowed and you should get an error message";
+        CAPTURE(note);
+        CAPTURE(r.herr);
+        REQUIRE(r.ierr > 100); // [TODO] force to be a 109 error
+    }
 };
 
 //TEST_CASE_METHOD(REFPROPDLLFixture, "Test mixture models of Thol", "[flash],[TholLNG]") {

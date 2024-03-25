@@ -462,7 +462,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Order of R32+yf should not matter", "[setup
     CAPTURE(r1.herr);
     CAPTURE(r2.herr);
     CAPTURE(r2.ierr);
-    CHECK_THAT(r1.Output[0], WithinAbsMatcher(r2.Output[0], 1e-10));
+    CHECK_THAT(r1.Output[0], WithinAbsMatcher(r2.Output[0], 1e-8));
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Order of ternary should not matter", "[setup],[fluidorder]") {

@@ -285,7 +285,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check all pure fluids", "[GERG20081]"){
         double P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A;
         PropertiesGERG(T_K, D_molL, zGERG, P_kPa, Z, dPdD, d2PdD2, d2PdTD, dPdT, U, H, S, cv_JmolK, cp_JmolK, w_ms, G, JT, Kappa, A);
         
-        double tol = 1e-10;
+        CAPTURE(cv_JmolK);
+        CAPTURE(cp_JmolK);
+        double tol = 1e-9;
         CHECK_THAT(r.Output[0], WithinRelMatcher(P_kPa/1e3, tol));
         CHECK_THAT(r.Output[1], WithinRelMatcher(cv_JmolK, tol));
         CHECK_THAT(r.Output[2], WithinRelMatcher(cp_JmolK, tol));

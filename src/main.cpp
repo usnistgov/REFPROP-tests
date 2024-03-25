@@ -833,7 +833,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test surface tension H2O + X fails", "[surt
         if (ierr == 117){ continue; } // Skip ones where setup was impossible
         auto r = REFPROP("", "PQ", "STN", 0, 0, 0, 101.325, 1, z);
         CAPTURE(r.herr);
-        if (other == "ACETONE" || other == "METHANOL" || other == "ETHANOL"){ continue; } // These have ST1
+        if (other.find("ACETONE") != -1 || other.find("METHANOL") != -1 || other.find("ETHANOL") != -1){ continue; } // These have ST1
+        CAPTURE(other);
         CHECK(r.ierr == 518);
     }
 }

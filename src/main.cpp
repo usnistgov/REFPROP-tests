@@ -348,8 +348,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CHECK values from GUI", "[flash],[911]") {
         { 2.4605,"P*V" },
         { -0.13574,"(Z-1)/P" },
         { -0.33398,"(Z-1)/D" },
-        { 11383,"EXERGY" },
-        { 8946.8,"CEXERGY" },
+        { -31.689,"EXERGY" }, // The REFPROP GUI uses by default a reference pressure of 0.001 MPa, or 1 kPa, for reference pressure, re-calc with 101.325 kPa
+        { 0.91225,"CEXERGY" }, // The REFPROP GUI uses by default a reference pressure of 0.001 MPa, or 1 kPa, for reference pressure, re-calc with 101.325 kPa
         { 24410,"SPHT" },
         { 0.99892,"FPV" },
         { 0.63372,"CSTAR" },

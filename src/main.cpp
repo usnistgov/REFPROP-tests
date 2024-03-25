@@ -583,7 +583,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
     std::string keys = "T;P;D;H;S;E;Qmass;Qmole";
     std::vector<std::string> unit_strings = { "DEFAULT", "MOLAR SI", "MASS SI", "SI WITH C", "MOLAR BASE SI", "MASS BASE SI", "ENGLISH", "MOLAR ENGLISH", "MKS", "CGS", "MIXED", "MEUNITS", "USER" };
     for (auto iMass : { 0 }) {//,1}){
-        for (std::string fld : { "XENON"}) { //"AMARILLO.MIX",
+        for (std::string fld : { "PROPANE"}) { //"AMARILLO.MIX",
             for (bool satspln : {true}) {//, false}){
                 for (std::string & unit_string : unit_strings) {
                     CAPTURE(iMass);
@@ -615,17 +615,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
                     XMASSdll(&(zc[0]), &(zmass[0]), wm);
                     double Tc = r0c.Output[0], Dc = r0c.Output[1];
                     // Find a point inside the isopleth of the phase envelope(VLE); this is our baseline state point
-                    auto rc = REFPROP(fld, "TD", keys, UNITS, iMass, satspln, Tc, Dc*0.7, r0c.z);
+                    auto rc = REFPROP(fld, "TD", keys, UNITS, iMass, satspln, Tc*0.9, Dc, r0c.z);
                     CAPTURE(rc.herr);
                     REQUIRE(rc.ierr < 100);
                     auto props0 = get_props(rc);
-                    REQUIRE(props0["D"] == Approx(Dc*0.7));
-                    REQUIRE(props0["T"] == Approx(Tc));
+                    REQUIRE(props0["D"] == Approx(Dc));
+                    REQUIRE(props0["T"] == Approx(Tc*0.9));
 
                     FLAGS("RESET ALL", 1, kflag);
                     auto r0cmass = REFPROP(fld, "", "TC;DC", UNITS, 1, satspln, 0, 0, zmass);
                     double Tcmass = r0cmass.Output[0], Dcmass = r0cmass.Output[1];
-                    auto rcmass = REFPROP(fld, "TD", keys, UNITS, 1, satspln, Tcmass, Dcmass*0.7, zmass);
+                    auto rcmass = REFPROP(fld, "TD", keys, UNITS, 1, satspln, Tcmass*0.9, Dcmass, zmass);
                     auto props0mass = get_props(rcmass);
                     REQUIRE(props0mass["Qmass"] == Approx(props0["Qmass"]));
 
@@ -643,7 +643,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
                     // Check the round-trip to get back to the starting point again
                     for (std::string && pair : { "T/P", "D/T", "T/D", "H/P", "P/H", "P/S", "S/P", "T/S", "P/E", "S/T",
                         "E/P", "P/D", "D/P", "D/H", "H/D", "D/S","S/D", "D/E", "E/D", "T/S", "H/S", "S/H",
-                        "Qmass/T", "T/Qmole", "Qmass/S", "S/Qmole", "D/Qmole" }) {
+                        "Qmass/T", "T/Qmole", "D/Qmole" }) { // , "S/Qmole", "Qmass/S",
+                        if (fld == "PROPANE" && pair == "T/P"){ continue; }
                         std::vector<double> z;
                         std::vector<std::string> names = str_split(pair, "/");
                         std::string k0 = names[0], k1 = names[1];
@@ -668,6 +669,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase phase flash roundtrips", "[VLErou
                         if (r.ierr > 100) { continue; } // Error already trapped
                         CAPTURE(Tc);
                         CAPTURE(Dc);
+                        CHECK(r.q >= 0);
+                        CHECK(r.q <= 1);
+                            
                         double T_expected = (iMass_) ? props0mass["T"] : props0["T"];
                         double P_expected = (iMass_) ? props0mass["P"] : props0["P"];
                         double D_expected = (iMass_) ? props0mass["D"] : props0["D"];

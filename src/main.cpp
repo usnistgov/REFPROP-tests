@@ -1790,6 +1790,11 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") 
     std::string Phase_TD = REFPROP(FLD,"TD","PHASE",US, 0,0,T,D,Comp).hUnits; // # Returns incorrect "Subcooled liquid"
     CHECK(Phase_TD == Phase_TP);
 };
+TEST_CASE_METHOD(REFPROPDLLFixture, "EOSMIN temp should not fail even if saturation call does", "[limits]") {
+    std::vector<double> Comp(20, 1);
+    auto r1 = REFPROP("R124","EOSMIN","T",0,0,0,0,0,Comp);
+    CHECK(r1.ierr == 0);
+};
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase viscosity", "[transport]") {
     std::vector<double> z(20, 1);

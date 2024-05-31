@@ -18,6 +18,7 @@ using Catch::Approx;
 #include <numeric>
 #include <map>
 #include <string>
+#include <set>
 
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <catch2/reporters/catch_reporter_registrars.hpp>

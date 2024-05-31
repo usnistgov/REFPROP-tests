@@ -1827,7 +1827,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
     }
 }
 
-
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check loading of fluids with bad names", "[setup]") {
+    std::string system = "fluoroethane*1,1,1,2-tetroBADFLUIDBADFLUIDBADFLUIDBADFLUIDfluoroethane";
+    std::vector<double> z1(20, 0.0); z1[0] = 0.4; z1[1] = 0.6;
+    std::vector<double> z2(20, 0.0); z2[0] = 0.6; z2[1] = 0.4;
+    auto r1 = REFPROP(system, "QT","P;NCOMP",MOLAR_BASE_SI,0,0,0,278.15,z1);
+    CHECK(r1.ierr == 101);
+    CHECK(r1.Output[1] != 1);
+    auto r2 = REFPROP(system, "QT","P;NCOMP",MOLAR_BASE_SI,0,0,0,278.15,z2);
+    CHECK(r2.ierr == 101);
+    CHECK(r2.Output[1] != 1);
+}
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") {
     // Although the phase is very difficult to define for mixtures,

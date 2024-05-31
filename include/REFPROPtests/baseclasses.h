@@ -222,6 +222,13 @@ public:
         std::string herr = std::string(herrsetup);
         return std::make_tuple(z, ierr, herr);
     }
+    auto NAME(int icomp) {
+        char hnam[13] = ""; memset(hnam,' ',12);
+        char hn80[81] = ""; memset(hn80,' ',80);
+        char hcasn[13] = ""; memset(hcasn,' ',12);
+        NAMEdll(icomp, hnam, hn80, hcasn, 12, 80, 12);
+        return std::make_tuple(std::string(hnam), std::string(hn80), std::string(hcasn));
+    }
     std::pair<int, std::string> SETMOD(int Ncomp, const std::string &type, const std::string &mix, const std::string &model) {
         char htype[4] = "", hmix[4] = "", hmodel[4] = "";
         REQUIRE(type.size() == 3);

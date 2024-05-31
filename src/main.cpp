@@ -1797,6 +1797,37 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
     CHECK_THAT(r2.z[0], WithinRelMatcher(0.2, 1e-15));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, and Prandtl number units", "[units]") {
+    
+    std::vector<double> z(20, 1.0);
+    
+    for (int US : {0,1,2,3,20,21,5,6,7,8,9,10}){
+        auto c = REFPROP("ARGON","CRIT","T;D",US,0,0,0,0,z);
+        double T = c.Output[0]*1.1;
+        double rho = c.Output[1]*0.9;
+        
+        auto r = REFPROP("ARGON","TD&","KV;TD;PRANDTL;VIS;TCX;CP;W",US,0,0,T,rho,z);
+        double nu = r.Output[0];
+        double td = r.Output[1];
+        double Pr = r.Output[2];
+        double eta = r.Output[3];
+        double tcx = r.Output[4];
+        double cp = r.Output[5];
+        double wmol = r.Output[6];
+        
+        // Convert cp and rho to their specific version
+        std::set<int> molar_unit_systems{0,1,20,6};
+        double cpmass = (molar_unit_systems.count(US) ? cp*wmol : cp);
+        double rhomass = (molar_unit_systems.count(US) ? rho*wmol : rho);
+        
+        CAPTURE(US);
+        CHECK_THAT(nu, WithinRelMatcher(eta/rhomass, 1e-15));
+        CHECK_THAT(td, WithinRelMatcher(tcx/(rhomass*cpmass), 1e-15));
+        CHECK_THAT(Pr, WithinRelMatcher((eta*cpmass)/tcx, 1e-15));
+    }
+}
+
+
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") {
     // Although the phase is very difficult to define for mixtures,

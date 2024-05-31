@@ -1466,6 +1466,15 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check absolute paths are ok", "[setup]") {
 };
 
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check that the NAMEdll function works as expected", "[setup],[NAME]") {
+    SETMIXTURE("R410A");
+    auto [hnam, hn80, hcasn] = NAME(1);
+    CHECK(hnam.find("R32")==0);
+    CHECK(hn80.find("Difluoromethane")==0);
+    CHECK(hcasn.find("75-10-5")==0);
+};
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check mass/molar caching correct", "[setup]") {
     auto units = get_enum("DEFAULT");
     auto fname = "R433B.MIX";

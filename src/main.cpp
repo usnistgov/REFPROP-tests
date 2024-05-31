@@ -1777,6 +1777,19 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Xmass for mixture", "[massfractions]") {
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") {
+    // Although the phase is very difficult to define for mixtures,
+    // the same result should be obtained for all input pairs
+    auto US = get_enum("MASS BASE SI");
+    std::string FLD = "Oxygen;Nitrogen";
+    std::vector<double> Comp(20, 1); Comp[0] = 0.2; Comp[1] = 0.8;
+    double T = 160; //#K
+    double P = 60e5; // #Pa
+    double D = REFPROP(FLD,"TP","D",US, 0,0,T,P,Comp).Output[0]; // #kg/m3
+    std::string Phase_TP = REFPROP(FLD,"TP","PHASE",US, 0,0,T,P,Comp).hUnits; // # Returns incorrect but acceptable "Superheated gas"
+    std::string Phase_TD = REFPROP(FLD,"TD","PHASE",US, 0,0,T,D,Comp).hUnits; // # Returns incorrect "Subcooled liquid"
+    CHECK(Phase_TD == Phase_TP);
+};
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Two-phase viscosity", "[transport]") {
     std::vector<double> z(20, 1);

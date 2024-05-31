@@ -1777,6 +1777,27 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Xmass for mixture", "[massfractions]") {
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") {
+    
+    int kflag = -1;
+    FLAGS("PR", 2, kflag, false);
+    
+    int iMass = 1, iUnits = 21;
+    
+    std::vector<double> composition_mix(20, 0.0); composition_mix[0] = 0.2; composition_mix[1] = 0.8;
+    std::string medium_mix = "R14 * R23";
+    
+    double p_H = 22.2e5;
+    double T_H_in = 293;
+    double T_H_out = 273-35;
+    
+    auto r1 = REFPROP(medium_mix,"PT","H",iUnits,iMass,0,p_H,T_H_in,composition_mix);
+    auto r2 = REFPROP(medium_mix,"PT","H",iUnits,iMass,0,p_H,T_H_out,composition_mix);
+    CHECK_THAT(r1.z[0], WithinRelMatcher(0.2, 1e-15)); // Mass fractions are provided since iMass=1, make sure mass fractions are returned
+    CHECK_THAT(r2.z[0], WithinRelMatcher(0.2, 1e-15));
+}
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") {
     // Although the phase is very difficult to define for mixtures,
     // the same result should be obtained for all input pairs

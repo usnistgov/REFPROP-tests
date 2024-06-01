@@ -1840,6 +1840,41 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check loading of fluids with bad names", "[
     CHECK(r2.Output[1] != 1);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check ABLFSH and REFPROP and ALLPROPS all yield same answer for specific energy terms", "[ABFLSH]") {
+    std::vector<double> z(20, 1.0), x(20,1.0), y(20,1.0);
+    SECTION("with specific h,s,u"){
+        auto r1 = REFPROP("NITROGEN", "PT","E;H;S;D",MASS_BASE_SI,0,0,101325,300.0,z);
+        auto r1mol = REFPROP("NITROGEN", "PT","E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);
+        char hOut[3] = "TP"; double T,P,D,DL,DV,q,e,h,s,Cv,Cp,w; int ierr =0; char herr[256] = "    ";
+        double a=300.0, b=101.325; int iFlag=102;
+        ABFLSHdll(hOut,a,b,&z[0],iFlag,T,P,D,DL,DV,&x[0],&y[0],q,e,h,s,Cv,Cp,w,ierr,herr,2,255);
+        auto r3 = ALLPROPS("E;H;S",MASS_BASE_SI,0,0,300.0,r1.Output[3],z);
+        CHECK(e == r1.Output[0]/1e3);
+        CHECK(h == r1.Output[1]/1e3);
+        CHECK(s == r1.Output[2]/1e3);
+        
+        CHECK(e == r3.Output[0]/1e3);
+        CHECK(h == r3.Output[1]/1e3);
+        CHECK(s == r3.Output[2]/1e3);
+        
+    }
+    SECTION("with molar h,s,u"){
+        auto r1 = REFPROP("NITROGEN", "PT","E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);
+        char hOut[3] = "TP"; double T,P,D,DL,DV,q,e,h,s,Cv,Cp,w; int ierr =0; char herr[256] = "    ";
+        double a=300.0, b=101.325; int iFlag=100;
+        ABFLSHdll(hOut,a,b,&z[0],iFlag,T,P,D,DL,DV,&x[0],&y[0],q,e,h,s,Cv,Cp,w,ierr,herr,2,255);
+        auto r3 = ALLPROPS("E;H;S",MOLAR_BASE_SI,0,0,a,r1.Output[3],z);
+        CHECK(e == r1.Output[0]);
+        CHECK(h == r1.Output[1]);
+        CHECK(s == r1.Output[2]);
+        
+        CHECK(e == r3.Output[0]);
+        CHECK(h == r3.Output[1]);
+        CHECK(s == r3.Output[2]);
+    }
+}
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") {
     // Although the phase is very difficult to define for mixtures,
     // the same result should be obtained for all input pairs

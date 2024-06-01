@@ -1798,6 +1798,68 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
     CHECK_THAT(r2.z[0], WithinRelMatcher(0.2, 1e-15));
 }
 
+/*
+ 
+ The factors were generated with this python snippet:
+ 
+ import pint
+ import pandas, io
+ df = pandas.read_csv(io.StringIO("""what    key    DEFAULT    MOLAR SI    MASS SI    SI WITH C    MOLAR BASE SI    MASS BASE SI    ENGLISH    MOLAR ENGLISH    MKS    CGS    MIXED    MEUNITS
+ iUnits        0    1    2    3    20    21    5    6    7    8    9    10
+ Temperature    T    K    K    K    C    K    K    F    F    K    K    K    C
+ Pressure    P    kPa    MPa    MPa    MPa    Pa    Pa    psia    psia    kPa    MPa    psia    bar
+ Density    D    mol/dm^3    mol/dm^3    kg/m^3    kg/m^3    mol/m^3    kg/m^3    lbm/ft^3    lbmol/ft^3    kg/m^3    g/cm^3    g/cm^3    g/cm^3
+ Enthalpy    H    J/mol    J/mol    J/g    J/g    J/mol    J/kg    Btu/lbm    Btu/lbmol    J/g    J/g    J/g    J/g
+ Entropy    S    (J/mol)/K    (J/mol)/K    (J/g)/K    (J/g)/K    (J/mol)/K    (J/kg)/K    (Btu/lbm)/R    (Btu/lbmol)/R    (J/g)/K    (J/g)/K    (J/g)/K    (J/g)/K
+ Speed    U    m/s    m/s    m/s    m/s    m/s    m/s    ft/s    ft/s    m/s    cm/s    m/s    cm/s
+ Kinematic vis.    KV    cm^2/s    cm^2/s    cm^2/s    cm^2/s    m^2/s    m^2/s    ft^2/s    ft^2/s    cm^2/s    cm^2/s    cm^2/s    cm^2/s
+ Viscosity    VIS    uPa-s    uPa-s    uPa-s    uPa-s    Pa-s    Pa-s    lbm/(ft-s)    lbm/(ft-s)    uPa-s    uPa-s    uPa-s    cpoise
+ Thermal    TCX    W/(m-K)    mW/(m-K)    mW/(m-K)    mW/(m-K)    W/(m-K)    W/(m-K)    Btu/(h-ft-R)    Btu/(h-ft-R)    W/(m-K)    mW/(m-K)    mW/(m-K)    mW/(m-K)
+ Surface    STN    N/m    mN/m    mN/m    mN/m    N/m    N/m    lbf/ft    lbf/ft    mN/m    dyne/cm    mN/m    mN/m
+ Molar    M    g/mol    g/mol    g/mol    g/mol    kg/mol    kg/mol    lbm/lbmol    lbm/lbmol    g/mol    g/mol    g/mol    g/mol"""),sep='\t')
+ # df.info()
+
+ Prfactors = {}
+ nufactors = {}
+ tdfactors = {}
+
+ for icol, col in enumerate(df):
+     if icol < 2: continue
+     def get_units(s):
+         # print(s)
+         return ureg.Unit(s.replace('-','*').replace('psia','psi').replace('lbmol','mol').replace('lbm','lb'))
+     
+     iUnits = int(df[col].iloc[0])
+     
+     uCP = get_units(df[col].iloc[5])
+     uETA = get_units(df[col].iloc[8])
+     uD = get_units(df[col].iloc[3])
+     uTCX = get_units(df[col].iloc[9])
+     uM = get_units(df[col].iloc[11])
+     
+     if 'mol' in str(uD):
+         uD = uD*uM
+         uCP = uCP/uM
+     
+     tdfactor = (1*uTCX/(uD*uCP)).to_base_units()
+     tdfactors[iUnits] = tdfactor.m
+     
+     nufactor = (1*uETA/uD).to_base_units()
+     nufactors[iUnits] = nufactor.m
+     
+     Prfactor = (1*uETA*uCP/uTCX).to_base_units()
+     if Prfactor.dimensionless:
+         Prfactors[iUnits] = Prfactor.m
+         
+ print(nufactors)
+ print(Prfactors)
+ print(tdfactors)
+ */
+
+std::map<int, double> Pr_factors = {{0, 0.001}, {1, 1.0}, {2, 1.0}, {3, 1.0}, {20, 1.0}, {21, 1.0}, {5, 3600.0}, {6, 3600.0}, {7, 0.001}, {8, 1.0}, {9, 1.0}, {10, 1000.0}};
+std::map<int, double> nu_factors = {{0, 1.0000000000000002e-06}, {1, 1.0e-06}, {2, 1e-06}, {3, 1e-06}, {20, 1.0}, {21, 1.0}, {5, 0.09290303999999999}, {6, 0.09290303999999999}, {7, 1e-06}, {8, 1.0000000000000003e-09}, {9, 1.000e-09}, {10, 1.0e-06}};
+std::map<int, double> td_factors = {{0, 0.00100}, {1, 1.00e-06}, {2, 1e-06}, {3, 1e-06}, {20, 1.0}, {21, 1.0}, {5, 2.58064e-05}, {6, 2.58064e-05}, {7, 0.001}, {8, 1.0e-09}, {9, 1.0e-09}, {10, 1.0e-09}};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, and Prandtl number units", "[units]") {
     
     std::vector<double> z(20, 1.0);
@@ -1820,6 +1882,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         double q = r.Output[7];
         
         // Convert cp and rho to their specific version
+        // for unit systems that use molar units
         std::set<int> molar_unit_systems{0,1,20,6};
         double cpmass = (molar_unit_systems.count(US)>0 ? cp/wmol : cp);
         double rhomass = (molar_unit_systems.count(US)>0 ? rho*wmol : rho);
@@ -1832,9 +1895,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         CAPTURE(rho);
         CAPTURE(rhomass);
         CAPTURE(q);
-        CHECK_THAT(nu, WithinRelMatcher(eta/rhomass, 1e-10));
-        CHECK_THAT(td, WithinRelMatcher(tcx/(rhomass*cpmass), 1e-10));
-        CHECK_THAT(Pr, WithinRelMatcher((eta*cpmass)/tcx, 1e-10));
+        CHECK_THAT(nu/nu_factors[US], WithinRelMatcher(eta/rhomass, 1e-10));
+        CHECK_THAT(td/td_factors[US], WithinRelMatcher(tcx/(rhomass*cpmass), 1e-10));
+        CHECK_THAT(Pr/Pr_factors[US], WithinRelMatcher((eta*cpmass)/tcx, 1e-10));
         
         auto rr = REFPROP("ARGON","TD&","PRANDTL",US,0,0,T,rho,z);
         CHECK(rr.hUnits.substr(0,3) == "-  ");

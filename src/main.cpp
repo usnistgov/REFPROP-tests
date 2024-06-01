@@ -1823,15 +1823,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
  nufactors = {}
  tdfactors = {}
 
+ ureg.define("pound_mass = 0.45359237 kg = lbm")
+ ureg.define("pound_mole = 0.45359237 kg*mol = lbmol")
+
  for icol, col in enumerate(df):
      if icol < 2: continue
      def get_units(s):
-         # print(s)
-         return ureg.Unit(s.replace('-','*').replace('psia','psi').replace('lbmol','mol').replace('lbm','lb'))
+         return ureg.Unit(s.replace('-','*').replace('psia','psi'))
      
      iUnits = int(df[col].iloc[0])
      
      uCP = get_units(df[col].iloc[5])
+     uKV = get_units(df[col].iloc[7])
      uETA = get_units(df[col].iloc[8])
      uD = get_units(df[col].iloc[3])
      uTCX = get_units(df[col].iloc[9])
@@ -1841,10 +1844,13 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
          uD = uD*uM
          uCP = uCP/uM
      
-     tdfactor = (1*uTCX/(uD*uCP)).to_base_units()
+     aa = RP.REFPROPdll(FLD,'TRIP','TD',iUnits,0,0,-1,-1,[1.0]) # Note you'll need to instantiate REFPROP
+     print(US, aa.hUnits, aa.Output[0], aa.ierr, aa.herr)
+     tdfactor = (1*uTCX/(uD*uCP)).to_base_units()/ureg.Quantity(1.0, aa.hUnits).to_base_units()
      tdfactors[iUnits] = tdfactor.m
      
-     nufactor = (1*uETA/uD).to_base_units()
+     nufactor = (1*uETA/uD).to_base_units()/(1*uKV).to_base_units()
+     assert(nufactor.dimensionless)
      nufactors[iUnits] = nufactor.m
      
      Prfactor = (1*uETA*uCP/uTCX).to_base_units()
@@ -1856,9 +1862,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
  print(tdfactors)
  */
 
+std::map<int, double> nu_factors = {{0, 0.01}, {1, 0.01}, {2, 0.009999999999999998}, {3, 0.009999999999999998}, {20, 1.0}, {21, 1.0}, {5, 1.0}, {6, 1.0}, {7, 0.009999999999999998}, {8, 1.0000000000000003e-05}, {9, 1.0e-05}, {10, 0.01}};
 std::map<int, double> Pr_factors = {{0, 0.001}, {1, 1.0}, {2, 1.0}, {3, 1.0}, {20, 1.0}, {21, 1.0}, {5, 3600.0}, {6, 3600.0}, {7, 0.001}, {8, 1.0}, {9, 1.0}, {10, 1000.0}};
-std::map<int, double> nu_factors = {{0, 1.0000000000000002e-06}, {1, 1.0e-06}, {2, 1e-06}, {3, 1e-06}, {20, 1.0}, {21, 1.0}, {5, 0.09290303999999999}, {6, 0.09290303999999999}, {7, 1e-06}, {8, 1.0000000000000003e-09}, {9, 1.000e-09}, {10, 1.0e-06}};
-std::map<int, double> td_factors = {{0, 0.00100}, {1, 1.00e-06}, {2, 1e-06}, {3, 1e-06}, {20, 1.0}, {21, 1.0}, {5, 2.58064e-05}, {6, 2.58064e-05}, {7, 0.001}, {8, 1.0e-09}, {9, 1.0e-09}, {10, 1.0e-09}};
+std::map<int, double> td_factors = {{0, 10.0}, {1, 0.01}, {2, 0.009999999999999998}, {3, 0.009999999999999998}, {20, 10000.0}, {21, 10000.0}, {5, 0.00027777777777777783}, {6, 0.00027777777777777783}, {7, 10.0}, {8, 1.0e-05}, {9, 1.0e-05}, {10, 1.0e-05}};
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, and Prandtl number units", "[units]") {
     
@@ -1866,7 +1872,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
     
     for (int US : {0,1,2,3,20,21,5,6,7,8,9,10}){
         auto c = REFPROP("ARGON","CRIT","T;D",US,0,0,0,0,z);
-        double T = c.Output[0]*1.1;
+        double T = c.Output[0]; // Multiplying T by a factor doesn't make sense for F because that makes F go "down", become more negative
         double rho = c.Output[1]*0.9;
         
         auto r = REFPROP("ARGON","TD&","KV;TD;PRANDTL;VIS;TCX;CP;M;Qmass",US,0,0,T,rho,z);
@@ -1890,6 +1896,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         CAPTURE(US);
         CAPTURE(eta);
         CAPTURE(tcx);
+        CAPTURE(td);
         CAPTURE(cp);
         CAPTURE(cpmass);
         CAPTURE(rho);

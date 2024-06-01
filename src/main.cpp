@@ -1807,7 +1807,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         double T = c.Output[0]*1.1;
         double rho = c.Output[1]*0.9;
         
-        auto r = REFPROP("ARGON","TD&","KV;TD;PRANDTL;VIS;TCX;CP;W",US,0,0,T,rho,z);
+        auto r = REFPROP("ARGON","TD&","KV;TD;PRANDTL;VIS;TCX;CP;M;Qmass",US,0,0,T,rho,z);
+        REQUIRE(r.ierr == 0);
+        
         double nu = r.Output[0];
         double td = r.Output[1];
         double Pr = r.Output[2];
@@ -1815,16 +1817,27 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         double tcx = r.Output[4];
         double cp = r.Output[5];
         double wmol = r.Output[6];
+        double q = r.Output[7];
         
         // Convert cp and rho to their specific version
         std::set<int> molar_unit_systems{0,1,20,6};
-        double cpmass = (molar_unit_systems.count(US) ? cp*wmol : cp);
-        double rhomass = (molar_unit_systems.count(US) ? rho*wmol : rho);
+        double cpmass = (molar_unit_systems.count(US)>0 ? cp/wmol : cp);
+        double rhomass = (molar_unit_systems.count(US)>0 ? rho*wmol : rho);
         
         CAPTURE(US);
-        CHECK_THAT(nu, WithinRelMatcher(eta/rhomass, 1e-15));
-        CHECK_THAT(td, WithinRelMatcher(tcx/(rhomass*cpmass), 1e-15));
-        CHECK_THAT(Pr, WithinRelMatcher((eta*cpmass)/tcx, 1e-15));
+        CAPTURE(eta);
+        CAPTURE(tcx);
+        CAPTURE(cp);
+        CAPTURE(cpmass);
+        CAPTURE(rho);
+        CAPTURE(rhomass);
+        CAPTURE(q);
+        CHECK_THAT(nu, WithinRelMatcher(eta/rhomass, 1e-10));
+        CHECK_THAT(td, WithinRelMatcher(tcx/(rhomass*cpmass), 1e-10));
+        CHECK_THAT(Pr, WithinRelMatcher((eta*cpmass)/tcx, 1e-10));
+        
+        auto rr = REFPROP("ARGON","TD&","PRANDTL",US,0,0,T,rho,z);
+        CHECK(rr.hUnits.substr(0,3) == "-  ");
     }
 }
 

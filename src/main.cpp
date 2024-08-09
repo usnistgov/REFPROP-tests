@@ -1696,7 +1696,7 @@ public:
         auto binary_pairs = get_binary_pairs();
         CHECK(binary_pairs.size() > 0);
 
-        for (const std::string & fluids: {"Methane * Ethane", "R1234yf * R134a" }){
+        for (const std::string & fluids: {"Methane * Ethane", "R1234yf * R134a", "R32 * R134a * R1233ZDE" }){
             CAPTURE(fluids);
             int ierr = 0; std::string herr;
             SETFLUIDS(fluids, ierr, herr);
@@ -1704,6 +1704,12 @@ public:
             CHECK(ierr == 0);
             // Get the initial state
             auto ktv = get_values();
+            CAPTURE(ktv.fij);
+            if (ierr == -117){
+                for (auto i : {1,3}){
+                    CHECK(ktv.fij[i] != 1.0); // gammaT and gammaV should not be equal to 1.0
+                }
+            }
 
             // Run each step, checking the output each time
             std::vector<perturbations> steps = {

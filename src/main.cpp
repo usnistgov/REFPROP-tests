@@ -1823,7 +1823,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Xmass for mixture", "[massfractions]") {
 TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
     std::string note = "The problem here is that the hUnits are always equal to \"||||...\"";
     CAPTURE(note);
+    
     std::vector<double> z(20, 0.0); z[0] = 1.0;
+    int ierr = -1; std::string herr; SETFLUIDS("CO2", ierr, herr);
     auto ap = ALLPROPS("T,P,D,H,S,CP,CV,JT,KAPPA,BETA,W,VIS,TCX,TD", MOLAR_BASE_SI, 0, 0, 220.34373135888058, 30.46539273251402, z);
     CHECK(ap.hUnits.substr(0, 3) != "|||");
     auto ap1 = ALLPROPS("T", MOLAR_BASE_SI, 0, 0, 220.34373135888058, 30.46539273251402, z);

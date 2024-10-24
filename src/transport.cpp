@@ -87,6 +87,10 @@ std::vector<vel> transport_validation_data = {
     {"Ammonia", "T", 200, "Q", 0, "V", 516.02e-6, 1e-3},
     {"Ammonia", "T", 380, "Q", 1, "V", 14.03e-6, 1e-3},
     {"Ammonia", "T", 380, "Q", 0, "V", 53.95e-6, 1e-3},
+    
+    // From Sotiriadou, IJT, 2023
+    {"ETHANOL", "T", 300, "Dmass", 0, "V", 8.9893e-6, 1e-3},
+    {"ETHANOL", "T", 300, "Dmass", 850, "V", 1682.72e-6, 1e-3},
 
     // From Lemmon and Jacobsen, JPCRD, 2004
     {"Nitrogen", "T", 100, "Dmolar", 1e-14, "V", 6.90349e-6, 1e-3},

@@ -1830,6 +1830,27 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "dB/dT for Gao terms", "[NH3dBdT]") {
     CHECK_THAT(r.Output[1], WithinRelMatcher(7.478745783079243e-07, 1e-8));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function", "[HMX]") {
+    std::string note = "The problem here is that the XR0 is not in the HMX.BNC file but no error code is returned and the interaction parameters are all 1.0";
+    CAPTURE(note);
+    int ierr = 0; std::string herr = "";
+    char * RESOURCES = std::getenv("RESOURCES");
+    REQUIRE(RESOURCES != nullptr);
+    auto resources = normalize_path(std::string(RESOURCES));
+    auto hmxpath = resources + "/missing_XR0.BNC";
+    REQUIRE(std::filesystem::exists(hmxpath));
+    SETUP(2, "RC318.FLD*BUTANE", hmxpath, "DEF", ierr, herr);
+    CHECK(ierr != 0);
+    // Get the parameters
+    int icomp = 1, jcomp = 2;
+    ierr = 0;
+    char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
+    double fij[6];
+    GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
+    CHECK_THAT(fij[1], WithinRelMatcher(0.916288, 1e-8));
+    
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
     std::string note = "The problem here is that the hUnits are always equal to \"||||...\"";
     CAPTURE(note);

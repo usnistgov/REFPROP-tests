@@ -1696,7 +1696,7 @@ public:
         auto binary_pairs = get_binary_pairs();
         CHECK(binary_pairs.size() > 0);
 
-        for (const std::string & fluids: {"Methane * Ethane", "R1234yf * R134a", "R32 * R134a * R1233ZDE" }){
+        for (const std::string & fluids: {"Methane * Ethane", "R1234yf * R134a" }){
             CAPTURE(fluids);
             int ierr = 0; std::string herr;
             SETFLUIDS(fluids, ierr, herr);

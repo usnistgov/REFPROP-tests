@@ -752,7 +752,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly appli
 
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple for propane", "[flags]") {
-    std::vector<double> z(20, 1.0); z[0] = 0.4; z[1] = 0.6;
+    std::vector<double> z(1, 1.0);
 
     // Do normal calc for propane below Ttrip
     auto r0 = REFPROP("PROPANE", "TQ", "D", 0, 0, 0, 80, 0, z);
@@ -761,6 +761,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple fo
     int k = 0;
     FLAGS("BOUNDS", 1, k);
     FLAGS("BoUnDs", 1, k); // check case sensitivity (should not be case sensitive)
+    REQUIRE(k == 1);
 
     // Same calc (with bounds off)
     auto r1 = REFPROP("PROPANE", "TQ", "D", 0, 0, 0, 80, 0, z);

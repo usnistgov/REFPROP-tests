@@ -1783,7 +1783,7 @@ TEST_CASE_METHOD(GETSETKTV, "Check BIP getting/setting when estimation scheme is
     SETFLUIDS("R134A * R1233ZDE", ierr, herr);
     CAPTURE(herr);
     CHECK(ierr == -117);
-    std::string note = "The problem here is that all the interaction parameters are not set properly because at least one pair has an estimation scheme applied";
+    std::string note = "An estimation scheme is in use, and the error code should indicate that";
     CAPTURE(note);
     // Get them from GETKTV
     auto vals = get_values(2, 1);

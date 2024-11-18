@@ -1754,21 +1754,25 @@ TEST_CASE_METHOD(GETSETKTV, "Check BIP for R32 + CO2", "[BIP]") {
     }
 };
 
-TEST_CASE_METHOD(GETSETKTV, "Check BIP getting/setting when estimation scheme is applied", "[BIP]") {
+TEST_CASE_METHOD(GETSETKTV, "Check BIP getting/setting when estimation scheme is applied for ternary", "[BIP]") {
     int ierr =0 ; std::string herr = "";
     SETFLUIDS("R32 * R134A * R1233ZDE", ierr, herr);
     CAPTURE(herr);
     CHECK(ierr == -117);
-    std::string note = "The problem here is that all the interaction parameters are not set properly because at least one pair has an estimation scheme applied";
+    std::string note = "The problem here is that all the interaction parameters are not set properly because at least one pair has an estimation scheme applied although all interaction parameters are available";
     CAPTURE(note);
     // Get them from GETKTV
     auto vals = get_values(1, 2);
+    CAPTURE(get_values(1, 2).fij);
+    CAPTURE(get_values(2, 3).fij);
+    CAPTURE(get_values(1, 3).fij);
     CHECK(vals.fij[1] != 1);
     // Perturb a value to given value
     auto vals2 = vals;
     vals2.fij[1] = 2.0;
     set_values(vals2, 1, 2);
     auto vals2out = get_values(1,2);
+    CAPTURE(vals2out.fij);
     CHECK(vals2out.fij[1] == 2);
 };
 

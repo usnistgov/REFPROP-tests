@@ -719,6 +719,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly appli
     SECTION("Without absolute paths") {
         int ierr = -1; std::string herr;
         SETFLUIDS("R13;R1234yf", ierr, herr);
+        CAPTURE(herr);
         REQUIRE(ierr == -117);
         // Get the parameters
         int icomp = 1, jcomp = 2;
@@ -1148,6 +1149,8 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check R404A", "[R404A]") {
 TEST_CASE_METHOD(REFPROPDLLFixture, "Qmass for single-phase point", "[flash],[props]") {
     std::vector<double> z = { 1.0 };
     auto r = REFPROP("Propane", "TP", "Qmass", MOLAR_BASE_SI, 0, 0, 273.15, 101325, z);
+    CAPTURE(r.ierr);
+    CAPTURE(r.herr);
     auto Qmass2 = r.q;
     REQUIRE(Qmass2 == Approx(998).margin(1));
     auto Qmass = r.Output[0];

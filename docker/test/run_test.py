@@ -37,11 +37,15 @@ for tag in all_tags:
 os.makedirs('/output/errors')
 os.makedirs('/output/ok')
 for g in glob.glob('/output/err_*.txt'):
-    is_ok = 'All tests passed' in open(g).read()
-    if is_ok:
-        shutil.move(g, '/output/ok')
-    else:
+    try:
+        is_ok = 'All tests passed' in open(g).read()
+        if is_ok:
+            shutil.move(g, '/output/ok')
+        else:
+            shutil.move(g, '/output/errors')
+    except UnicodeDecodeError as ude:
         shutil.move(g, '/output/errors')
+        
 shutil.make_archive('/output/errors','zip','/output/errors')
 shutil.make_archive('/output/ok','zip','/output/ok')
 

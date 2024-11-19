@@ -12,7 +12,7 @@
 #include <cctype>
 
 // From: https://en.cppreference.com/mwiki/index.php?title=cpp/ranges/drop_while_view&oldid=127184
-std::string trim(std::string_view const in)
+static std::string trim(std::string_view const in)
 {
     auto view
         = in

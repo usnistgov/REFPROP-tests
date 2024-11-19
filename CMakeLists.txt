@@ -12,7 +12,7 @@ if(MSVC)
     endif ()
 endif()
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
+#add_subdirectory("${CMAKE_SOURCE_DIR}/externals/boost-cmake")
 
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/externals/Catch")
@@ -28,7 +28,7 @@ file(GLOB APP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 # The main EXE
 add_executable(main ${APP_SOURCES})
 # The required dependencies
-target_link_libraries(main PUBLIC Boost::filesystem PRIVATE Catch2WithMain)
+target_link_libraries(main PRIVATE Catch2WithMain)
 add_test(normal_tests main)
 
 if (WIN32)

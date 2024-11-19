@@ -1,9 +1,7 @@
 #ifndef REFPROP_TESTS_UTILS
 #define REFPROP_TESTS_UTILS
-
-#include <boost/foreach.hpp> 
-#include <boost/algorithm/string/trim.hpp>
-
+ 
+#include <ranges>
 #include <locale>
 #include <regex>
 #include <string>
@@ -11,6 +9,14 @@
 #include <fstream>
 #include <valarray>
 #include <filesystem>
+#include <cctype>
+
+// From: https://cplusplus.com/forum/general/285372/
+void trim_inplace(std::string& in) {
+    return in = std::ranges::to<std::string>(in |
+        std::views::drop_while(std::isspace) | std::views::reverse |
+        std::views::drop_while(std::isspace) | std::views::reverse);
+}
 
 /**  Read in an entire file in one shot
  */
@@ -67,7 +73,7 @@ static std::vector<std::pair<std::string, std::string>> get_binary_pairs() {
     for (auto &&line : str_split(contents)) {
         if (std::regex_search(line, pair_match, pattern)){
             std::string flds = pair_match[1];
-            boost::algorithm::trim(flds); // inplace
+            trim_inplace(flds); // inplace
             auto fld = str_split(flds, "/");
             pairs.emplace_back(fld[0], fld[1]);
         }
@@ -119,7 +125,7 @@ static predef_mix_values get_predef_mix_values(const std::string &fname) {
     std::vector<double> vals;
     for (auto &c : val_string) {
 		std::string cc = c;
-        boost::algorithm::trim(cc); // inplace
+        trim_inplace(cc); // inplace
         if (!cc.empty()){
 			vals.emplace_back(string_to_double(cc));
         }
@@ -127,11 +133,11 @@ static predef_mix_values get_predef_mix_values(const std::string &fname) {
     if (vals.size() != 4) {
         throw "Length of values is not 4 in "+ fname;
     }
-    boost::algorithm::trim(lines[2]);
+    trim_inplace(lines[2]);
     std::vector<double> molar_compositions;
     auto Ncomp = static_cast<int>(string_to_double(lines[2]));
     for (auto i = 0; i < Ncomp; ++i) {
-        boost::algorithm::trim(lines[3+Ncomp+i]);
+        trim_inplace(lines[3+Ncomp+i]);
         molar_compositions.emplace_back(string_to_double(lines[3 + Ncomp + i]));
     }
     return predef_mix_values{vals[0], vals[1], vals[2], vals[3], molar_compositions};

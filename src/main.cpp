@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <boost/algorithm/string/trim.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
@@ -47,9 +46,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Version", "[setup][version]") {
     CHECK(hpath[0] != '*');
     std::vector<double> z(20, 0.0); 
     auto r = REFPROP("", "", "DLL#", DEFAULT, 0, 0, 0, 0, z);
-    boost::algorithm::trim(r.hUnits);
+    trim_inplace(r.hUnits);
     std::string shpath(hpath);
-    boost::algorithm::trim(shpath);
+    trim_inplace(shpath);
     CHECK(shpath == r.hUnits);
 }
 
@@ -1532,7 +1531,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check full absolute paths are ok", "[setup]
         CAPTURE(sep);
         CAPTURE(r.herr);
         std::string str = std::string(r.hUnits);
-        boost::algorithm::trim(str);
+        trim_inplace(str);
         str = normalize_path(str);
         fld0 = normalize_path(fld0);
         CHECK(str == fld0);
@@ -1582,11 +1581,11 @@ public:
         KTVvalues o;
         
         o.hmodij = std::string(hmodij,3); o.fij=fij; o.hfmix = std::string(hfmix,254); o.hfij = std::string(hfij,254); o.hbinp = std::string(hbinp,254); o.hmxrul = std::string(hmxrul,254);
-        boost::algorithm::trim(o.hmodij); //inplace
-        boost::algorithm::trim(o.hfmix); //inplace
-        boost::algorithm::trim(o.hfij); //inplace
-        boost::algorithm::trim(o.hbinp); //inplace
-        boost::algorithm::trim(o.hmxrul); //inplace
+        trim_inplace(o.hmodij); //inplace
+        trim_inplace(o.hfmix); //inplace
+        trim_inplace(o.hfij); //inplace
+        trim_inplace(o.hbinp); //inplace
+        trim_inplace(o.hmxrul); //inplace
         return o;
     }
     void set_values(const KTVvalues in, int icomp = 1, int jcomp = 2) {
@@ -2072,6 +2071,15 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent phase for mixtures", "[phase]") 
     std::string Phase_TD = REFPROP(FLD,"TD","PHASE",US, 0,0,T,D,Comp).hUnits; // # Returns incorrect "Subcooled liquid"
     CHECK(Phase_TD == Phase_TP);
 };
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent SETUP failure", "[setup]") {
+    std::vector<double> Comp(20, 1);
+    std::string FLD = "BADFLUID";
+    auto r1 = REFPROP(FLD,"TP","D",0,0,0,0,0,Comp);
+    auto r2 = REFPROP(FLD,"TP","D",0,0,0,0,0,Comp);
+    CHECK(r1.ierr == r2.ierr);
+};
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "EOSMIN temp should not fail even if saturation call does", "[limits]") {
     std::vector<double> Comp(20, 1);
     auto r1 = REFPROP("R124","EOSMIN","T",0,0,0,0,0,Comp);
@@ -2136,10 +2144,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check hUnits are the same several ways", "[
     auto r2 = REFPROP("PROPANE", " ", "TC;PC", 0, 0, 0, 0, 0, z);
     auto r3 = REFPROP("PROPANE", "TQ", "TC;PC", 0, 0, 0, 200, 0, z);
     auto r4 = REFPROP("PROPANE", "CRIT", "T", 0, 0, 0, 0, 0, z);
-    boost::algorithm::trim(r.hUnits); //inplace
-    boost::algorithm::trim(r2.hUnits); //inplace
-    boost::algorithm::trim(r3.hUnits); //inplace
-    boost::algorithm::trim(r4.hUnits); //inplace
+    trim_inplace(r.hUnits); //inplace
+    trim_inplace(r2.hUnits); //inplace
+    trim_inplace(r3.hUnits); //inplace
+    trim_inplace(r4.hUnits); //inplace
     CAPTURE(r.herr);
     CHECK(r.ierr == 0);
     CHECK(r.hUnits == r2.hUnits);
@@ -2167,7 +2175,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "CAS# for PROPANE", "[CAS]") {
     auto r = REFPROP("PROPANE", " ", "CAS#", 0,0,0,0,0,z);
     CAPTURE(r.herr);
     CHECK(r.ierr == 0);
-    boost::algorithm::trim(r.hUnits); //inplace
+    trim_inplace(r.hUnits); //inplace
     CHECK(r.hUnits == "74-98-6");
 };
 
@@ -2176,7 +2184,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check InChI for D6", "[InChI]") {
     auto r = REFPROP("D6","","INCHI",0,0,0,0,0,z);
     CAPTURE(r.herr);
     CHECK(r.ierr == 0);
-    boost::algorithm::trim(r.hUnits); //inplace
+    trim_inplace(r.hUnits); //inplace
     CHECK("InChI="+r.hUnits == "InChI=1S/C12H36O6Si6/c1-19(2)13-20(3,4)15-22(7,8)17-24(11,12)18-23(9,10)16-21(5,6)14-19/h1-12H3");
 };
 

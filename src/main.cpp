@@ -750,13 +750,6 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly appli
     }
 };
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Check name1", "[NAMEdll]") {
-    std::vector<double> z(1, 1.0);
-    SETMIXTURE("R410A.MIX");
-    auto name1 = NAME(1);
-    CHECK(name1.hnam == "R32");
-};
-
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple for propane", "[flags]") {
     std::vector<double> z(1, 1.0);

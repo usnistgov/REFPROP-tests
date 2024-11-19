@@ -23,12 +23,15 @@ class ClassRunner():
         for p in self.paths:
             self._build_one(p, **kwargs)
 
-    def _expand_ZIP(self, *, outroot='.'):
+    def _expand_ZIPs(self, *, outroot='.'):
         for path in self.paths:
             h = run_one.get_path_hash(path)
             test = self.test
-            with zipfile.ZipFile(os.path.join(self.ofprefix, f'{h}_{test}.zip')) as z:
-                z.extractall(path=f'{outroot}/{h}')
+            try:
+                with zipfile.ZipFile(os.path.join(self.ofprefix, f'{h}_{test}.zip')) as z:
+                    z.extractall(path=f'{outroot}/{h}')
+            except:
+                pass
 
     def _collect_tag_list(self):
         tags = []
@@ -53,7 +56,7 @@ class ClassRunner():
             'pathhash': pathhash
         }
 
-    def build_tag_report(self, tags, sort_by = None, sort_kwargs={}):
+    def build_tag_report(self, tags, sort_by = None, sort_kwargs={}, output_folder=None):
         o = []
         unhash = {}
         for tag in tags:
@@ -86,14 +89,14 @@ class ClassRunner():
                 return pair
             
         df = pandas.DataFrame(o).sort_values(by=by, key=keyer, **sort_kwargs)
-        df.to_html('report.html', index=False, escape=False)
-        df.to_csv('report.csv', index=False)
+        df.to_html(output_folder+'/report.html', index=False, escape=False)
+        df.to_csv(output_folder+'report.csv', index=False)
         return df
 
     def compare(self, sort_by = None, sort_kwargs={}, outroot=None):
-        self._expand_ZIP(outroot=outroot)
+        self._expand_ZIPs(outroot=outroot)
         self.tags = self._collect_tag_list()
-        return self.build_tag_report(self.tags, sort_by=sort_by, sort_kwargs=sort_kwargs)
+        return self.build_tag_report(self.tags, sort_by=sort_by, sort_kwargs=sort_kwargs, output_folder=outroot)
 
 if __name__ == '__main__':
     print('Can\'t run this file directly')

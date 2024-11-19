@@ -219,10 +219,23 @@ std::vector<vel> transport_validation_data = {
     {"R23", "T", 420, "Dmolar", 7564, "V", 39.459e-6, 1e-4},
     {"R23", "T", 370, "Dmolar", 32.62, "V", 18.213e-6, 1e-4},
 
-    // From Friend, JPCRD, 1991
-    {"Ethane", "T", 100, "Dmolar", 21330, "V", 878.6e-6, 1e-2},
-    {"Ethane", "T", 430, "Dmolar", 12780, "V", 58.70e-6, 1e-2},
-    {"Ethane", "T", 500, "Dmolar", 11210, "V", 48.34e-6, 1e-2},
+    // From Herrmann, JPCRD, 2018
+    {"ETHANE", 100, "Dmass", 650, "V", 1050.774, 1e-6},
+    {"ETHANE", 300, "Dmass", 0, "V", 9.285785, 1e-6},
+    {"ETHANE", 300, "Dmass", 1, "V", 9.293015, 1e-6},
+    {"ETHANE", 300, "Dmass", 100, "V", 12.55151, 1e-6},
+    {"ETHANE", 300, "Dmass", 500, "V", 114.3985, 1e-6},
+    {"ETHANE", 305.322, "Dmass", 206.18,"V", 22.63285, 1e-6},
+    {"ETHANE", 310, "Dmass", 1, "V", 9.592824, 1e-6},
+    {"ETHANE", 310, "Dmass", 100, "V", 12.88843, 1e-6},
+    {"ETHANE", 310, "Dmass", 500, "V", 114.8683, 1e-6},
+    {"ETHANE", 500, "Dmass", 1, "V", 14.85686, 1e-6},
+    {"ETHANE", 500, "Dmass", 100, "V", 18.82032, 1e-6},
+    {"ETHANE", 500, "Dmass", 400, "V", 66.15890, 1e-6},
+    {"ETHANE", 675, "Dmass", 0, "V", 18.97242, 1e-6},
+    {"ETHANE", 675, "Dmass", 1, "V", 18.99427, 1e-6},
+    {"ETHANE", 675, "Dmass", 100, "V", 23.37711, 1e-6},
+    {"ETHANE", 675, "Dmass", 300, "V", 45.90524, 1e-6},
 
     // From Xiang, JPCRD, 2006
     {"Methanol", "T", 300, "Dmass", 0.12955, "V", 0.009696e-3, 1e-3},

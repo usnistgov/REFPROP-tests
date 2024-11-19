@@ -25,7 +25,7 @@ std::string trim(std::string_view const in)
 }
 
 // Trim, but its a copy
-void trim_inplace(std::string & in){
+static void trim_inplace(std::string & in){
     in = trim(in);
 }
 

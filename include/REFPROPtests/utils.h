@@ -11,11 +11,22 @@
 #include <filesystem>
 #include <cctype>
 
-// From: https://cplusplus.com/forum/general/285372/
-void trim_inplace(std::string& in) {
-    return in = std::ranges::to<std::string>(in |
-        std::views::drop_while(std::isspace) | std::views::reverse |
-        std::views::drop_while(std::isspace) | std::views::reverse);
+// From: https://en.cppreference.com/mwiki/index.php?title=cpp/ranges/drop_while_view&oldid=127184
+std::string trim(std::string_view const in)
+{
+    auto view
+        = in
+        | std::views::drop_while(isspace)
+        | std::views::reverse
+        | std::views::drop_while(isspace)
+        | std::views::reverse
+        ;
+    return {view.begin(), view.end()};
+}
+
+// Trim, but its a copy
+void trim_inplace(std::string & in){
+    in = trim(in);
 }
 
 /**  Read in an entire file in one shot

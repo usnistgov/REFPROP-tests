@@ -1900,6 +1900,20 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
     CHECK(ap1.hUnits == "K");
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {
+    std::string note = "P,H flashes fail for water";
+    CAPTURE(note);
+    std::vector<double> z(20, 0.0); z[0] = 1.0;
+    int ierr = -1; std::string herr; SETFLUIDS("WATER", ierr, herr);
+    double p_Pa = 21.8299e6;
+    for (auto h_kJkg : {137.5115, 138.0115, 138.5115, 139.0115, 139.5115}){
+        auto r = REFPROP("", "PH", "T", MASS_BASE_SI, 0, 0, p_Pa, h_kJkg*1e3, z);
+        double T = r.Output[0];
+        bool acceptable = T > 28+273.15 && T < 29+273.15;
+        CHECK(acceptable);
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") {
     
     int kflag = -1;

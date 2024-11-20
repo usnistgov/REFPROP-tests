@@ -1,0 +1,36 @@
+HMX               !Mnemonic for mixture model, must match hfmix on call to SETUP.
+5                 !Version number
+
+! Changelog:
+! ---------
+
+#BNC              !Binary mixing coefficients
+BNC
+?
+!
+?RC318/BUTANE                      [RC318/BUTANE]
+?Bell (202X)
+  9e4d8e90/7b3b4080
+    B02   0.98944     0.916288       0.954663       0.900133    0.             0.             0. 0. 0. 0. 0. 0.
+    TC7   0.0      0.0     0.0       0.             0.             0.             0. 0. 0. 0. 0. 0.
+    VC7   0.0      0.0     0.0       0.             0.             0.             0. 0. 0. 0. 0. 0.
+!
+
+#MXM              !Mixture model specification
+B02  R134a/R1234ze(E) mixture
+?
+?```````````````````````````````````````````````````````````````````````````````
+? I.H. Bell
+?  Mixture Models for Refrigerants R-1234yf/134a, R-1234yf/1234ze(E), and R-134a/1234ze(E)
+?  and Interim Models for R-125/1234yf, R-1234ze(E)/227ea, and R-1234yf/152a
+?  J. Phys. Chem. Ref. Data 51, 013103 (2022)
+?  DOI:https://doi.org/10.1063/5.0086060
+?
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV    Fij    not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  2 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.068889 3.184446 1.0 1.0                                !n(i),t(i),d(i),l(i) in term n_i*tau^t_i*delta^d_i*exp(-delta^l_i)
+ -0.004831 2.034344 2.0 2.0
+
+@END

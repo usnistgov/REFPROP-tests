@@ -1860,6 +1860,35 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function"
     
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check HMX with non .BNC extension", "[HMX]") {
+    std::string note = "The HMX should not be required(!) to have a .HMX file extension";
+    CAPTURE(note);
+    int ierr = 0; std::string herr = "";
+    char * RESOURCES = std::getenv("RESOURCES");
+    REQUIRE(RESOURCES != nullptr);
+    auto resources = normalize_path(std::string(RESOURCES));
+    auto hmxpath = resources + "/HMX.badextension";
+    REQUIRE(std::filesystem::exists(hmxpath));
+    SETUP(2, "RC318.FLD*BUTANE", hmxpath, "DEF", ierr, herr);
+    CAPTURE(herr);
+    CHECK(ierr == 0);
+}
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "SETUP with absolute paths to fluids", "[HMX]") {
+    std::string note = "The HMX should not be required(!) to have a .HMX file extension";
+    CAPTURE(note);
+    int ierr = 0; std::string herr = "";
+    char * RESOURCES = std::getenv("RESOURCES");
+    REQUIRE(RESOURCES != nullptr);
+    char * RPPREFIX = std::getenv("RPPREFIX");
+    REQUIRE(RPPREFIX != nullptr);
+    std::string prefix{RPPREFIX};
+    auto resources = normalize_path(std::string(RESOURCES));
+    SETUP(2, prefix+"/FLUIDS/ETHANE.FLD*"+prefix+"/FLUIDS/BUTANE.FLD", "HMX.BNC", "DEF", ierr, herr);
+    CAPTURE(herr);
+    CHECK(ierr == 0);
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
     std::string note = "The problem here is that the hUnits are always equal to \"||||...\"";
     CAPTURE(note);

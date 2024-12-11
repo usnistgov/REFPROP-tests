@@ -2658,3 +2658,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check refrigerant models", "[HMX]"){
         CHECK_THAT(actual, WithinRel(alphar, 1e-10));
     }
 }
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "iMass in REFPROP", "[iMassREFPROP]") {
+    int MassSI = get_enum("Mass SI"); // unit in MASS SI
+    int iFlag = 1; // 0: don't call SATSPLN, 1: call SATSPLN
+    std::vector<double> z (20, 1.0); z[0] = 0.8; z[1] = 0.2;
+
+    std::string hFLD = "R1234zeZ; CYCLOPEN";
+    auto r0 = REFPROP(hFLD, "", "PC", MassSI, 0, iFlag, -1, -1, z);
+    REFPROP("ARGON", "", "PC", MassSI, 0, iFlag, 300, 1.0, z); // To force a reload
+    auto r1 = REFPROP(hFLD, "", "PC", MassSI, 1, iFlag, -1, -1, z);
+    CHECK(r0.Output[0] != r1.Output[0]);
+    CHECK(r0.ierr == -117);
+    CHECK(r1.ierr == -117);
+}

@@ -6,6 +6,8 @@ Some of these tests are based on the tests implemented in the CoolProp program (
 
 #include <cstdlib>
 
+#include <unordered_map>
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 using Catch::Matchers::WithinAbsMatcher;

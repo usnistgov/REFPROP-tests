@@ -185,10 +185,10 @@ public:
         }
     }
     void SETREF(const std::string &ref, int ixflag, std::vector<double> &z, double& h0, double& s0, double& T0, double& p0, int &ierr, std::string &herr) {
-        char hFlds[3] = "";
+        char hFlds[4] = "";
         REQUIRE(ref.size() <= 3);
         strcpy(hFlds, (ref.c_str() + std::string(3 - ref.size(), ' ')).c_str());
-        char herrset[255] = "";
+        char herrset[256] = "";
         if (z.size() != 20){ throw std::invalid_argument("z must be of length 20"); };
         SETREFdll(hFlds, ixflag, &(z[0]), h0, s0, T0, p0, ierr, herrset, 3, 255);
         herr = std::string(herrset);

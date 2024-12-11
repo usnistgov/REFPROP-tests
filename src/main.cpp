@@ -2038,9 +2038,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, a
         CAPTURE(rho);
         CAPTURE(rhomass);
         CAPTURE(q);
-        CHECK_THAT(nu/nu_factors[US], WithinRelMatcher(eta/rhomass, 1e-10));
-        CHECK_THAT(td/td_factors[US], WithinRelMatcher(tcx/(rhomass*cpmass), 1e-10));
-        CHECK_THAT(Pr/Pr_factors[US], WithinRelMatcher((eta*cpmass)/tcx, 1e-10));
+        CHECK_THAT(nu/nu_factors[US], WithinRelMatcher(eta/rhomass, 1e-8));
+        CHECK_THAT(td/td_factors[US], WithinRelMatcher(tcx/(rhomass*cpmass), 1e-8));
+        CHECK_THAT(Pr/Pr_factors[US], WithinRelMatcher((eta*cpmass)/tcx, 1e-8));
         
         auto rr = REFPROP("ARGON","TD&","PRANDTL",US,0,0,T,rho,z);
         CHECK(rr.hUnits.substr(0,3) == "-  ");

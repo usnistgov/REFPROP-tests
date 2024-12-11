@@ -70,7 +70,7 @@ class ClassRunner():
                 if len(tagpaths) == 1:
                     results.append(self._get_tag_info(tagpath=tagpaths[0], pathhash=pathhash))
                 else:
-                    print(candidates)
+                    print('none of these candidates were matched:', candidates)
             if not all([r['failure_count'] == 0 for r in results]):
                 # print(tag, results)
                 j = {'tag': tag}

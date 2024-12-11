@@ -79,27 +79,28 @@ def run_test(*, root, test, ofprefix, clean=False):
         shutil.make_archive(prefix, 'zip', os.path.join(test, 'output'))
     except:
         lines = open(logfile).readlines()
-        numlines = min(20, len(lines)-1)
+        numlines = min(40, len(lines)-1)
         print('Tail of logfile:', ''.join(lines[-numlines::]))
         raise
 
 if __name__ == '__main__':
 
-    build_REFPROP_zip(root='Q:/Public/Eric/INSTALL/1000/10.0', zippath='test/REFPROP.zip')
-    quit()
+   # build_REFPROP_zip(root='Q:/Public/Eric/INSTALL/1000/10.0', zippath='test/REFPROP.zip')
+   # quit()
 
-    mnt = '/media/Q/'
-    if sys.platform.startswith('win'):
-        mnt = 'Q:/Public/'
+    # mnt = '/media/Q/'
+    # if sys.platform.startswith('win'):
+    #     mnt = 'Q:/Public/'
     # sys.argv += ['--root', mnt+'Eric/INSTALL/BETA','--test','test']
     # sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','valgrind']
     # sys.argv += ['--root', r'Q:/Public/Eric/INSTALL/1000/10.0','--test','test']
-    sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','test']
+    # sys.argv += ['--root', r'C:\Users\ihb\Code\REFPROP-sandbox','--test','test']
+    sys.argv += ['--root', r'sources/1717766042_56c80cf4af3593aa1bd25e5043df4d6d603b69d6.zip','--test','valgrind']
 
     parser = argparse.ArgumentParser(description='Run a specified test, and generate a zip file with perhaps relevant output')
     parser.add_argument('--root', type=str, required=True, nargs=1, 
         help='The root path of the REFPROP installation from which to take the folders FLUIDS, MIXTURES, and FORTRAN')
     parser.add_argument('--test', type=str, required=True, nargs=1, 
-        help='The selected test to run', choices=['gcov','valgrind','test'])
+        help='The selected test to run', choices=['gcov','valgrind','test','testintel'])
     args = parser.parse_args()
-    run_test(root=args.root[0], test=args.test[0])
+    run_test(root=args.root[0], test=args.test[0], ofprefix='runresults')

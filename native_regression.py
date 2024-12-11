@@ -28,24 +28,25 @@ class VersionBuilder:
             PATH = os.path.abspath(source)+'/FORTRAN'
         DEST = os.path.abspath(dest)
             
-        subprocess.check_call(f'cmake -S REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={PATH} -DCMAKE_BUILD_TYPE=Release', shell=True)
+        subprocess.check_call(f'cmake -S {DEST}/REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={PATH} -DCMAKE_BUILD_TYPE=Release', shell=True)
         subprocess.check_call(f'cmake --build {DEST} --config Release', shell=True)
         if not os.path.exists(dest+'/FLUIDS'):
             shutil.copytree(source+'/FLUIDS', dest+'/FLUIDS')
             shutil.copytree(source+'/MIXTURES', dest+'/MIXTURES')
+        shutil.copy2(f'{DEST}/Release/REFPRP64.DLL', f'{DEST}/REFPRP64.DLL')
 
     def run_tests(self, RPbuild, *, outputbase, tags=None):
         
         # Collect all the tags to be run
         if tags is None:
             all_tags = []
-            output = subprocess.run(self.tester_exe + ' --list-tags', shell = True, stdout = subprocess.PIPE).stdout.decode('utf-8')
+            output = subprocess.run(f'{self.tester_exe} --list-tags', shell=True, stdout = subprocess.PIPE).stdout.decode('utf-8')
             for il, line in enumerate(output.split('\n')[1::]):
                 if not line or '[' not in line: continue
                 tag = '[' + line.split('[')[1]
                 if 'veryslow' in tag: continue # Don't run the veryslow tests
             #    if 'predef_mix' not in tag: continue
-                all_tags.append(tag)
+                all_tags.append(tag.strip())
             tags = all_tags
 
         environ = {'RPPREFIX': RPbuild, 'RESOURCES': os.path.abspath('resources')}
@@ -124,18 +125,18 @@ class VersionBuilder:
         df.to_html('report.html', index=False, escape=False)
         return
 
-vb = VersionBuilder(tester_exe='bld/Debug/main')
+vb = VersionBuilder(tester_exe=r'bld/Debug/main.exe')
 
 sources = ['docker/sources/' + f for f in ['10000-ce2a80', 'BETA', '1717766042_56c80cf4af3593aa1bd25e5043df4d6d603b69d6.zip']]
 
 for source in sources:
     
     # Build the version of REFPROP to be tested
-    dest = 'RPbuilds/' + source.replace('.zip', '')
-    vb.build_REFPROP(source=f'docker/sources/{source}', dest=dest)
+    dest = 'RPbuilds/' + source.replace('.zip', '').replace('docker/sources/','')
+    vb.build_REFPROP(source=source, dest=dest)
     
     # And run the tests
-    outputbase = 'RPoutputs/' + source.replace('.zip', '')
+    outputbase = 'RPoutputs/' + source.replace('.zip', '').replace('docker/sources/','')
     os.makedirs(outputbase, exist_ok=True)
     vb.run_tests(RPbuild=dest, tags=None, outputbase=outputbase)
     

@@ -67,7 +67,7 @@ class VersionBuilder:
         os.makedirs(outputbase+'/errors')
         os.makedirs(outputbase+'/ok')
         for g in glob.glob(outputbase+'/err_*.txt'):
-            is_ok = 'All tests passed' in open(g).read()
+            is_ok = 'All tests passed' in open(g, encoding='utf-8', errors='ignore').read()
             if is_ok:
                 shutil.move(g, outputbase+'/ok')
             else:

@@ -91,8 +91,10 @@ class VersionBuilder:
         else:
             groups = re.search(r'assertions: (\d+) \| (\d+) passed \| (\d+) failed', contents)
             if groups is None:
-                raise ValueError('no match for test result')
-            failure_count = groups.group(3)
+                failure_count = -9999999 # crash!
+                # raise ValueError('no match for test result')
+            else:
+                failure_count = groups.group(3)
         return {
             'failure_count': failure_count,
             'url': tagpath,

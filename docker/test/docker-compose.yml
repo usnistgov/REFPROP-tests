@@ -5,6 +5,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      shm_size: '2gb' # <-- this will set the size when BUILDING; see https://github.com/docker/compose/issues/6333
+    shm_size: '2gb' # <-- when RUNNING 
     volumes:
       - type: bind
         source: ./output

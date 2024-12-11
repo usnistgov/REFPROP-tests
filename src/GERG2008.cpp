@@ -9,6 +9,7 @@ using Catch::Matchers::WithinRelMatcher;
 using Catch::Approx;
 
 #include <numeric>
+#include <array>
 
 #include "REFPROPtests/baseclasses.h"
 

@@ -57,7 +57,10 @@ def run_test(*, root, test, ofprefix, clean=False):
     zip_destination = os.path.join(test, 'REFPROP.zip')
     if os.path.exists(zip_destination):
         os.remove(zip_destination)
-    build_REFPROP_zip(root=root, zippath=zip_destination)
+    if os.path.exists(root) and os.path.isfile(root):
+        shutil.copy2(root, zip_destination)
+    else:
+        build_REFPROP_zip(root=root, zippath=zip_destination)
     print(f'zip built in {zip_destination} from {root}')
 
     # Run the test

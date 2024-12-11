@@ -33,7 +33,8 @@ class VersionBuilder:
         if not os.path.exists(dest+'/FLUIDS'):
             shutil.copytree(source+'/FLUIDS', dest+'/FLUIDS')
             shutil.copytree(source+'/MIXTURES', dest+'/MIXTURES')
-        shutil.copy2(f'{DEST}/Release/REFPRP64.DLL', f'{DEST}/REFPRP64.DLL')
+        if 'win' in sys.platform:
+            shutil.copy2(f'{DEST}/Release/REFPRP64.DLL', f'{DEST}/REFPRP64.DLL')
 
     def run_tests(self, RPbuild, *, outputbase, tags=None):
         

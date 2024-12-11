@@ -3,6 +3,12 @@ build/
 /docker/valgrind/output
 /codelite
 bld/
+bldsandbox/
 /docker/.email_recipients.json
+/docker/sources
+/docker/runresults
+/docker/**/output
+/**/.DS_Store
+/**/*.pyc
 
 REFPROP.zip

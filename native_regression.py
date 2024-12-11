@@ -50,6 +50,8 @@ class VersionBuilder:
             tags = all_tags
 
         environ = {'RPPREFIX': RPbuild, 'RESOURCES': os.path.abspath('resources')}
+        if 'win' in sys.platform:
+            environ = os.environ | {'RPPREFIX': RPbuild, 'RESOURCES': os.path.abspath('resources')}
         for tag in tags:
             root =  tag.replace('[', '').replace(']','') + '.txt'
             print(tag, ' --> ', root)

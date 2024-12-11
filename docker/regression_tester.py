@@ -91,7 +91,7 @@ class ClassRunner():
             
         df = pandas.DataFrame(o).sort_values(by=by, key=keyer, **sort_kwargs)
         df.to_html(output_folder+'/report.html', index=False, escape=False)
-        df.to_csv(output_folder+'report.csv', index=False)
+        df.to_csv(output_folder+'/report.csv', index=False)
         return df
 
     def compare(self, sort_by = None, sort_kwargs={}, outroot=None):

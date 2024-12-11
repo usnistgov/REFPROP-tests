@@ -4,3 +4,5 @@ build/
 /codelite
 bld/
 /docker/.email_recipients.json
+
+REFPROP.zip

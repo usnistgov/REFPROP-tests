@@ -2672,3 +2672,29 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "iMass in REFPROP", "[iMassREFPROP]") {
     CHECK(r0.ierr == -117);
     CHECK(r1.ierr == -117);
 }
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "SETREF for propane", "[SETREF]") {
+    int MassSI = get_enum("Mass SI"); // unit in MASS SI
+    int iFlag = 1; // 0: don't call SATSPLN, 1: call SATSPLN
+    std::vector<double> z (20, 1.0);
+
+    auto r0 = REFPROP("PROPANE", "QT", "H;S", MASS_BASE_SI, 0, 0, 0, 273.15, z);
+    CHECK_THAT(r0.Output[0], WithinRel(200000, 1e-10));
+    CHECK_THAT(r0.Output[1], WithinRel(1000, 1e-10));
+    
+    int icomp = 1; std::string herr2; int ierr2 = -300;
+    double h0, s0, T0, p0 = -1;
+    SETREF("NBP", icomp, z, h0, s0, T0, p0, ierr2, herr2);
+    
+    auto r1 = REFPROP("PROPANE", "PQ", "H;S", MASS_BASE_SI, 0, 0, 101325, 0, z);
+    CHECK_THAT(r1.Output[0], WithinAbs(0, 1e-10));
+    CHECK_THAT(r1.Output[1], WithinAbs(0, 1e-10));
+    
+    int ierr = -100; std::string herr3;
+    SETFLUIDS("DECANE", ierr, herr3);
+    
+    auto r2 = REFPROP("PROPANE", "QT", "H;S", MASS_BASE_SI, 0, 0, 0, 273.15, z);
+    CHECK_THAT(r2.Output[0], WithinRel(200000, 1e-10));
+    CHECK_THAT(r2.Output[1], WithinRel(1000, 1e-10));
+}
+

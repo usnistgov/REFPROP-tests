@@ -2723,7 +2723,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test too many departure functions in the HM
         int ierr0 = -100; std::string herr0;
         SETUP(2, "BUTANE*ETHANE", resources+"/HMX45.BNC", "DEF", ierr0, herr0);
         CAPTURE(herr0);
-        CHECK(ierr0 == 100);
+        trim_inplace(herr0);
+        CHECK(herr0.empty());
+        CHECK(ierr0 == 0);
         check_betagamma();
     }
     SECTION("More than 100 departure functions; fail with ierr > 100"){

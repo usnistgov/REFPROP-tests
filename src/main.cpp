@@ -2698,3 +2698,39 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "SETREF for propane", "[SETREF]") {
     CHECK_THAT(r2.Output[1], WithinRel(1000, 1e-10));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Test too many departure functions in the HMX.BNC", "[toomanydeparture]") {
+    char * RESOURCES = std::getenv("RESOURCES");
+    REQUIRE(RESOURCES != nullptr);
+    auto resources = normalize_path(std::string(RESOURCES));
+    
+    auto check_betagamma = [this](){
+        int icomp = 1, jcomp = 2;
+        char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
+        double fij[6];
+        GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
+        CHECK(fij[0] == 1.0);
+        CHECK(fij[1] == 0.990830895552353);
+    };
+    
+    SECTION("Acceptable number of departure functions; load ok with correct parameters"){
+        int ierr0 = -100; std::string herr0;
+        SETUP(2, "BUTANE*ETHANE", resources+"/HMX20.BNC", "DEF", ierr0, herr0);
+        CAPTURE(herr0);
+        CHECK(ierr0 == 0);
+        check_betagamma();
+    }
+    SECTION("More than 40 departure functions; should load properly without warning"){
+        int ierr0 = -100; std::string herr0;
+        SETUP(2, "BUTANE*ETHANE", resources+"/HMX45.BNC", "DEF", ierr0, herr0);
+        CAPTURE(herr0);
+        CHECK(ierr0 == 100);
+        check_betagamma();
+    }
+    SECTION("More than 100 departure functions; fail with ierr > 100"){
+        int ierr0 = -100; std::string herr0;
+        SETUP(2, "BUTANE*ETHANE", resources+"/HMX200.BNC", "DEF", ierr0, herr0);
+        CAPTURE(herr0);
+        CHECK(ierr0 > 100);
+    }
+}
+    

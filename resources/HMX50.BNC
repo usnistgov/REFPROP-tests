@@ -1,0 +1,638 @@
+HMX               !Mnemonic for mixture model, must match hfmix on call to SETUP.
+5                 !Version number
+
+! Changelog:
+! ---------
+!
+!  THIS FILE IS FOR TESTING ONLY!!!!!
+!
+
+
+#BNC              !Binary mixing coefficients
+BNC
+? Binary mixing coefficients for the various mixing rules used with the HMX model:
+?
+? KWi:  (i = 1,2,3,...,A,B,...)  --->  Kunz-Wagner mixing rules
+?   model     BetaT     GammaT    BetaV     GammaV    Fij      not used
+?
+!
+?BUTANE/ETHANE                      [BUTANE/ETHANE]
+?Bell (202X)
+  7b3b4080/434e2a40
+    XR0    1.     0.990830895552353       1.       1.    0.             0.             0. 0. 0. 0. 0. 0.
+    TC5    0.0      0.0     0.0       0.             0.             0.             0. 0. 0. 0. 0. 0.
+    VC5    0.0      0.0     0.0       0.             0.             0.             0. 0. 0. 0. 0. 0.
+!
+
+#MXM              !Mixture model specification
+XR0  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+#MXM              !Mixture model specification
+X00  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X01  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X02  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X03  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X04  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X05  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X06  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X07  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X08  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X09  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X10  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X11  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X12  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X13  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X14  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X15  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X16  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X17  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X18  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X19  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X20  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X21  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X22  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X23  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X24  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X25  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X26  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X27  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X28  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X29  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X30  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X31  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X32  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X33  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X34  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X35  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X36  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X37  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X38  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X39  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X40  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X41  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X42  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X43  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X44  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X45  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X46  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X47  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X48  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+#MXM              !Mixture model specification
+X49  Reducing functions only
+?
+?```````````````````````````````````````````````````````````````````````````````
+? For testing only
+!```````````````````````````````````````````````````````````````````````````````
+ BetaT    GammaT   BetaV    GammaV  not used not used      !Descriptors for binary-specific parameters
+  1.0      1.0      1.0      1.0      0.0      0.0         !Default values (i.e. ideal-solution)
+  1 4      0        0 0      0 0      0 0      0 0         !# terms and # coefs/term for normal terms, Kunz-Wagner terms, and Gaussian terms.  3rd column is not used.
+  0.0 1.0 1.0 1.0
+
+
+@END

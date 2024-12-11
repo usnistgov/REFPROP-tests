@@ -42,7 +42,8 @@ class ClassRunner():
         return [t for t in set(tags)] 
 
     def _get_tag_info(self, *, tagpath, pathhash):
-        contents = open(tagpath).read()
+        with open(tagpath, encoding='utf-8', errors='ignore') as fp:
+            contents = fp.read()
         if 'All tests passed' in contents:
             failure_count = 0
         else:

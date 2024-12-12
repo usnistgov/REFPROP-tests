@@ -132,8 +132,10 @@ class VersionBuilder:
 
 vb = VersionBuilder(tester_exe=r'bld/Debug/main.exe')
 
-sources = ['docker/sources/' + f for f in ['10000-ce2a80', 'BETA', '1717766042_56c80cf4af3593aa1bd25e5043df4d6d603b69d6.zip']]
+basenames = ['10000-ce2a80', 'BETA', '1733254076_e65b9ec6937edd36b1af26851eed114768649598.zip']
+sources = ['docker/sources/' + f for f in basenames]
 
+# TODO: this could be multithreaded as it is embarassingly parallel
 for source in sources:
     
     # Build the version of REFPROP to be tested

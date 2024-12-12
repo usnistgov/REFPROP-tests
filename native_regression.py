@@ -104,8 +104,9 @@ class VersionBuilder:
     def get_info(self, *, path):
         return [self.get_tag_info(tagpath=f) for f in glob.glob(path+'/errors/*.txt') + glob.glob(path+'/ok/*.txt')]
         
-    def build_table(self, outputroot, *, sort_by, sort_kwargs):
-        paths = [ f.path for f in os.scandir(outputroot) if f.is_dir() ]
+    def build_table(self, outputroot, *, sort_by, sort_kwargs, paths=None):
+        if paths is None:
+            paths = [ f.path for f in os.scandir(outputroot) if f.is_dir() ]
         results = { path:self.get_info(path=path) for path in paths }
         o = []
         for tag in self.collect_tag_list(paths=paths):
@@ -145,4 +146,5 @@ for source in sources:
     vb.run_tests(RPbuild=dest, tags=None, outputbase=outputbase)
     
 # And collect all the results into a nice table
-vb.build_table(outputroot='RPoutputs', sort_by=['RPoutputs/1717766042_56c80cf4af3593aa1bd25e5043df4d6d603b69d6', 'tag'], sort_kwargs=dict(ascending=[False, True]))
+paths = ['RPoutputs/'+bn.replace('.zip', '') for bn in basenames]
+vb.build_table(outputroot='RPoutputs', paths=paths, sort_by=[paths[-1], 'tag'], sort_kwargs=dict(ascending=[False, True]))

@@ -50,7 +50,7 @@ class VersionBuilder:
                 all_tags.append(tag.strip())
             tags = all_tags
 
-        environ = {'RPPREFIX': RPbuild, 'RESOURCES': os.path.abspath('resources')}
+        environ = {'RPPREFIX': os.path.abspath(RPbuild), 'RESOURCES': os.path.abspath('resources')}
         if sys.platform == 'win32':
             environ = os.environ | {'RPPREFIX': os.path.abspath(RPbuild), 'RESOURCES': os.path.abspath('resources')}
         for tag in tags:

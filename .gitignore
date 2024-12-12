@@ -12,3 +12,7 @@ bldsandbox/
 /**/*.pyc
 
 REFPROP.zip
+RPbuilds
+RPoutputs
+report.html
+report.csv

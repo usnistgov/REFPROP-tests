@@ -1947,7 +1947,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
  import pint
  import pandas, io
  df = pandas.read_csv(io.StringIO("""what    key    DEFAULT    MOLAR SI    MASS SI    SI WITH C    MOLAR BASE SI    MASS BASE SI    ENGLISH    MOLAR ENGLISH    MKS    CGS    MIXED    MEUNITS
- iUnits        0    1    2    3    20    21    5    6    7    8    9    10
+ iUnits   XX     0    1    2    3    20    21    5    6    7    8    9    10
  Temperature    T    K    K    K    C    K    K    F    F    K    K    K    C
  Pressure    P    kPa    MPa    MPa    MPa    Pa    Pa    psia    psia    kPa    MPa    psia    bar
  Density    D    mol/dm^3    mol/dm^3    kg/m^3    kg/m^3    mol/m^3    kg/m^3    lbm/ft^3    lbmol/ft^3    kg/m^3    g/cm^3    g/cm^3    g/cm^3
@@ -1958,12 +1958,20 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
  Viscosity    VIS    uPa-s    uPa-s    uPa-s    uPa-s    Pa-s    Pa-s    lbm/(ft-s)    lbm/(ft-s)    uPa-s    uPa-s    uPa-s    cpoise
  Thermal    TCX    W/(m-K)    mW/(m-K)    mW/(m-K)    mW/(m-K)    W/(m-K)    W/(m-K)    Btu/(h-ft-R)    Btu/(h-ft-R)    W/(m-K)    mW/(m-K)    mW/(m-K)    mW/(m-K)
  Surface    STN    N/m    mN/m    mN/m    mN/m    N/m    N/m    lbf/ft    lbf/ft    mN/m    dyne/cm    mN/m    mN/m
- Molar    M    g/mol    g/mol    g/mol    g/mol    kg/mol    kg/mol    lbm/lbmol    lbm/lbmol    g/mol    g/mol    g/mol    g/mol"""),sep='\t')
- # df.info()
+ Molar    M    g/mol    g/mol    g/mol    g/mol    kg/mol    kg/mol    lbm/lbmol    lbm/lbmol    g/mol    g/mol    g/mol    g/mol"""),sep=' {2,}', engine='python')
+ df.info()
+ df.to_csv('aaa.csv')
+
+ import ctREFPROP.ctREFPROP as ct
+ root = 'e65b9ec6937edd36b1af26851eed114768649598'
+ RP = ct.REFPROPFunctionLibrary(root+'/librefprop.dylib')
+ RP.SETPATHdll(root)
 
  Prfactors = {}
  nufactors = {}
  tdfactors = {}
+
+ ureg = pint.UnitRegistry()
 
  ureg.define("pound_mass = 0.45359237 kg = lbm")
  ureg.define("pound_mole = 0.45359237 kg*mol = lbmol")
@@ -1986,6 +1994,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
          uD = uD*uM
          uCP = uCP/uM
      
+     FLD = 'NITROGEN'
+     US = col
+     
      aa = RP.REFPROPdll(FLD,'TRIP','TD',iUnits,0,0,-1,-1,[1.0]) # Note you'll need to instantiate REFPROP
      print(US, aa.hUnits, aa.Output[0], aa.ierr, aa.herr)
      tdfactor = (1*uTCX/(uD*uCP)).to_base_units()/ureg.Quantity(1.0, aa.hUnits).to_base_units()
@@ -2006,7 +2017,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
 
 std::map<int, double> nu_factors = {{0, 0.01}, {1, 0.01}, {2, 0.009999999999999998}, {3, 0.009999999999999998}, {20, 1.0}, {21, 1.0}, {5, 1.0}, {6, 1.0}, {7, 0.009999999999999998}, {8, 1.0000000000000003e-05}, {9, 1.0e-05}, {10, 0.01}};
 std::map<int, double> Pr_factors = {{0, 0.001}, {1, 1.0}, {2, 1.0}, {3, 1.0}, {20, 1.0}, {21, 1.0}, {5, 3600.0}, {6, 3600.0}, {7, 0.001}, {8, 1.0}, {9, 1.0}, {10, 1000.0}};
-std::map<int, double> td_factors = {{0, 10.0}, {1, 0.01}, {2, 0.009999999999999998}, {3, 0.009999999999999998}, {20, 10000.0}, {21, 10000.0}, {5, 0.00027777777777777783}, {6, 0.00027777777777777783}, {7, 10.0}, {8, 1.0e-05}, {9, 1.0e-05}, {10, 1.0e-05}};
+std::map<int, double> td_factors = {{0, 10.0}, {1, 0.01}, {2, 0.01}, {3, 0.01}, {20, 1.0}, {21, 1.0}, {5, 0.00027777777777777783}, {6,  0.00027777777777777783}, {7, 10.0}, {8, 1.0e-05}, {9, 1.0e-05}, {10, 1.0e-05}};
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Kinematic viscosity, thermal diffusivity, and Prandtl number units", "[units]") {
     

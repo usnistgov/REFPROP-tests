@@ -41,7 +41,7 @@ class VersionBuilder:
         # Collect all the tags to be run
         if tags is None:
             all_tags = []
-            output = subprocess.run(f'{self.tester_exe} --list-tags', shell=True, stdout = subprocess.PIPE).stdout.decode('utf-8')
+            output = subprocess.run([self.tester_exe, '--list-tags'], shell=False, stdout = subprocess.PIPE).stdout.decode('utf-8')
             for il, line in enumerate(output.split('\n')[1::]):
                 if not line or '[' not in line: continue
                 tag = '[' + line.split('[')[1]
@@ -56,11 +56,10 @@ class VersionBuilder:
         for tag in tags:
             root =  tag.replace('[', '').replace(']','') + '.txt'
             print(tag, ' --> ', root)
-            cmd = f'{self.tester_exe} ' + tag
             with open(outputbase+'/err_'+root,'w') as fp_stdout:
-                fp_stdout.write('About to run command: '+cmd+'\n')
+                fp_stdout.write(f'About to run command: {self.tester_exe} {tag}\n')
                 fp_stdout.flush()
-                subprocess.run(cmd, shell=True, stdout=fp_stdout, stderr=fp_stdout, env=environ)
+                subprocess.run([self.tester_exe, tag], shell=False, stdout=fp_stdout, stderr=fp_stdout, env=environ)
 
         # Store all the outputs in zip archive
         shutil.rmtree(outputbase+'/errors', ignore_errors=True)

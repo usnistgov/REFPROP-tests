@@ -1903,7 +1903,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {
-    std::string note = "P,H flashes fail for water";
+    std::string note = "P,H flashes fail for water for reasonable subcooled states";
     CAPTURE(note);
     std::vector<double> z(20, 0.0); z[0] = 1.0;
     int ierr = -1; std::string herr; SETFLUIDS("WATER", ierr, herr);
@@ -1912,6 +1912,10 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {
         auto r = REFPROP("", "PH", "T", MASS_BASE_SI, 0, 0, p_Pa, h_kJkg*1e3, z);
         double T = r.Output[0];
         bool acceptable = T > 28+273.15 && T < 29+273.15;
+        CAPTURE(p_Pa);
+        CAPTURE(h_kJkg);
+        CAPTURE(T);
+        CAPTURE(r.herr);
         CHECK(acceptable);
     }
 }

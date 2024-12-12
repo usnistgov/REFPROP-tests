@@ -14,7 +14,7 @@ class VersionBuilder:
             else:
                 os.remove(g)
 
-    def build_REFPROP(self, *, source, dest):
+    def build_REFPROP(self, *, source, dest, build_type='Release'):
         
         os.makedirs(dest, exist_ok=True)
         
@@ -28,13 +28,13 @@ class VersionBuilder:
             PATH = os.path.abspath(source)+'/FORTRAN'
         DEST = os.path.abspath(dest)
             
-        subprocess.check_call(f'cmake -S {DEST}/REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={PATH} -DCMAKE_BUILD_TYPE=Release', shell=True)
-        subprocess.check_call(f'cmake --build {DEST} --config Release', shell=True)
+        subprocess.check_call(f'cmake -S {DEST}/REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={PATH} -DCMAKE_BUILD_TYPE={build_type}', shell=True)
+        subprocess.check_call(f'cmake --build {DEST} --config {build_type}', shell=True)
         if not os.path.exists(dest+'/FLUIDS'):
             shutil.copytree(source+'/FLUIDS', dest+'/FLUIDS')
             shutil.copytree(source+'/MIXTURES', dest+'/MIXTURES')
-        if 'win' in sys.platform:
-            shutil.copy2(f'{DEST}/Release/REFPRP64.DLL', f'{DEST}/REFPRP64.DLL')
+        if 'win32' in sys.platform:
+            shutil.copy2(f'{DEST}/{build_type}/REFPRP64.DLL', f'{DEST}/REFPRP64.DLL')
 
     def run_tests(self, RPbuild, *, outputbase, tags=None):
         

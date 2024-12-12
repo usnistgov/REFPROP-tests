@@ -51,7 +51,7 @@ MXMblock = """#MXM              !Mixture model specification
   0.0 1.0 1.0 1.0
 """
 
-for Nmax in [20, 45, 50, 200]:
+for Nmax in [20, 45, 50, 99, 200]:
     MXMS = '\n\n'.join([MXMblock.format(CODE=f'X{i:02d}') for i in range(Nmax)])
     HMX = template.replace('%MXM%', MXMS)
     with open(f'../resources/HMX{Nmax}.BNC','w') as fp:

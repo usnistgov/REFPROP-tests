@@ -2,6 +2,7 @@ import zipfile, glob, os, re
 
 import run_one
 import pandas
+import shutil
 
 class ClassRunner():
     def __init__(self, *, paths, test, ofprefix):
@@ -90,14 +91,25 @@ class ClassRunner():
                 return pair
             
         df = pandas.DataFrame(o).sort_values(by=by, key=keyer, **sort_kwargs)
-        df.to_html(output_folder+'/report.html', index=False, escape=False)
-        df.to_csv(output_folder+'/report.csv', index=False)
+        df.to_html('report.html', index=False, escape=False)
+        df.to_csv('report.csv', index=False)
+
         return df
 
-    def compare(self, sort_by = None, sort_kwargs={}, outroot=None):
-        self._expand_ZIPs(outroot=outroot)
+    def compare(self, sort_by = None, sort_kwargs={}, output_folder='.', move_destination=None):
+        self._expand_ZIPs(outroot=output_folder)
         self.tags = self._collect_tag_list()
-        return self.build_tag_report(self.tags, sort_by=sort_by, sort_kwargs=sort_kwargs, output_folder=outroot)
+        report = self.build_tag_report(self.tags, sort_by=sort_by, sort_kwargs=sort_kwargs)
+        
+        # Move files into a subfolder to keep the tree clean(er)
+        if move_destination is not None:
+            if not os.path.exists(move_destination):
+                os.makedirs(move_destination)
+            for path in self.paths:
+                pathhash = run_one.get_path_hash(path)
+                shutil.move(pathhash, move_destination)
+            shutil.move('report.html', move_destination)
+            shutil.move('report.csv', move_destination)
 
 if __name__ == '__main__':
     print('Can\'t run this file directly')

@@ -1900,6 +1900,17 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
     auto ap1 = ALLPROPS("T", MOLAR_BASE_SI, 0, -1, 220.34373135888058, 30.46539273251402, z);
     CHECK(ap1.hUnits.substr(0, 5) == "T {K}");
     CHECK(ap1.ierr == 0);
+    
+}
+
+TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units for mix", "[allprops]") {
+    std::string note = "There is memory corruption happening in v10.0";
+    CAPTURE(note);
+    std::vector<double> z(20, 0.0); z[0] = 0.3; z[1] = 0.7;
+    int ierr = -1; std::string herr; SETFLUIDS("CO2*R125", ierr, herr);
+    auto ap0 = ALLPROPS("TC;PC;DC", MOLAR_BASE_SI, 0, 0, 1, 1, z);
+    auto ifirstbad = ap0.hUnits.find_first_not_of(" |");
+    CHECK(ifirstbad == std::string::npos);
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {

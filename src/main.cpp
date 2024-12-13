@@ -1993,6 +1993,32 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
     CHECK_THAT(r2.z[0], WithinRelMatcher(0.2, 1e-15));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Getting of massfractions", "[massfractions]"){
+    // From https://github.com/usnistgov/REFPROP-issues/issues/650
+    
+    // If I use a predefined mixture, say R410A, it works perfectly:
+    std::vector<double> z0(20, 0); z0[0] = 0;
+    auto r0 = REFPROP("R410A","TQ","P;XMASS",MASS_BASE_SI,1,0,273,0,z0);
+    CHECK_THAT(r0.Output[1], WithinRel(0.5, 1e-6));
+    
+    std::vector<double> z(20, 0); z[0] = 0.5; z[1] = 0.5;
+    std::vector<double> z1 = z, z2 = z, z3 = z;
+    
+    auto r1 = REFPROP("R32 * R125","TQ","P;XMASS",MASS_BASE_SI,1,0,273,0,z1);
+    CHECK_THAT(r1.Output[1], WithinRel(0.5, 1e-6));
+    CHECK_THAT(r1.z[0], WithinRel(z1[0], 1e-6));
+    
+    auto r2 = REFPROP("R32 * R125","TQ","P;XMASS",MASS_BASE_SI,1,0,273,0,z2);
+    CHECK_THAT(r2.Output[1], WithinRel(0.5, 1e-6));
+    CHECK_THAT(r2.z[0], WithinRel(z2[0], 1e-6));
+    
+    int ierr = -1; std::string herr;
+    SETFLUIDS("R32 * R125", ierr, herr);
+    auto r3 = REFPROP("", "TQ", "P;XMASS", MASS_BASE_SI,1,0,273,0,z3);
+    CHECK_THAT(r3.Output[1], WithinRel(0.5, 1e-6));
+    CHECK_THAT(r3.z[0], WithinRel(z3[0], 1e-6));
+}
+
 /*
  
  The factors were generated with this python snippet:

@@ -1892,14 +1892,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "SETUP with absolute paths to fluids", "[HMX
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units", "[allprops]") {
-    std::string note = "The problem here is that the hUnits are always equal to \"||||...\"";
-    CAPTURE(note);
     std::vector<double> z(20, 0.0); z[0] = 1.0;
     int ierr = -1; std::string herr; SETFLUIDS("CO2", ierr, herr);
-    auto ap = ALLPROPS("T,P,D,H,S,CP,CV,JT,KAPPA,BETA,W,VIS,TCX,TD", MOLAR_BASE_SI, 0, 0, 220.34373135888058, 30.46539273251402, z);
+    auto ap = ALLPROPS("T,P,D,H,S,CP,CV,JT,KAPPA,BETA,W,VIS,TCX,TD", MOLAR_BASE_SI, 0, 2, 220.34373135888058, 30.46539273251402, z);
     CHECK(ap.hUnits.substr(0, 3) != "|||");
-    auto ap1 = ALLPROPS("T", MOLAR_BASE_SI, 0, 0, 220.34373135888058, 30.46539273251402, z);
-    CHECK(ap1.hUnits == "K");
+    CAPTURE(ap.hUnits);
+    auto ap1 = ALLPROPS("T", MOLAR_BASE_SI, 0, -1, 220.34373135888058, 30.46539273251402, z);
+    CHECK(ap1.hUnits.substr(0, 5) == "T {K}");
+    CHECK(ap1.ierr == 0);
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {

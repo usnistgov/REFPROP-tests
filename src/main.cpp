@@ -1913,16 +1913,22 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units for mix", "[allprops]") {
     CHECK(ifirstbad == std::string::npos);
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2O]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2OPH]") {
     std::string note = "P,H flashes fail for water for reasonable subcooled states";
     CAPTURE(note);
     std::vector<double> z(20, 0.0); z[0] = 1.0;
     int ierr = -1; std::string herr; SETFLUIDS("WATER", ierr, herr);
     double p_Pa = 21.8299e6;
-    for (auto h_kJkg : {137.5115, 138.0115, 138.5115, 139.0115, 139.5115}){
-        auto r = REFPROP("", "PH", "T", MASS_BASE_SI, 0, 0, p_Pa, h_kJkg*1e3, z);
+//    auto rMLT = REFPROP("", "MELT-PT", "T", MASS_BASE_SI, 0, 0, p_Pa, 0, z);
+//    CAPTURE(rMLT.Output[0]);
+    for (auto T_K: linspace(28+273.15, 29+273.15, 100)){
+        auto r0 = REFPROP("", "TP", "H", MASS_BASE_SI, 0, 0, T_K, p_Pa, z);
+        CHECK(r0.ierr == 0);
+        auto r = REFPROP("", "PH", "T", MASS_BASE_SI, 0, 0, p_Pa, r0.Output[0], z);
         double T = r.Output[0];
         bool acceptable = T > 28+273.15 && T < 29+273.15;
+        double h_kJkg = r0.Output[0]/1e3;
+        CAPTURE(T_K);
         CAPTURE(p_Pa);
         CAPTURE(h_kJkg);
         CAPTURE(T);

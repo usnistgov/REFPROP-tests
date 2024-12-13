@@ -1937,6 +1937,42 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2OPH]") {
     }
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check divergence around vapor line ", "[nearvap]") {
+    // https://github.com/usnistgov/REFPROP-issues/issues/573
+    std::string fluids0 = "METHANE*ETHANE*PROPANE*ISOBUTAN*BUTANE*IPENTANE*PENTANE*HEXANE*HEPTANE*OCTANE*NONANE*DECANE*NITROGEN*CO2";
+    std::vector<double> mole_fractions0 = {
+        0.5635,
+        0.08679999999999999,
+        0.05710000000000004,
+        0.009499999999999953,
+        0.020100000000000007,
+        0.0046000000000000485,
+        0.006399999999999961,
+        0.0036000000000000476,
+        0.0016000000000000458,
+        0.00039999999999995595,
+        9.999999999998899e-05,
+        9.999999999998899e-05,
+        0.0042999999999999705,
+        0.2419
+    };
+    double p = 1736576.570380364;
+//    double Tsat = REFPROP(fluids0, "PQ", "T", MASS_BASE_SI, 0, 0, p, 1, mole_fractions0).Output[0];
+    double Tsat = 310.50588773145404;
+    for (double dT : linspace(-0.1, 0.1, 31)){
+        double T = Tsat + dT;
+        auto r = REFPROP(fluids0, "PT", "QMOLE", MASS_BASE_SI, 0, 1, p, T, mole_fractions0);
+        double Q = r.Output[0];
+        CAPTURE(T);
+        CAPTURE(r.ierr);
+        CAPTURE(r.herr);
+        CHECK((r.ierr == 0 || r.ierr == -998));
+        if (r.ierr == 0){
+            CHECK(Q > 0.999);
+        }
+    }
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") {
     
     int kflag = -1;

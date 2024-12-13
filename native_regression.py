@@ -23,12 +23,24 @@ class VersionBuilder:
             
         if source.endswith('.zip'):
             shutil.unpack_archive(source, extract_dir=dest)
-            PATH = os.path.abspath(dest+'/FORTRAN')
+            FORTRAN_PATH = os.path.abspath(dest+'/FORTRAN')
         else:
-            PATH = os.path.abspath(source)+'/FORTRAN'
-        DEST = os.path.abspath(dest)
+            FORTRAN_PATH = os.path.abspath(source)+'/FORTRAN'
             
-        subprocess.check_call(f'cmake -S {DEST}/REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={PATH} -DCMAKE_BUILD_TYPE={build_type}', shell=True)
+        # Disable expiration, if possible
+        try:
+            SETUP_FOR = FORTRAN_PATH + '/FORTRAN/SETUP.FOR'
+            contents = open(SETUP_FOR).read()
+            pattern = r"if \(herr\.gt\.\'(\d{6})\'\)"
+            with open(SETUP_FOR, 'w', encoding='cp1252') as fp:
+                fp.write(re.sub(pattern, '9'*6, contents))
+        except BaseException as be:
+            print(be)
+            pass
+    
+        DEST = os.path.abspath(dest)
+        
+        subprocess.check_call(f'cmake -S {DEST}/REFPROP-cmake -B {DEST} -DREFPROP_FORTRAN_PATH={FORTRAN_PATH} -DCMAKE_BUILD_TYPE={build_type}', shell=True)
         subprocess.check_call(f'cmake --build {DEST} --config {build_type}', shell=True)
         if not os.path.exists(dest+'/FLUIDS'):
             shutil.copytree(source+'/FLUIDS', dest+'/FLUIDS')

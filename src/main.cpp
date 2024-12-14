@@ -753,7 +753,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Make sure that estimation is properly appli
 };
 
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple for propane", "[flags]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple for propane", "[bounds]") {
     std::vector<double> z(1, 1.0);
 
     // Do normal calc for propane below Ttrip
@@ -777,7 +777,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check turning off bounds for T < Ttriple fo
     CHECK(r1.Output[0] > 10.0);
 };
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "Unset bounds", "[flags]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "Unset bounds", "[bounds]") {
     std::vector<double> z(20, 1.0); z[0] = 0.4; z[1] = 0.6;
 
     // Do normal calc for propane below Ttrip
@@ -2248,7 +2248,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Consistent SETUP failure", "[setup]") {
     CHECK(r1.ierr == r2.ierr);
 };
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "EOSMIN temp should not fail even if saturation call does", "[limits]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "EOSMIN temp should not fail even if saturation call does", "[bounds]") {
     std::vector<double> Comp(20, 1);
     auto r1 = REFPROP("R124","EOSMIN","T",0,0,0,0,0,Comp);
     CHECK(r1.ierr == 0);

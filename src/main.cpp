@@ -1912,6 +1912,48 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "ALLPROPS units for mix", "[allprops]") {
     CHECK(ifirstbad == std::string::npos);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[ABFLSH]") {
+    // See https://github.com/usnistgov/REFPROP-issues/issues/293
+    std::string mix = "R407C.mix";
+    auto sm = SETMIX(mix, "HMX.BNC", "DEF");
+    int ierr = -9999; std::string herr0 = "";
+    double h0, s0, T0, p0 = -1;
+    SETREF("DEF", 2, sm.z, h0, s0, T0, p0, ierr, herr0);
+    
+    // One state for R407C received by REFPROP GUI
+    double T = 267.15;
+    double P = 371450;
+    double D = 15.964;
+    double u = 383270;
+    double h = 406530;
+    double s = 1784;
+    double Q = 1.0;
+
+    auto rpdll = REFPROP("", "QT", "H;S;M", MOLAR_BASE_SI, 0, 0, Q, T, sm.z);
+    double Hmolar = rpdll.Output[0], Smolar = rpdll.Output[1], M = rpdll.Output[2];
+    double hmass_REFPROP = Hmolar / M, smass_REFPROP = Smolar / M;
+
+    auto tqflsh = TQFLSH(T, Q, sm.z, 0);
+    double hmass_TQ = tqflsh.h / M, smass_TQ = tqflsh.s / M;
+    
+    auto abflsh_molar = ABFLSH("TQ", T, Q, sm.z, 0);
+    double hmass_ABmolar = abflsh_molar.h/M, smass_ABmolar = abflsh_molar.s/M;
+ 
+    // This is deprecated because it was not possible to fix this function
+    // for all the different combinations of properties, qualities, and compositions
+    auto abflsh_mass = ABFLSH("TQ", T, Q, sm.z, 1);
+    CAPTURE(abflsh_mass.herr);
+    REQUIRE(abflsh_mass.ierr == 858);
+    
+    auto Poutmass = get_enum("POUTMASS");
+    auto abflash_mass = ABFLASH("TQ", T, Q, sm.z, Poutmass);
+    double hmass_ABmass = abflash_mass.h*1000, smass_ABmass = abflash_mass.s*1000;
+    
+    CHECK_THAT(hmass_REFPROP, WithinRel(hmass_TQ, 1e-6));
+    CHECK_THAT(hmass_REFPROP, WithinRel(hmass_ABmolar, 1e-6));
+    CHECK_THAT(hmass_REFPROP, WithinRel(hmass_ABmass, 1e-6));
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "PH flash for water", "[H2OPH]") {
     std::string note = "P,H flashes fail for water for reasonable subcooled states";
     CAPTURE(note);
@@ -2187,17 +2229,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ABLFSH and REFPROP and ALLPROPS all y
         double a=300.0, b=101.325; int iFlag=102;
         ABFLSHdll(hOut,a,b,&z[0],iFlag,T,P,D,DL,DV,&x[0],&y[0],q,e,h,s,Cv,Cp,w,ierr,herr,2,255);
         CAPTURE(herr);
-        REQUIRE(ierr > 100);
-        
-        auto r3 = ALLPROPS("E;H;S",MASS_BASE_SI,0,0,300.0,r1.Output[3],z);
-        CHECK(e == r1.Output[0]/1e3);
-        CHECK(h == r1.Output[1]/1e3);
-        CHECK(s == r1.Output[2]/1e3);
-        
-        CHECK(e == r3.Output[0]/1e3);
-        CHECK(h == r3.Output[1]/1e3);
-        CHECK(s == r3.Output[2]/1e3);
-        
+        REQUIRE(ierr == 858); // mass inputs are now deprecated
     }
     SECTION("with molar h,s,u"){
         auto r1 = REFPROP("NITROGEN", "PT","E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);

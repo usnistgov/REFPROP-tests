@@ -29,11 +29,38 @@ struct ALLPROPSResult {
     std::string herr;
 };
 
+struct TQFLSHResult {
+    std::vector<double> xliq, xvap;
+    double p, D, Dl, Dv, u, h, s, cv, cp, w;
+    int ierr;
+    std::string herr;
+};
+
+struct ABFLSHResult {
+    std::vector<double> x, y;
+    double T, p, q, D, Dl, Dv, u, h, s, cv, cp, w;
+    int ierr;
+    std::string herr;
+};
+
+struct ABFLASHResult {
+    std::vector<double> x, y;
+    double T, p, q, D, Dl, Dv, u, h, s, cv, cp, w;
+    int ierr;
+    std::string herr;
+};
+
 struct SATGUESSResult {
     double T, p, D, h, s, Dy;
     std::vector<double> y;
     int ierr;
     char herr[256] = "";
+};
+
+struct SETMIXResult {
+    std::vector<double> z;
+    int ierr = 9999, ncc = -1;
+    std::string hfiles, herr;
 };
 
 class REFPROPDLLFixture
@@ -170,6 +197,30 @@ public:
         ALLPROPSResult res = {Output, std::string(hUnits), iUnit, ierr, std::string(herr) };
         return res;
     }
+    
+    auto TQFLSH(double T, double q, std::vector<double>& z, int kq) {
+        TQFLSHResult o; char herr[256] = ""; o.xliq.resize(20); o.xvap.resize(20);
+        TQFLSHdll(T, q, &z[0], kq, o.p, o.D, o.Dl, o.Dv, &o.xliq[0], &o.xvap[0], o.u, o.h, o.s, o.cv, o.cp, o.w, o.ierr, herr, 255);
+        o.herr = herr;
+        return o;
+    }
+    auto ABFLSH(const std::string & shout, double a, double b, std::vector<double>& z, int iFlag) {
+        ABFLSHResult o; char herr[256] = ""; o.x.resize(20); o.y.resize(20);
+        char hout[3] = "";
+        strcpy(hout, (shout.c_str() + std::string(3 - shout.size(), ' ')).c_str());
+        ABFLSHdll(hout, a, b, &z[0], iFlag,o.T,o.p, o.D,o.Dl,o.Dv,&o.x[0],&o.y[0],o.q, o.u,o.h,o.s,o.cv,o.cp,o.w,o.ierr,herr,2,255);
+        o.herr = herr;
+        return o;
+    }
+    auto ABFLASH(const std::string & shout, double a, double b, std::vector<double>& z, int iFlag) {
+        ABFLASHResult o; char herr[256] = ""; o.x.resize(20); o.y.resize(20);
+        char hout[3] = "";
+        strcpy(hout, (shout.c_str() + std::string(3 - shout.size(), ' ')).c_str());
+        ABFLASHdll(hout, a, b, &z[0], iFlag,o.T,o.p, o.D,o.Dl,o.Dv,&o.x[0],&o.y[0],o.q, o.u,o.h,o.s,o.cv,o.cp,o.w,o.ierr,herr,2,255);
+        o.herr = herr;
+        return o;
+    }
+    
     void FLAGS(const std::string &_hFlag, int jflag, int &kflag, bool check_kflag = true){
         char hFlag[256] = "";
         REQUIRE(_hFlag.size() <= 255);
@@ -299,6 +350,22 @@ public:
         }
         SATGUESSdll(kph, iprop, &(znew[0]), o.T, o.p, o.D, o.h, o.s, o.Dy, &(o.y[0]),o.ierr, o.herr, 255);
         return o;
+    }
+    auto SETMIX(const std::string& MixName, const std::string& HMX, const std::string REF) {
+        
+        char hMixNme[256] = "", hhmx[256] = "", href[4] = "", herr[256], hfiles[10001];
+        
+        strcpy(hMixNme, (MixName + std::string(255-MixName.size(),' ')).c_str());
+        strcpy(hhmx, (HMX + std::string(255-HMX.size(), ' ')).c_str());
+        strcpy(href, (REF + std::string(3-REF.size(), ' ')).c_str());
+        
+        SETMIXResult r;
+        r.z.resize(20);
+        SETMIXdll(hMixNme,hhmx, href, r.ncc, hfiles, &(r.z[0]), r.ierr, herr, 255,255,3,10000,255);
+        r.hfiles = hfiles;
+        r.herr = herr;
+        return r;
+        
     }
 };
 

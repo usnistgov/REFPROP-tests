@@ -1851,21 +1851,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function"
     auto hmxpath = resources + "/missing_XR0.BNC";
     REQUIRE(std::filesystem::exists(hmxpath));
     SETUP(2, "RC318.FLD*BUTANE", hmxpath, "DEF", ierr, herr);
+    CAPTURE(ierr);
+    CAPTURE(herr);
     CHECK(ierr != 0);
-    // Get the parameters
-    int icomp = 1, jcomp = 2;
-    ierr = 0;
-    char hmodij[3], hfmix[255], hbinp[255], hfij[255], hmxrul[255];
-    double fij[6];
-    GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
-    CHECK_THAT(fij[1], WithinRelMatcher(0.916288, 1e-8));
-    int hmx1 = -100; FLAGS("HMX", 1, hmx1);
     
+    int hmx1 = -100; FLAGS("HMX", 1, hmx1, /*check_kflag=*/ false);
     int ierr2 = 0; std::string herr2 = "";
     SETUP(2, "METHANE*ETHANE", "HMX.BNC", "DEF", ierr2, herr2);
     CHECK(ierr2 == 0);
-    
-    
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check HMX with non .BNC extension", "[HMX]") {

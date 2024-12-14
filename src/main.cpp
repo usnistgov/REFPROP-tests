@@ -1859,6 +1859,12 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function"
     double fij[6];
     GETKTVdll(icomp, jcomp, hmodij, fij, hfmix, hfij, hbinp, hmxrul, 3, 255, 255, 255, 255);
     CHECK_THAT(fij[1], WithinRelMatcher(0.916288, 1e-8));
+    int hmx1 = -100; FLAGS("HMX", 1, hmx1);
+    
+    int ierr2 = 0; std::string herr2 = "";
+    SETUP(2, "METHANE*ETHANE", "HMX.BNC", "DEF", ierr2, herr2);
+    CHECK(ierr2 == 0);
+    
     
 }
 

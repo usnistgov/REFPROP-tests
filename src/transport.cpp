@@ -978,6 +978,29 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ethane test points", "[ethane]") {
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check THF test points", "[THF]") {
+    SECTION("Viscosity"){
+        std::vector<std::tuple<double, double>> vals = {{0,8.3705}, {900, 589.3956}};
+        for (auto [rho_kgm3, expected_uPas] : vals){
+            CAPTURE(expected_uPas);
+            std::vector<double> z(20,0); z[0] = 1;
+            auto r1 = REFPROP("THF", "TD", "VIS", MASS_BASE_SI, 0, 0, 300, rho_kgm3, z);
+            CHECK(r1.ierr == 0);
+            CHECK_THAT(r1.Output[0]*1e6, WithinRelMatcher(expected_uPas, 1e-5));
+        }
+    }
+    SECTION("Conductivity"){
+        std::vector<std::tuple<double, double>> vals = {{0,12.2206}, {900, 159.8654}};
+        for (auto [rho_kgm3, expected_uPas] : vals){
+            CAPTURE(expected_uPas);
+            std::vector<double> z(20,0); z[0] = 1;
+            auto r1 = REFPROP("THF", "TD", "TCX", MASS_BASE_SI, 0, 0, 300, rho_kgm3, z);
+            CHECK(r1.ierr == 0);
+            CHECK_THAT(r1.Output[0]*1e3, WithinRelMatcher(expected_uPas, 1e-5));
+        }
+    }
+};
+
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check mixtures give warning for transport", "[transport],[mixtures]") {
     

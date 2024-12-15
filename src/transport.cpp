@@ -967,6 +967,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check very old fluid files with old transpo
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check ethane test points", "[ethane]") {
+    std::vector<std::tuple<double, double>> vals  =  {{0,9.285784551214537},{1,9.293014645143069},{100,12.551507244363366},{500,114.39845400414495}};
+    for (auto [rho_kgm3, expected_uPas] : vals){
+        CAPTURE(expected_uPas);
+        std::vector<double> z(20,0); z[0] = 1;
+        auto r1 = REFPROP("ETHANE", "TD", "VIS", MASS_BASE_SI, 0, 0, 300, rho_kgm3, z);
+        CHECK(r1.ierr == 0);
+        CHECK_THAT(r1.Output[0]*1e6, WithinRelMatcher(expected_uPas, 1e-6));
+    }
+};
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check mixtures give warning for transport", "[transport],[mixtures]") {
     
     int ierr; std::string herr;

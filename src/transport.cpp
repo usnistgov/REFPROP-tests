@@ -879,7 +879,7 @@ public:
                     actual = r.Output[0]; // [W/m/K]
                 }
                 else if (el.out == "V") {
-                    r = REFPROP(el.fluid, "TD&", "ETA", MOLAR_BASE_SI, iMass, iFlag, T_K, D_molm3, z);
+                    r = REFPROP(el.fluid, "TD&", "VIS", MOLAR_BASE_SI, iMass, iFlag, T_K, D_molm3, z);
                     actual = r.Output[0]; // [Pa-s]
                 }
                 else if (el.out == "I") {
@@ -961,7 +961,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check very old fluid files with old transpo
         std::vector<double> z(20,0); z[0] = 1;
         auto r = REFPROP("","","TC;DC",0,0,0,0,0,z);
         auto Tc = r.Output[0], Dc = r.Output[1];
-        auto r1 = REFPROP("", "TD&", "ETA;TCX", 0, 0, 0, Tc*1.1, Dc*1.1, z);
+        auto r1 = REFPROP("", "TD&", "VIS;TCX", 0, 0, 0, Tc*1.1, Dc*1.1, z);
         CAPTURE(r1.herr);
         CHECK(r1.ierr < 100);
     }
@@ -972,7 +972,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check mixtures give warning for transport",
     int ierr; std::string herr;
     SETFLUIDS("CO2 * SO2", ierr, herr);
     std::vector<double> z(20,0); z[0] = 0.4; z[1] = 0.6;
-    auto r1 = REFPROP("", "TD&", "ETA;TCX", 0, 0, 0, 300, 300, z);
+    auto r1 = REFPROP("", "TD&", "VIS;TCX", 0, 0, 0, 300, 300, z);
     CHECK(r1.ierr < 0);
 };
 

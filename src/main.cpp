@@ -2225,21 +2225,30 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check loading of fluids with bad names", "[
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check ABLFSH and REFPROP and ALLPROPS all yield same answer for specific energy terms", "[ABFLSH]") {
     std::vector<double> z(20, 1.0), x(20,1.0), y(20,1.0);
     SECTION("with specific h,s,u"){
-        auto r1 = REFPROP("NITROGEN", "PT","E;H;S;D",MASS_BASE_SI,0,0,101325,300.0,z);
-        auto r1mol = REFPROP("NITROGEN", "PT","E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);
-        char hOut[3] = "TP"; double T=-1,P=-1,D=-1,DL=-1,DV=-1,q=-1,e=-1,h=-1,s=-1,Cv=-1,Cp=-1,w=-1; int ierr =0; char herr[256] = "    ";
-        double a=300.0, b=101.325; int iFlag=102;
-        ABFLSHdll(hOut,a,b,&z[0],iFlag,T,P,D,DL,DV,&x[0],&y[0],q,e,h,s,Cv,Cp,w,ierr,herr,2,255);
-        CAPTURE(herr);
-        REQUIRE(ierr == 858); // mass inputs are now deprecated
+        auto r1 = REFPROP("NITROGEN", "PT", "E;H;S;D",MASS_BASE_SI,0,0,101325,300.0,z);
+        auto r1mol = REFPROP("NITROGEN", "PT", "E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);
+        
+        double a=300.0, b=101.325; int iFlag=1;
+        auto ab = ABFLSH("TP",a,b,z,iFlag);
+        CAPTURE(ab.herr);
+        REQUIRE(ab.ierr == 858); // mass inputs are now deprecated
+        
+        auto Poutmass = get_enum("POUTMASS");
+        auto abmass = ABFLASH("TP",a,b,z,Poutmass);
+        
+        CHECK_THAT(abmass.u*1000, WithinRel(r1.Output[0], 1e-10)); // kJ/kg
+        CHECK_THAT(abmass.h*1000, WithinRel(r1.Output[1], 1e-10)); // kJ/kg
+        CHECK_THAT(abmass.s*1000, WithinRel(r1.Output[2], 1e-10)); // kJ/(kg*K)
+        CHECK_THAT(abmass.D, WithinRel(r1.Output[3], 1e-10)); // kg/m^3
+        
     }
     SECTION("with molar h,s,u"){
         auto r1 = REFPROP("NITROGEN", "PT","E;H;S;D",MOLAR_BASE_SI,0,0,101325,300.0,z);
         char hOut[3] = "TP"; double T=-1,P=-1,D=-1,DL=-1,DV=-1,q=-1,e=-1,h=-1,s=-1,Cv=-1,Cp=-1,w=-1; int ierr =0; char herr[256] = "    ";
-        double a=300.0, b=101.325; int iFlag=100;
+        double a=300.0, b=101.325; int iFlag=0;
         ABFLSHdll(hOut,a,b,&z[0],iFlag,T,P,D,DL,DV,&x[0],&y[0],q,e,h,s,Cv,Cp,w,ierr,herr,2,255);
         CAPTURE(herr);
-        REQUIRE(ierr > 100);
+        REQUIRE(ierr == 0);
         
         auto r3 = ALLPROPS("E;H;S",MOLAR_BASE_SI,0,0,a,r1.Output[3],z);
         CHECK(e == r1.Output[0]);

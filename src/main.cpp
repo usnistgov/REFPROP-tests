@@ -2036,6 +2036,21 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") 
     CHECK_THAT(r2.z[0], WithinRelMatcher(0.2, 1e-15));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Another mass fractions change", "[massfractions]") {
+    // https://github.com/usnistgov/REFPROP-issues/issues/554
+    
+    auto [z_composition, ierr0, herr0] = SETMIXTURE("R410A.MIX");
+    int iMass = 1;
+    std::vector<double> zmass(20,0.0); zmass[0] = 0.5; zmass[1] = 0.5;
+    auto r1 = REFPROP("","TQ","H",MOLAR_BASE_SI,iMass,0,300,0,zmass);
+    auto r2 = REFPROP("","TQ","H",MASS_BASE_SI,iMass,0,300,0,zmass);
+    
+    CHECK_THAT(r1.x[0], WithinRelMatcher(0.5, 1e-15));
+    CHECK_THAT(r2.x[0], WithinRelMatcher(0.5, 1e-15));
+    CHECK_THAT(r1.z[0], WithinRelMatcher(0.5, 1e-15));
+    CHECK_THAT(r2.z[0], WithinRelMatcher(0.5, 1e-15));
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Getting of massfractions", "[massfractions]"){
     // From https://github.com/usnistgov/REFPROP-issues/issues/650
     

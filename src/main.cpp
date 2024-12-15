@@ -1821,7 +1821,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Xmass for mixture", "[massfractions]") {
     }
     SECTION("with imass=1"){
         std::vector<double> z(20, 0.8); z[1] = 0.2;
-        auto r = REFPROP("R32*R125", "", "XMASS", 0, 0, 1, 101.325, 0.5, z);
+        auto r = REFPROP("R32*R125", "", "XMASS", 0, 1, 0, 101.325, 0.5, z);
         CAPTURE(r.herr);
         CHECK_THAT(r.Output[0], WithinRelMatcher(0.8, 1e-14));
         CHECK(r.ierr != 0);

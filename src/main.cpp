@@ -1804,6 +1804,8 @@ TEST_CASE_METHOD(GETSETKTV, "Check BIP getting/setting when estimation scheme is
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Xmass for mixture", "[massfractions]") {
+    // https://github.com/usnistgov/REFPROP-issues/issues/630
+    
     std::vector<double> z(20, 1);
     SECTION("with imass=0"){
         auto r = REFPROP("R410A.MIX", "PQ", "XMASS", 0, 0, 0, 101.325, 0.5, z);
@@ -2017,7 +2019,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check divergence around vapor line ", "[nea
 }
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "mass fractions change", "[massfractions]") {
-    
+    // See https://github.com/usnistgov/REFPROP-issues/issues/644
     int kflag = -1;
     FLAGS("PR", 2, kflag, false);
     
@@ -2842,7 +2844,9 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check refrigerant models", "[HMX]"){
     }
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "iMass in REFPROP", "[iMassREFPROP]") {
+TEST_CASE_METHOD(REFPROPDLLFixture, "iMass in REFPROP", "[massfractions]") {
+    // https://github.com/usnistgov/REFPROP-issues/issues/311
+    
     int MassSI = get_enum("Mass SI"); // unit in MASS SI
     int iFlag = 1; // 0: don't call SATSPLN, 1: call SATSPLN
     std::vector<double> z (20, 1.0); z[0] = 0.8; z[1] = 0.2;

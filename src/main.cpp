@@ -1857,6 +1857,58 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check that H-S flash @ 2-phase can be done 
     CHECK_THAT(r.Output[1], WithinRelMatcher(400, 1e-6));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check two calls, both with SETREF=2, yield same answer", "[SETREFmix]") {
+    // see https://github.com/usnistgov/REFPROP-issues/issues/711
+    SECTION("Via REFPROPdll function, string compositions"){
+        for (bool setREF : {true, false}){
+            std::vector<double> z;
+            if (setREF){
+                REFPROP("", "FLAGS", "SETREF", 0, 0, 2, 0, 0, z);
+            }
+            CAPTURE(setREF);
+            auto r0 = REFPROP("R32;R125|0.3;0.7", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            auto r1 = REFPROP("R32;R125|0.3;0.7", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            CHECK(r0.Output[0] == r1.Output[0]);
+            REFPROP("", "SETREFOFF", "", 0, 0, 2, 0, 0, z);
+        }
+    }
+    SECTION("array compositions"){
+        for (bool setREF : {true, false}){
+            std::vector<double> z0;
+            if (setREF){
+                REFPROP("", "FLAGS", "SETREF", 0, 0, 2, 0, 0, z0);
+            }
+            CAPTURE(setREF);
+            std::vector<double> z(20, 0.0); z[0]=0.3; z[1]=0.7;
+            int ierr = 0; std::string herr;
+            auto r0 = REFPROP("R32;R125", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            auto r1 = REFPROP("R32;R125", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            CHECK(r0.Output[0] == r1.Output[0]);
+            CHECK(r0.ierr == 0);
+            CHECK(r1.ierr == 0);
+            REFPROP("", "SETREFOFF", "", 0, 0, 2, 0, 0, z);
+        }
+    }
+    SECTION("and also SETFLUIDS compositions"){
+        for (bool setREF : {true, false}){
+            
+            std::vector<double> z(20, 0.0); z[0]=0.3; z[1]=0.7;
+            int ierr = 0; std::string herr;
+            
+            SETFLUIDS("R32*R125", ierr, herr);
+            auto s = REFPROP("", "SETREF", "", 0, 0, 2, 0, 0, z);
+            
+            auto r0 = REFPROP("", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            auto r1 = REFPROP("", "PS", "H", MOLAR_SI, 0, 0, 10, 110, z);
+            CAPTURE(r0.Output[0]);
+            CHECK(r0.Output[0] == r1.Output[0]);
+            CHECK(r0.ierr == 0);
+            REFPROP("", "SETREFOFF", "", 0, 0, 2, 0, 0, z);
+        }
+    }
+}
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function", "[HMX]") {
     std::string note = "The problem here is that the XR0 is not in the HMX.BNC file but no error code is returned and the interaction parameters are all 1.0";
     CAPTURE(note);

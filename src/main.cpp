@@ -1845,6 +1845,18 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "dB/dT for Gao terms", "[NH3dBdT]") {
     CHECK_THAT(r.Output[1], WithinRelMatcher(7.478745783079243e-07, 1e-8));
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check that H-S flash @ 2-phase can be done for pure fluids", "[HS2phase]") {
+    std::string note = "HS calculations for pure fluids were not supported in v10.0";
+    CAPTURE(note);
+    std::vector<double> z(20, 0.0); z[0] = 1.0;
+    auto r0 = REFPROP("WATER","QT","H;S", MOLAR_BASE_SI, 0,0,0.7,400,z);
+    auto r = REFPROP("WATER","HS","QMASS;T", MOLAR_BASE_SI, 0,0,r0.Output[0],r0.Output[1],z);
+    CAPTURE(r.herr);
+    CHECK(r.ierr == 0);
+    CHECK_THAT(r.Output[0], WithinRelMatcher(0.7, 1e-6));
+    CHECK_THAT(r.Output[1], WithinRelMatcher(400, 1e-6));
+}
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function", "[HMX]") {
     std::string note = "The problem here is that the XR0 is not in the HMX.BNC file but no error code is returned and the interaction parameters are all 1.0";
     CAPTURE(note);

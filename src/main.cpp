@@ -1929,11 +1929,12 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function"
     CHECK(ierr2 == 0);
 }
 
-TEST_CASE_METHOD(REFPROPDLLFixture, "hexanebutane", "[HMX]") {
-    
+TEST_CASE_METHOD(REFPROPDLLFixture, "Strange caching w/ hexane+butane mixture", "[HMX]") {
     std::vector<double> z(20,0.0);
     auto res = REFPROP("", "FLAGS", "SETREF", 0, 0, 2, 0, 0, z);
+    auto r0 = REFPROP("R410A.mix", "TD", "DLIQ",MOLAR_SI,0,0,250,10, z);
     auto r = REFPROP("hexane;butane|.6;.4 mass", "DE", "P", get_enum("SI"), 0, 0, 600, -120.0, z);
+    CAPTURE(r.herr);
     CHECK(r.ierr == 0);
     
 }

@@ -351,9 +351,9 @@ public:
         SATGUESSdll(kph, iprop, &(znew[0]), o.T, o.p, o.D, o.h, o.s, o.Dy, &(o.y[0]),o.ierr, o.herr, 255);
         return o;
     }
-    auto SETMIX(const std::string& MixName, const std::string& HMX, const std::string REF) {
+    auto SETMIX(const std::string& MixName, const std::string& HMX, const std::string& REF) {
         
-        char hMixNme[256] = "", hhmx[256] = "", href[4] = "", herr[256], hfiles[10001];
+        char hMixNme[256] = "", hhmx[256] = "", href[4] = "", herr[256] = "", hfiles[10001] = "";
         
         strcpy(hMixNme, (MixName + std::string(255-MixName.size(),' ')).c_str());
         strcpy(hhmx, (HMX + std::string(255-HMX.size(), ' ')).c_str());

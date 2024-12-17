@@ -996,6 +996,26 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check ethane test points", "[ethane]") {
     }
 };
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "Check argon setting of ECS via SETMOD", "[transport]") {
+        
+    std::vector<double> z(20, 1);
+    
+    // base calculation, normal model
+    auto r0 = REFPROP("ARGON", "TQ", "VIS", MASS_BASE_SI, 0, 0, 100, 0, z);
+    
+    auto [ierr, herr] = SETMOD(1, "VIS", "HMX", "ECS");
+    int ierr2 = -1; std::string herr2 = ""; SETFLUIDS("ARGON", ierr2, herr2);
+    
+    // with ECS model
+    auto r1 = REFPROP("", "TQ", "VIS", MASS_BASE_SI, 0, 0, 100, 0, z);
+    CAPTURE(r0.herr);
+    CHECK(r0.ierr == 0);
+    CAPTURE(r1.herr);
+    CHECK(r1.ierr == 0);
+    CHECK(r0.Output[0] != r1.Output[0]);
+};
+
+
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check THF test points", "[THF]") {
     SECTION("Viscosity"){
         std::vector<std::tuple<double, double>> vals = {{0,8.3705}, {900, 589.3956}};

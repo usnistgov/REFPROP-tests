@@ -1929,6 +1929,14 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check error for missing departure function"
     CHECK(ierr2 == 0);
 }
 
+TEST_CASE_METHOD(REFPROPDLLFixture, "hexanebutane", "[HMX]") {
+    
+    std::vector<double> z(20,0.0);
+    auto res = REFPROP("", "FLAGS", "SETREF", 0, 0, 2, 0, 0, z);
+    auto r = REFPROP("hexane;butane|.6;.4 mass", "DE", "P", get_enum("SI"), 0, 0, 600, -120.0, z);
+    CHECK(r.ierr == 0);
+    
+}
 TEST_CASE_METHOD(REFPROPDLLFixture, "Check HMX with non .BNC extension", "[HMX]") {
     std::string note = "The HMX should not be required(!) to have a .HMX file extension";
     CAPTURE(note);

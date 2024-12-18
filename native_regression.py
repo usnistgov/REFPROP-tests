@@ -30,11 +30,11 @@ class VersionBuilder:
             
         # Disable expiration, if possible
         try:
-            SETUP_FOR = FORTRAN_PATH + '/FORTRAN/SETUP.FOR'
+            SETUP_FOR = FORTRAN_PATH + '/SETUP.FOR'
             contents = open(SETUP_FOR).read()
             pattern = r"if \(herr\.gt\.\'(\d{6})\'\)"
             with open(SETUP_FOR, 'w', encoding='cp1252') as fp:
-                fp.write(re.sub(pattern, '9'*6, contents))
+                fp.write(re.sub(pattern, "if (herr.gt.'999999')", contents))
         except BaseException as be:
             print(be)
             pass

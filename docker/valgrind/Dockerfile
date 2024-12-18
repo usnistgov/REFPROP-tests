@@ -44,3 +44,7 @@ ADD run_valgrind.py /
 WORKDIR /
 # -u for run unbuffered
 CMD python3 -u run_valgrind.py
+
+# Alternatively, you can run a single tag by passing a command line argument to the script. To do
+# so, comment out the previous CMD command, and uncomment this one:
+# CMD python3 -u run_valgrind.py --catchargs [nearvap]

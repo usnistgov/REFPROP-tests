@@ -22,7 +22,8 @@ class VersionBuilder:
             subprocess.check_call('git clone https://github.com/usnistgov/REFPROP-cmake --recursive', shell=True, cwd=dest)
             
         if source.endswith('.zip'):
-            shutil.unpack_archive(source, extract_dir=dest)
+            if not os.path.exists(dest+'/FLUIDS'):
+                shutil.unpack_archive(source, extract_dir=dest)
             FORTRAN_PATH = os.path.abspath(dest+'/FORTRAN')
         else:
             FORTRAN_PATH = os.path.abspath(source)+'/FORTRAN'

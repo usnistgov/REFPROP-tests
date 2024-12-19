@@ -141,7 +141,7 @@ After compilation is complete, you should have a DLL in the ``Debug`` folder and
 
 Once the debug version of REFPROP has been compiled, you can run any code you want to step into the Fortran debugger. In the Visual Studio Property page, you will want to set the paths to the executable you want to run, as well as any arguments the executable should take, and what working directory should be used. Make sure that in whatever code you are running, the correct REFPROP path is used, which should be the one for the Debug folder (make sure to use an absolute path!). To run a script with Python, a convenient way to quickly implement a simple test, that could look like:
 
-<img src="imgs/VSconfig.PNG" alt="Screenshow showing how to setup Visual Studio to run a Python script" style="width: 400px;"/>
+<img src="imgs/VSconfig.png" alt="Screenshow showing how to setup Visual Studio to run a Python script" style="width: 400px;"/>
 
 Note: you need to use absolute paths for working directory and executable. It is inconvenient, but necessary.
 

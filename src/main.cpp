@@ -119,36 +119,44 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Check spinodals", "[spinodal]") {
 };
 
 TEST_CASE_METHOD(REFPROPDLLFixture, "Try to load all predefined mixtures", "[setup],[predef_mixes]") {
+    auto mixlist = get_predefined_mixtures_list();
+    REQUIRE(!mixlist.empty());
     for (auto &&mix : get_predefined_mixtures_list()) {
         // Load it
         std::vector<double> z(20, 0.0);
-        auto r = REFPROP(mix+".MIX", " ", "TRED", 1, 0, 0, 0.101325, 300, z);
-        if (r.herr.find("R1132A") > 0){ continue; }
-        if (r.herr.find("R1132E") > 0){ continue; }
-        if (r.herr.find("R1130E") > 0){ continue; }
-        CAPTURE(mix+".MIX");
+        auto r = REFPROP(mix, " ", "TRED", 1, 0, 0, 0.101325, 300, z);
+        if (r.herr.find("R1132A") != std::string::npos){ continue; }
+        if (r.herr.find("R1132E") != std::string::npos){ continue; }
+        if (r.herr.find("R1130E") != std::string::npos){ continue; }
+        CAPTURE(mix);
         CAPTURE(r.herr);
         CHECK(r.ierr < 100);
         // Get the predefined mixture critical values
-        auto vals = get_predef_mix_values(mix+".MIX");
+        auto vals = get_predef_mix_values(mix);
         // Turn on splines
         int ierr = 0; char herr[255] = "";
         SATSPLNdll(&(z[0]), ierr, herr, 255U);
-        
         CAPTURE(herr);
+        if (ierr != 0){
+            int rr = 0;
+        }
         CHECK(ierr == 0);
         
-        // Get critical point
-        double Tcspl = -1, Pcspl = -1, Dcspl = -1;
         double Wmol; WMOLdll(&(z[0]), Wmol);
+        
+        // Get critical point from the splines
+        double Tcspl = -1, Pcspl = -1, Dcspl = -1;
         CRITPdll(&(z[0]),Tcspl,Pcspl,Dcspl,ierr,herr,255U);
-        CHECK(vals.Wmol == Approx(Wmol).epsilon(1e-2)); 
+        // And check it agrees with the values obtained from the .MIX file
+        CHECK(vals.Wmol == Approx(Wmol).epsilon(1e-2));
         CHECK(vals.Tc == Approx(Tcspl).epsilon(1e-2));
         CHECK(vals.pc == Approx(Pcspl).epsilon(1e-2));
         CHECK(vals.rhoc == Approx(Dcspl).epsilon(1e-2));
+        
         // Check that the Tc, pc, and rhoc are pretty much consistent by evaluation of p(T,rho);
         double pchk = -1; PRESSdll(Tcspl, Dcspl, &(z[0]), pchk);
         CHECK(pchk == Approx(Pcspl).epsilon(1e-2));
+        
         // Check molar composition matches what we loaded
         for (auto i = 0; i < vals.molar_composition.size(); ++i) {
             CHECK(z[i] == Approx(vals.molar_composition[i]));

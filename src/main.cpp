@@ -966,6 +966,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         CHECK(r.ierr < 100);
 
         reload();
+        SETFLUIDS(fluid, ierr, herr);
         
         CAPTURE(herr);
         CHECK(ierr == 0);
@@ -976,6 +977,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         std::vector<double> default_ = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
         reload();
+        SETFLUIDS(fluid, ierr, herr);
         {
             char hflag[255] = "PX0", herr[255] = "";
             int jflag = 0, kflag = -1, ierr = 0;
@@ -990,6 +992,7 @@ TEST_CASE_METHOD(REFPROPDLLFixture, "Test all PX0 for pures", "[PX0]") {
         std::vector<double> no_PX0 = std::vector<double>(r.Output.begin(), r.Output.begin() + 5);
 
         reload();
+        SETFLUIDS(fluid, ierr, herr);
         {
             char hflag[255] = "PX0", herr[255] = "";
             int jflag = 1, kflag = -1, ierr = 0;

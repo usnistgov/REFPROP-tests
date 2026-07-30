@@ -10,6 +10,7 @@ bldsandbox/
 /docker/**/output
 /**/.DS_Store
 /**/*.pyc
+.vs/
 
 REFPROP.zip
 RPbuilds
